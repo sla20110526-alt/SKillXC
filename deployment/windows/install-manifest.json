@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "persistent_root_hint": "D:\\Ai影视制作\\2026项目\\006-skills",
+  "codex_user_entry": "%USERPROFILE%\\.agents",
+  "central_repository": {
+    "relative_path": "..\\002-2026项目\\015-Skill整理\\SKillXC",
+    "remote": "https://github.com/sla20110526-alt/SKillXC.git"
+  },
+  "central_skill_count": 26,
+  "local_skills": [
+    "xyq-short-drama-skill",
+    "xyq-skill"
+  ],
+  "plugins": [
+    {
+      "name": "skillxc",
+      "storage": "junction-to-central-repository"
+    },
+    {
+      "name": "cowart",
+      "storage": "persistent-copy"
+    }
+  ],
+  "integrity": [
+    {
+      "name": "xyq-short-drama-skill",
+      "relative_path": "skills\\xyq-short-drama-skill",
+      "file_count": 1,
+      "byte_count": 25217,
+      "tree_sha256": "dbb542fb2f6fffbc657f0eecb4935d1ad85e53d8aba3b71fcc198835f1c00185"
+    },
+    {
+      "name": "xyq-skill",
+      "relative_path": "skills\\xyq-skill",
+      "file_count": 7,
+      "byte_count": 46888,
+      "tree_sha256": "bd9ecd6bfebcc6cfffe0fca1e9c8f4bb623743b08390852a6f4cc8f44b7e8d4e"
+    },
+    {
+      "name": "cowart",
+      "relative_path": "plugins\\plugins\\cowart",
+      "file_count": 8081,
+      "byte_count": 118788724,
+      "tree_sha256": "bf74c8455c65db3592a3121f4dacb840ad35ea541dd0b53b507708361fe4ecb7"
+    }
+  ]
+}

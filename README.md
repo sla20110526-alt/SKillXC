@@ -21,7 +21,8 @@
 
 - [插件清单](.codex-plugin/plugin.json) 将本仓库作为一套可持续更新的 `skillxc` 插件提供。
 - [仓库级规则](AGENTS.md) 约束中央源、调用确认、维护边界和安装拓扑。
-- 本地开发态通过用户级 Skill 目录中的链接直接读取 `skills/`，不复制 Skill；中央源更新后各项目读取到同一版本。
+- 用户级 `.agents` 持久化根目录位于 D 盘，C 盘用户目录只保留标准发现入口；[重装恢复说明](docs/Codex用户级Skill重装恢复.md)与[恢复工具](deployment/windows/)随仓库备份。
+- 本地开发态通过持久化目录中的链接直接读取 `skills/`，不复制 Skill；中央源更新后各项目读取到同一版本。
 - `production-router-handoff` 是唯一可自动识别的总路由入口；其余 25 个 Skill 必须在用户确认后显式调用。
 - 个人插件市场入口与直接链接是两种接入方式，不同时启用，避免同名 Skill 重复发现。
 
