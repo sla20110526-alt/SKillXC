@@ -33,9 +33,12 @@ description: 将锁定剧本建立为可追溯的场次、人物、原台词、�
 
 ## 输出
 
+- `剧本事实索引卡.md`
 - `剧本场次索引.csv`
 - `剧本事实索引.csv`
 - `剧本版本差异.md`（仅版本变化时）
 
-字段见 [事实索引字段](references/truth-index-fields.md)。输出后交给 `script-asset-breakdown`，不得直接登记正式资产。
+使用 `assets/剧本事实索引卡模板.md` 汇总范围、数量、歧义和文件引用；两张 CSV 每行都带项目 ID 与剧本版本。分别使用 `assets/script-scene.schema.json` 和 `assets/script-fact.schema.json` 检查，并把校验报告路径和结论写回卡片。字段见 [事实索引字段](references/truth-index-fields.md)，通用规则见 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md)。
+
+输出后交给 `script-asset-breakdown`，不得直接登记正式资产；Schema 通过不代表 `UNKNOWN` 已解决。
 

@@ -1,7 +1,7 @@
 interface:
   display_name: "资产审批与登记"
-  short_description: "绑定项目数据目录，仅按明确登记指令更新该项目正式资产。"
-  default_prompt: "使用 $approval-asset-registry 核对项目绑定和明确登记指令，并登记指定资产。"
+  short_description: "绑定并校验项目数据，仅按明确登记指令更新正式与可调用资产。"
+  default_prompt: "使用 $approval-asset-registry 核对项目绑定和明确登记指令，登记指定资产并校验两张项目表。"
 policy:
   allow_implicit_invocation: false
 

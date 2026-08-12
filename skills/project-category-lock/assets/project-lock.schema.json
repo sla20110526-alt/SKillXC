@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "项目锁定索引",
+  "type": "object",
+  "required": ["项目ID", "项目名称", "锁定卡版本", "锁定状态", "剧本内容版本", "当前生产范围", "制作类别", "图片资产模型", "视频生成模型", "项目锁定卡路径", "生效日期"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "项目名称": {"type": "string", "minLength": 1},
+    "锁定卡版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "锁定状态": {"type": "string", "enum": ["待确认", "已锁定", "已失效"]},
+    "剧本内容版本": {"type": "string", "minLength": 1},
+    "当前生产范围": {"type": "string", "minLength": 1},
+    "制作类别": {"type": "string", "enum": ["真人写实"]},
+    "图片资产模型": {"type": "string", "minLength": 1},
+    "视频生成模型": {"type": "string", "minLength": 1},
+    "项目成片画幅": {"type": "string"},
+    "项目锁定卡路径": {"type": "string", "minLength": 1},
+    "生效日期": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

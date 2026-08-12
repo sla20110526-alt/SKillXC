@@ -35,10 +35,17 @@ description: 根据项目数据绑定、当前阶段、资产类型和缺口选�
 - 必须继承、允许变化、禁止变化
 - 需要加载的 Skill 与已确认 Profile
 - 输出格式
+- 用户指定的格式例外；没有时写“无”
 - 明确禁止的越权行为
 - 下游接收者和返回条件
 
+## 数据交接门
+
+项目数据默认遵循 [项目数据三层契约](references/project-data-contract.md)：Markdown 卡片负责确认和摘要，CSV 负责多行记录，JSON Schema 负责结构检查。创作 Skill 的单次短卡不机械复制成专用 CSV，而是由本任务的 `任务索引.csv` 建立结构化追踪。
+
+下游交接前，使用 `scripts/validate_project_data.py` 检查本次涉及的 CSV 与 Schema；真实项目必须传入项目 ID，并把 `数据校验报告.md` 写到绑定项目数据目录。结构不通过时暂停交接。结构通过不代表资产批准、创作通过或业务引用有效。
+
 ## 输出
 
-使用 [交接对象](references/handoff-contracts.md) 生成 Markdown 任务单和新对话激活指令。信息不足但不影响方向时标缺口；缺口会改变创作方向时暂停询问。
+使用 [交接对象](references/handoff-contracts.md)、`assets/创作任务单模板.md`、`assets/任务索引模板.csv` 与 `assets/handoff-task.schema.json` 生成 Markdown 任务单、新对话激活指令和任务索引行。信息不足但不影响方向时标缺口；缺口会改变创作方向时暂停询问。
 

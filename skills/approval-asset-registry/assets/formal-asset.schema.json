@@ -13,6 +13,7 @@
     "文件路径",
     "正式用途",
     "登记指令原文",
+    "登记日期",
     "状态"
   ],
   "properties": {
@@ -32,7 +33,7 @@
     "正式用途": {"type": "string", "minLength": 1},
     "模型": {"type": "string"},
     "登记指令原文": {"type": "string", "minLength": 1},
-    "登记日期": {"type": "string"},
+    "登记日期": {"type": "string", "minLength": 1},
     "状态": {"type": "string", "enum": ["可调用", "停用", "历史", "待复核"]}
   },
   "additionalProperties": false

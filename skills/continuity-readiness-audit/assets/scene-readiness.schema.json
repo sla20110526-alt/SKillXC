@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "场次资产就绪审计",
+  "type": "object",
+  "required": ["项目ID", "场次ID", "剧本版本", "缺口", "场次就绪结论", "复核日期"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "场次ID": {"type": "string", "minLength": 1},
+    "剧本版本": {"type": "string", "minLength": 1},
+    "人物资产与版本": {"type": "string"},
+    "服装妆造与状态": {"type": "string"},
+    "场景母图与视图ID": {"type": "string"},
+    "光影状态": {"type": "string"},
+    "道具载具": {"type": "string"},
+    "生物怪物与VFX": {"type": "string"},
+    "声音资产": {"type": "string"},
+    "缺口": {"type": "string"},
+    "场次就绪结论": {"type": "string", "enum": ["可继续", "有条件继续", "暂停"]},
+    "复核日期": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

@@ -14,7 +14,7 @@ description: 通过问答锁定已有剧本或明确内容的AI影视项目类�
 3. 区分参考材料分别影响媒介、写实度、人物、材质、色彩、灯光、构图、运镜或节奏中的哪一项。
 4. 当前系统只接受“真人写实”作为正式执行类别；其他类别标记为尚未配置，不套用真人规则。
 5. 默认锁定图片资产模型为 GPT Image 2、视频生成模型为 Seedance 2.0；用户明确变更时再更新。
-6. 输出项目锁定卡并等待用户确认。确认前不得交给下游 Skill。
+6. 使用 `assets/项目锁定卡模板.md` 输出项目锁定卡并等待用户确认。若项目尚未绑定，卡片只在对话中交付并标记“待绑定”，不得写入中央仓库；项目绑定时再原样落入项目目录并建立索引。确认前不得交给下游 Skill。
 
 ## 必须锁定
 
@@ -32,7 +32,13 @@ description: 通过问答锁定已有剧本或明确内容的AI影视项目类�
 
 ## 输出
 
-使用 Markdown 卡片。字段见 [项目锁定字段](references/project-lock-fields.md)。
+按 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md) 输出：
+
+- 人读层：`项目锁定卡.md`
+- 结构层：使用 `assets/项目锁定索引模板.csv`，每个锁定卡版本一行
+- 检查层：使用 `assets/project-lock.schema.json` 检查索引；在卡片写明数据契约版本、索引路径、Schema 和校验报告
+
+字段见 [项目锁定字段](references/project-lock-fields.md)。Schema 通过不等于用户已经确认；只有明确确认且项目数据目录已绑定后才把索引状态写为 `已锁定`。若锁定先于绑定，把已确认卡交给 `approval-asset-registry` 落盘和建索引，登记 Skill 不得改写卡片中的创作或类别决定。
 
 ## 边界
 

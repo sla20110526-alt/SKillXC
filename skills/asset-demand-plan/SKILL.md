@@ -33,5 +33,7 @@ description: 将已审核的候选资产转成需求槽位、父子依赖、优�
 - `资产依赖关系.csv`
 - `生产批次计划.md`
 
-使用 [资产需求字段](references/asset-demand-fields.md)。交给 `production-router-handoff` 发任务，不交给正式资产登记。
+使用 `assets/生产批次计划模板.md`、两张 CSV 模板、`assets/asset-demand.schema.json` 和 `assets/asset-dependency.schema.json`，按 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md) 生成校验报告并写回计划卡。字段见 [资产需求字段](references/asset-demand-fields.md)。
+
+Schema 通过只表示结构可交接，不使需求槽位或预留 ID 成为正式资产；交给 `production-router-handoff` 发任务，不交给正式资产登记。
 

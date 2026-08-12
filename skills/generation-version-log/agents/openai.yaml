@@ -1,7 +1,7 @@
 interface:
   display_name: "生成版本记录"
-  short_description: "只在用户明确要求时记录模型、Prompt、批次、结果与失败原因。"
-  default_prompt: "使用 $generation-version-log 按我的明确要求记录当前生成版本。"
+  short_description: "只在用户明确要求时记录并校验模型、Prompt、结果与失败原因。"
+  default_prompt: "使用 $generation-version-log 按我的明确要求记录当前生成版本，并校验项目记录表。"
 policy:
   allow_implicit_invocation: false
 

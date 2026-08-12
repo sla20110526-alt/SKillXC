@@ -24,7 +24,9 @@ description: 按用户明确要求记录GPT Image 2或Seedance 2.0的生成批�
 
 ## 输出
 
-使用 `assets/生成版本记录模板.csv`。记录不进入正式资产登记表，也不能使结果成为可调用资产。
+只有用户明确要求记录时，才使用 `assets/生成版本记录卡模板.md` 与 `assets/生成版本记录模板.csv`；每行必须携带项目 ID，并用 `assets/generation-version.schema.json` 检查。按 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md) 把检查报告写入绑定项目目录。
+
+记录不进入正式资产登记表，也不能使结果成为可调用资产；Schema 通过不改变这一身份。
 
 项目结束复盘时允许从各对话的标准摘要汇总，但先说明可访问范围；不可访问的旧对话标为缺失，不虚构。
 

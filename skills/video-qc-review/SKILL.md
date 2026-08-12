@@ -31,5 +31,5 @@ description: 独立分析Seedance 2.0生成镜头的身份、表演、动作物�
 - 最小修订方向
 - 是否需要重做分镜、补资产、拆分生成单元或重写 Prompt
 
-默认不写文件。用户明确要求正式记录时才使用 `assets/视频QC记录模板.csv`。
+默认不写文件。用户明确要求正式记录时才使用 `assets/视频QC记录卡模板.md` 与 `assets/视频QC记录模板.csv`，每行携带项目 ID，并用 `assets/video-qc.schema.json` 检查；通用规则见 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md)。Schema 通过不等于镜头可用或问题已经解决。
 

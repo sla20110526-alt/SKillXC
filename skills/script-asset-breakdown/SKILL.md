@@ -42,4 +42,11 @@ description: 从锁定的剧本事实索引识别真人写实项目所需的人�
 
 ## 输出
 
-输出带项目 ID、预留正式资产 ID、暂定名称、资产类型、父预留 ID、剧本出处和信息来源的候选资产清单，以及缺口清单；交给 `asset-demand-plan` 复核去重、建立需求槽位和排产。不得直接调用生成模型或正式登记。
+按 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md) 输出：
+
+- `资产拆解卡.md`：汇总范围、数量、去重关系、缺口和下游动作
+- `候选资产拆解表.csv`：项目 ID、预留正式资产 ID、暂定名称、类型、父预留 ID、出处和信息来源
+- `资产信息缺口表.csv`：缺失信息、责任 Skill 与返回节点
+- 使用 `asset-candidate.schema.json` 和 `asset-gap.schema.json` 逐行检查，并在拆解卡引用校验报告
+
+使用 `assets/` 下对应模板和 Schema。Schema 通过不代表候选已登记；交给 `asset-demand-plan` 复核去重、建立需求槽位和排产，不得直接调用生成模型或正式登记。

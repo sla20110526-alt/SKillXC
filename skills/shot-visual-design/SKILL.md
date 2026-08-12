@@ -35,5 +35,7 @@ description: 把确认的场戏、调度和表演转成具有叙事动机的景�
 
 ## 输出
 
-使用 `assets/分镜表模板.csv` 和 [镜头字段](references/shot-fields.md)。
+使用 `assets/分镜设计卡模板.md` 汇总范围与上游版本，使用 `assets/分镜表模板.csv` 保存逐镜数据并保证每行携带项目 ID，使用 `assets/storyboard-shot.schema.json` 检查。按 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md) 把校验报告写入绑定项目目录；字段见 [镜头字段](references/shot-fields.md)。
+
+Schema 通过只证明分镜表结构可读，不代表用户批准镜头，也不引入分镜版本与通过登记规则。
 

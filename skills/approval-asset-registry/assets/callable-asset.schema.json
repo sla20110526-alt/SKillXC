@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "可调用资产映射",
+  "type": "object",
+  "required": ["项目ID", "绑定卡版本", "正式资产ID", "版本", "资产类型", "资产名称", "文件路径", "平台引用名", "可调用范围", "状态"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "绑定卡版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "正式资产ID": {"type": "string", "minLength": 1},
+    "版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "资产类型": {"type": "string", "enum": ["人物", "服装妆造", "场景", "场景视图", "光影", "道具", "载具", "生物怪物", "VFX", "图案文字", "声音"]},
+    "资产名称": {"type": "string", "minLength": 1},
+    "文件路径": {"type": "string", "minLength": 1},
+    "平台引用名": {"type": "string", "minLength": 1},
+    "可调用范围": {"type": "string", "minLength": 1},
+    "父正式资产ID": {"type": ["string", "null"]},
+    "连续性备注": {"type": "string"},
+    "状态": {"type": "string", "enum": ["可调用", "停用", "历史", "待复核"]}
+  },
+  "additionalProperties": false
+}

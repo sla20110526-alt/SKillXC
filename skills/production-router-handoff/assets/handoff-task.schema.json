@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "生产交接任务索引",
+  "type": "object",
+  "required": ["项目ID", "任务ID", "任务单版本", "项目数据绑定卡版本", "当前阶段", "责任Skill", "需求槽位场次镜头范围", "任务状态", "任务单路径", "创建日期"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "任务ID": {"type": "string", "minLength": 1},
+    "任务单版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "项目数据绑定卡版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "当前阶段": {"type": "string", "minLength": 1},
+    "责任Skill": {"type": "string", "minLength": 1},
+    "需求槽位场次镜头范围": {"type": "string", "minLength": 1},
+    "任务状态": {"type": "string", "enum": ["待确认", "已激活", "执行中", "已返回", "已取消"]},
+    "任务单路径": {"type": "string", "minLength": 1},
+    "创建日期": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

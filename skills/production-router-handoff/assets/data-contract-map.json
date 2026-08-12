@@ -1,0 +1,85 @@
+{
+  "contract_version": "v0.1",
+  "pairs": [
+    {
+      "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
+      "schema": "skills/project-category-lock/assets/project-lock.schema.json",
+      "card": "skills/project-category-lock/assets/项目锁定卡模板.md"
+    },
+    {
+      "template": "skills/script-truth-index/assets/剧本场次索引模板.csv",
+      "schema": "skills/script-truth-index/assets/script-scene.schema.json",
+      "card": "skills/script-truth-index/assets/剧本事实索引卡模板.md"
+    },
+    {
+      "template": "skills/script-truth-index/assets/剧本事实索引模板.csv",
+      "schema": "skills/script-truth-index/assets/script-fact.schema.json",
+      "card": "skills/script-truth-index/assets/剧本事实索引卡模板.md"
+    },
+    {
+      "template": "skills/script-asset-breakdown/assets/候选资产拆解表模板.csv",
+      "schema": "skills/script-asset-breakdown/assets/asset-candidate.schema.json",
+      "card": "skills/script-asset-breakdown/assets/资产拆解卡模板.md"
+    },
+    {
+      "template": "skills/script-asset-breakdown/assets/资产信息缺口表模板.csv",
+      "schema": "skills/script-asset-breakdown/assets/asset-gap.schema.json",
+      "card": "skills/script-asset-breakdown/assets/资产拆解卡模板.md"
+    },
+    {
+      "template": "skills/asset-demand-plan/assets/资产需求总表模板.csv",
+      "schema": "skills/asset-demand-plan/assets/asset-demand.schema.json",
+      "card": "skills/asset-demand-plan/assets/生产批次计划模板.md"
+    },
+    {
+      "template": "skills/asset-demand-plan/assets/资产依赖关系模板.csv",
+      "schema": "skills/asset-demand-plan/assets/asset-dependency.schema.json",
+      "card": "skills/asset-demand-plan/assets/生产批次计划模板.md"
+    },
+    {
+      "template": "skills/production-router-handoff/assets/任务索引模板.csv",
+      "schema": "skills/production-router-handoff/assets/handoff-task.schema.json",
+      "card": "skills/production-router-handoff/assets/创作任务单模板.md"
+    },
+    {
+      "template": "skills/approval-asset-registry/assets/项目数据绑定索引模板.csv",
+      "schema": "skills/approval-asset-registry/assets/project-data-binding.schema.json",
+      "card": "skills/approval-asset-registry/assets/项目数据绑定卡模板.md"
+    },
+    {
+      "template": "skills/approval-asset-registry/assets/正式资产登记表模板.csv",
+      "schema": "skills/approval-asset-registry/assets/formal-asset.schema.json",
+      "card": "skills/approval-asset-registry/assets/登记回执模板.md"
+    },
+    {
+      "template": "skills/approval-asset-registry/assets/可调用资产表模板.csv",
+      "schema": "skills/approval-asset-registry/assets/callable-asset.schema.json",
+      "card": "skills/approval-asset-registry/assets/登记回执模板.md"
+    },
+    {
+      "template": "skills/generation-version-log/assets/生成版本记录模板.csv",
+      "schema": "skills/generation-version-log/assets/generation-version.schema.json",
+      "card": "skills/generation-version-log/assets/生成版本记录卡模板.md"
+    },
+    {
+      "template": "skills/continuity-readiness-audit/assets/场次资产就绪表模板.csv",
+      "schema": "skills/continuity-readiness-audit/assets/scene-readiness.schema.json",
+      "card": "skills/continuity-readiness-audit/assets/就绪审计卡模板.md"
+    },
+    {
+      "template": "skills/continuity-readiness-audit/assets/生成单元就绪表模板.csv",
+      "schema": "skills/continuity-readiness-audit/assets/generation-readiness.schema.json",
+      "card": "skills/continuity-readiness-audit/assets/就绪审计卡模板.md"
+    },
+    {
+      "template": "skills/shot-visual-design/assets/分镜表模板.csv",
+      "schema": "skills/shot-visual-design/assets/storyboard-shot.schema.json",
+      "card": "skills/shot-visual-design/assets/分镜设计卡模板.md"
+    },
+    {
+      "template": "skills/video-qc-review/assets/视频QC记录模板.csv",
+      "schema": "skills/video-qc-review/assets/video-qc.schema.json",
+      "card": "skills/video-qc-review/assets/视频QC记录卡模板.md"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 interface:
   display_name: "连续性与就绪审计"
-  short_description: "按项目绑定核查正式资产连续性、版本影响和镜头生成就绪度。"
-  default_prompt: "使用 $continuity-readiness-audit 按当前项目绑定审计场次或镜头的生产就绪度。"
+  short_description: "按项目绑定审计并校验正式资产连续性、版本影响和生成就绪度。"
+  default_prompt: "使用 $continuity-readiness-audit 按当前项目绑定审计场次或镜头的生产就绪度，并校验审计表。"
 policy:
   allow_implicit_invocation: false
 

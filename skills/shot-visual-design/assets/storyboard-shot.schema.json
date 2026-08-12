@@ -3,6 +3,7 @@
   "title": "正式分镜镜头",
   "type": "object",
   "required": [
+    "项目ID",
     "镜头编号",
     "生成单元",
     "对应剧本事实ID",
@@ -17,6 +18,7 @@
     "为什么选择本机位与运镜"
   ],
   "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
     "镜头编号": {"type": "string", "minLength": 1},
     "生成单元": {"type": "string", "minLength": 1},
     "对应剧本事实ID": {"type": "string", "minLength": 1},

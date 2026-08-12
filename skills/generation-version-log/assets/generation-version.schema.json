@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "生成版本记录",
+  "type": "object",
+  "required": ["项目ID", "生成批次ID", "目标需求槽位或镜头", "模型", "Prompt版本", "Prompt路径或正文", "用户结论", "记录日期"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "生成批次ID": {"type": "string", "minLength": 1},
+    "目标需求槽位或镜头": {"type": "string", "minLength": 1},
+    "模型": {"type": "string", "minLength": 1},
+    "平台设置": {"type": "string"},
+    "Prompt版本": {"type": "string", "minLength": 1},
+    "Prompt路径或正文": {"type": "string", "minLength": 1},
+    "参考输入": {"type": "string"},
+    "结果文件": {"type": "string"},
+    "用户结论": {"type": "string", "enum": ["失败", "待调整", "通过", "仅记录版本"]},
+    "用户失败描述": {"type": "string"},
+    "AI诊断": {"type": "string"},
+    "修订方向": {"type": "string"},
+    "上一版本": {"type": ["string", "null"]},
+    "记录日期": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

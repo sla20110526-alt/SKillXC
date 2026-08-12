@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "生成单元就绪审计",
+  "type": "object",
+  "required": ["项目ID", "生成单元ID", "分镜版本", "调用正式资产", "首帧状态", "结束状态", "参考负载结论", "版本冲突", "缺口", "生成就绪结论", "复核日期"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "生成单元ID": {"type": "string", "minLength": 1},
+    "分镜版本": {"type": "string", "minLength": 1},
+    "调用正式资产": {"type": "string", "minLength": 1},
+    "平台引用名": {"type": "string"},
+    "首帧状态": {"type": "string", "minLength": 1},
+    "结束状态": {"type": "string", "minLength": 1},
+    "动作视线银幕方向": {"type": "string"},
+    "声音": {"type": "string"},
+    "参考负载结论": {"type": "string", "enum": ["通过", "需减载", "待确认"]},
+    "版本冲突": {"type": "string"},
+    "缺口": {"type": "string"},
+    "生成就绪结论": {"type": "string", "enum": ["可继续", "有条件继续", "暂停"]},
+    "复核日期": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

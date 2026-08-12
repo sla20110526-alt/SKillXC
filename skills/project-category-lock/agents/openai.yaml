@@ -1,7 +1,7 @@
 interface:
   display_name: "项目类别锁定"
-  short_description: "通过问答锁定项目ID、真人写实类别、模型、边界和参考用途。"
-  default_prompt: "使用 $project-category-lock 完成当前项目ID、类别与生产边界锁定。"
+  short_description: "通过问答锁定项目类别与边界，并维护可校验的项目锁定索引。"
+  default_prompt: "使用 $project-category-lock 完成当前项目ID、类别与生产边界锁定，并校验项目锁定索引。"
 policy:
   allow_implicit_invocation: false
 

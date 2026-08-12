@@ -32,9 +32,13 @@ description: 使用已正式登记和可调用的资产审计人物、服装、�
 
 ## 输出
 
+- `就绪审计卡.md`
 - `场次资产就绪表.csv`
+- `生成单元就绪表.csv`（进入正式 Prompt 前）
 - 审计结论：`可继续 / 有条件继续 / 暂停`
 - 缺口列表：责任 Skill、所需输入、返回节点
+
+使用 `assets/就绪审计卡模板.md`、两张 CSV 模板、`scene-readiness.schema.json` 和 `generation-readiness.schema.json`，按 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md) 生成检查报告。Schema 通过不替代正式资产、版本依赖、参考负载与连续性业务复核。
 
 不得用最接近的旧资产代替缺失资产，也不得在 Prompt 中掩盖上游缺口。
 

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "视频QC记录",
+  "type": "object",
+  "required": ["项目ID", "镜头编号", "生成单元", "视频文件", "时间点", "可观察问题", "严重度", "问题类别", "归属Skill", "建议返回节点", "最小修订方向", "用户结论", "记录日期"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "镜头编号": {"type": "string", "minLength": 1},
+    "生成单元": {"type": "string", "minLength": 1},
+    "视频文件": {"type": "string", "minLength": 1},
+    "时间点": {"type": "string", "minLength": 1},
+    "可观察问题": {"type": "string", "minLength": 1},
+    "严重度": {"type": "string", "enum": ["阻断", "重要", "可接受偏差"]},
+    "问题类别": {"type": "string", "minLength": 1},
+    "归属Skill": {"type": "string", "minLength": 1},
+    "建议返回节点": {"type": "string", "minLength": 1},
+    "最小修订方向": {"type": "string", "minLength": 1},
+    "用户结论": {"type": "string", "minLength": 1},
+    "记录日期": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

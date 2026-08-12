@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "资产需求依赖",
+  "type": "object",
+  "required": ["项目ID", "上游需求槽位ID", "上游预留正式资产ID", "下游需求槽位ID", "下游预留正式资产ID", "依赖类型", "生效条件", "上游变更后的处理"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "上游需求槽位ID": {"type": "string", "minLength": 1},
+    "上游预留正式资产ID": {"type": "string", "minLength": 1},
+    "下游需求槽位ID": {"type": "string", "minLength": 1},
+    "下游预留正式资产ID": {"type": "string", "minLength": 1},
+    "依赖类型": {"type": "string", "enum": ["父子派生", "状态继承", "空间依赖", "光影依赖", "声音身份依赖", "生产顺序", "其他"]},
+    "生效条件": {"type": "string", "minLength": 1},
+    "上游变更后的处理": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

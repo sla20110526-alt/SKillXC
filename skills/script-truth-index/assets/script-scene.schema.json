@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "剧本场次索引",
+  "type": "object",
+  "required": ["项目ID", "剧本内容版本", "场次ID", "内外景", "地点", "时间", "剧本范围"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "剧本内容版本": {"type": "string", "minLength": 1},
+    "场次ID": {"type": "string", "minLength": 1},
+    "集数": {"type": "string"},
+    "内外景": {"type": "string", "enum": ["内景", "外景", "内外景", "待确认"]},
+    "地点": {"type": "string", "minLength": 1},
+    "时间": {"type": "string", "minLength": 1},
+    "剧本范围": {"type": "string", "minLength": 1},
+    "出场人物": {"type": "string"},
+    "场次起始状态": {"type": "string"},
+    "场次结束状态": {"type": "string"}
+  },
+  "additionalProperties": false
+}

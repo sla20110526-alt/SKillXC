@@ -1,7 +1,7 @@
 interface:
   display_name: "剧本资产拆解"
-  short_description: "从锁定剧本识别候选资产与状态变体，并预留项目内资产ID。"
-  default_prompt: "使用 $script-asset-breakdown 拆解当前剧本范围并预留项目内正式资产ID。"
+  short_description: "从锁定剧本拆解并校验候选资产、缺口和项目内预留资产ID。"
+  default_prompt: "使用 $script-asset-breakdown 拆解当前剧本范围，预留项目内正式资产ID并校验候选与缺口表。"
 policy:
   allow_implicit_invocation: false
 

@@ -15,12 +15,14 @@
 - 大师 Profile 只在用户明确选择后调取，并且只在指定阶段和作用域内生效。
 - 没有具体项目或项目数据目录时，只维护工作流，不创建虚构项目数据。
 - 具体项目必须先由 `approval-asset-registry` 确认项目 ID、项目数据根目录和绑定卡；所有项目数据读写必须解析到绑定目录内，禁止跨项目串表。
+- 项目数据默认遵循 `skills/production-router-handoff/references/project-data-contract.md`：人读卡、CSV 行数据、JSON Schema 检查三层分工；结构检查不得替代批准和业务复核。
 
 ## 维护边界
 
 - 用户要求按优先级一次修复一项时，只修改当前确认项；完成逐文件检查后停止，等待下一次确认。
 - 修改 Skill 前遵循 Codex 的 `skill-creator` 规范；修改插件结构前遵循 `plugin-creator` 规范。
 - 修改源文件后必须检查 UTF-8、YAML/JSON 语法、内部链接、目录结构和调用边界。
+- 修改数据模板或 Schema 后必须更新 `skills/production-router-handoff/assets/data-contract-map.json`，并运行 `validate_project_data.py --manifest`；不得只增加 Schema 而不执行检查。
 - 历史讨论文档只作为档案，不得当作当前生产规则；当前规则以正式 Skill、插件清单和用户最新明确指令为准。
 
 ## 安装拓扑
