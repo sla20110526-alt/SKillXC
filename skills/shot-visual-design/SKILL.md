@@ -18,6 +18,8 @@ description: 把确认的场戏、调度、表演和摄影规则卡转成具有�
 
 镜头视觉设计负责决定并写入镜头存在理由、叙事任务、观众视点、景别对象、机位高低/俯仰/侧别、构图、遮挡、运镜动机、触发点和停止点。它必须在摄影卡允许范围内提出视场/透视目标、物理距离和执行参数草案，摄影指导随后只审核摄影一致性与物理可执行性。
 
+按 [分镜、正式 Prompt 与可用镜头的版本状态规则](../production-router-handoff/references/shot-prompt-version-state.md) 建立稳定的分镜组 ID、镜头 ID、生成单元 ID 和版本。每次写表都形成明确且独立保存的分镜组快照，不覆盖旧快照；只递增实际发生设计变化的镜头版本。
+
 ## 核心门槛
 
 每个镜头必须回答：
@@ -65,5 +67,5 @@ description: 把确认的场戏、调度、表演和摄影规则卡转成具有�
 
 使用 `assets/分镜设计卡模板.md` 汇总范围、摄影卡引用和审核写回状态，使用 `assets/分镜表模板.csv` 保存逐镜数据并保证每行携带项目 ID，使用 `assets/storyboard-shot.schema.json` 检查。按 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md) 把校验报告写入绑定项目目录；字段见 [镜头字段](references/shot-fields.md)。
 
-Schema 通过只证明分镜表结构可读，不代表用户批准镜头，也不引入分镜版本与通过登记规则。
+Schema 通过只证明分镜表结构和版本字段可读，不代表用户批准镜头。系统不要求用户单独登记“分镜批准”；正式 Prompt 被放行生成时，只确认该 Prompt 引用的分镜组与镜头版本为本次生产依据。
 

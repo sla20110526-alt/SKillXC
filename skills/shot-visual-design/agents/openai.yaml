@@ -1,7 +1,7 @@
 interface:
   display_name: "镜头视觉设计"
-  short_description: "继承摄影规则设计逐镜叙事方案，并唯一负责分镜表写入与审核修正。"
-  default_prompt: "使用 $shot-visual-design 继承现有摄影规则，为当前场戏设计逐镜方案并闭环摄影审核。"
+  short_description: "继承摄影规则设计逐镜方案，维护分镜组快照与镜头版本并唯一写表。"
+  default_prompt: "使用 $shot-visual-design 继承现有摄影规则，为当前场戏建立带稳定ID和版本的逐镜方案。"
 policy:
   allow_implicit_invocation: false
 

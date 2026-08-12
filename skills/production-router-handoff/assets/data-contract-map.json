@@ -62,6 +62,11 @@
       "card": "skills/generation-version-log/assets/生成版本记录卡模板.md"
     },
     {
+      "template": "skills/generation-version-log/assets/镜头生产进度表模板.csv",
+      "schema": "skills/generation-version-log/assets/shot-production-progress.schema.json",
+      "card": "skills/generation-version-log/assets/镜头生产进度卡模板.md"
+    },
+    {
       "template": "skills/continuity-readiness-audit/assets/场次资产就绪表模板.csv",
       "schema": "skills/continuity-readiness-audit/assets/scene-readiness.schema.json",
       "card": "skills/continuity-readiness-audit/assets/就绪审计卡模板.md"
