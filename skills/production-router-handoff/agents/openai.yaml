@@ -1,7 +1,7 @@
 interface:
   display_name: "生产路由与交接"
-  short_description: "确认并路由抽屉式生产Skill，生成最小跨对话任务单和交接包。"
-  default_prompt: "使用 $production-router-handoff 路由当前任务并生成最小交接包。"
+  short_description: "核对项目绑定并路由抽屉式生产Skill，生成最小跨对话交接包。"
+  default_prompt: "使用 $production-router-handoff 核对项目绑定，路由当前任务并生成最小交接包。"
 policy:
   allow_implicit_invocation: true
 

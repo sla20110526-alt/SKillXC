@@ -3,6 +3,8 @@
   "title": "正式登记资产",
   "type": "object",
   "required": [
+    "项目ID",
+    "绑定卡版本",
     "正式资产ID",
     "需求槽位ID",
     "版本",
@@ -14,6 +16,8 @@
     "状态"
   ],
   "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "绑定卡版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
     "正式资产ID": {"type": "string", "minLength": 1},
     "需求槽位ID": {"type": "string", "minLength": 1},
     "版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},

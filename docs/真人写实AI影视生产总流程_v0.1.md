@@ -17,21 +17,24 @@
 ## 主流程
 
 1. `project-category-lock`：问答锁定真人写实、GPT Image 2、Seedance 2.0、画幅和参考用途。
-2. `script-truth-index`：建立不含创作建议的剧本事实索引。
-3. `script-asset-breakdown`：识别候选资产与状态变化。
-4. `asset-demand-plan`：建立需求槽位、依赖与生产批次；需求不是正式资产。
-5. `style-lock-director`：用户确认专业 Skill 与可选 Profile 后完成风格测试和短执行卡。
-6. 分类资产生产：人物、场景或世界资产 + `image-prompt-production`。
-7. `approval-asset-registry`：只有“登记这张”“确认登记”等明确指令才登记并进入可调用表。
-8. `continuity-readiness-audit`：分镜前只核对正式可调用资产。
-9. `dramaturgy-scene-beats` → `directing-blocking` → `acting-direction`。
-10. `shot-visual-design` → `cinematography-direction` → `editing-rhythm` → `sound-voice-direction`。
-11. 用户确认分镜后，`video-prompt-production` 装配 Seedance 2.0 Prompt 并生成可用镜头。
-12. 用户需要时调用 `video-qc-review` 独立诊断；默认只分析，明确要求后才登记 QC 记录。
+2. `approval-asset-registry`：为具体项目确认项目 ID 和项目数据根目录，建立项目数据绑定卡；没有具体项目时只提醒，不建虚构目录。
+3. `script-truth-index`：建立不含创作建议的剧本事实索引。
+4. `script-asset-breakdown`：识别候选资产与状态变化，并预留项目内稳定正式资产 ID；预留不等于登记。
+5. `asset-demand-plan`：沿用预留正式资产 ID，建立独立需求槽位、依赖与生产批次；需求不是正式资产版本。
+6. `style-lock-director`：用户确认专业 Skill 与可选 Profile 后完成风格测试和短执行卡。
+7. 分类资产生产：人物、场景或世界资产 + `image-prompt-production`。
+8. `approval-asset-registry`：只有“登记这张”“确认登记”等明确指令才把预留 ID 的正式版本写入绑定项目的登记表和可调用表；正式名称采用用户指定名称。
+9. `continuity-readiness-audit`：分镜前只核对当前绑定项目的正式可调用资产。
+10. `dramaturgy-scene-beats` → `directing-blocking` → `acting-direction`。
+11. `shot-visual-design` → `cinematography-direction` → `editing-rhythm` → `sound-voice-direction`。
+12. 用户确认分镜后，`video-prompt-production` 装配 Seedance 2.0 Prompt 并生成可用镜头。
+13. 用户需要时调用 `video-qc-review` 独立诊断；默认只分析，明确要求后才登记 QC 记录。
 
 ## 硬规则
 
 - 候选、失败、用户仅表示喜欢或准备继续修改的结果都不登记。
+- 每个项目使用独立项目数据根目录和绑定卡；生产对话只提交登记申请，登记对话只写绑定项目的表。
+- 正式资产 ID 在资产拆解时预留，登记时沿用并增加版本；正式资产名称以用户明确指定的名称为准。
 - 失败原因只在用户明确要求时由 `generation-version-log` 记录。
 - 人物采用一张五视图总览卡：左1/3为正面特写和3/4侧面特写，右2/3为正面、侧面、背面全身。
 - 人物资产画幅按排版需要，不跟随成片画幅。

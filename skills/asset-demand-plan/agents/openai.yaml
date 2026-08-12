@@ -1,7 +1,7 @@
 interface:
   display_name: "资产需求计划"
-  short_description: "规划资产需求槽位、父子依赖、生产优先级、批次和就绪条件。"
-  default_prompt: "使用 $asset-demand-plan 将候选资产整理为需求与生产计划。"
+  short_description: "沿用预留资产ID，规划独立需求槽位、依赖、批次和就绪条件。"
+  default_prompt: "使用 $asset-demand-plan 沿用预留资产ID，将候选资产整理为需求与生产计划。"
 policy:
   allow_implicit_invocation: false
 

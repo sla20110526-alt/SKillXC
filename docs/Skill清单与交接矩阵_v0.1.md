@@ -14,9 +14,9 @@
 |---|---|---|---|
 | `project-category-lock` | 剧本、参考、用户问答 | 项目锁定卡 | 剧本事实索引 |
 | `script-truth-index` | 项目锁定卡、锁定剧本 | 场次与事实索引 | 资产拆解、场戏分析 |
-| `asset-demand-plan` | 候选资产、剧本事实 | 需求槽位、依赖、批次 | 路由交接 |
-| `production-router-handoff` | 当前阶段、任务和缺口 | Skill确认、任务单、激活指令 | 对应创作 Skill |
-| `approval-asset-registry` | 用户明确登记指令、唯一候选 | 正式资产登记、可调用映射 | 就绪审计、分镜 |
+| `asset-demand-plan` | 候选资产、预留正式资产ID、剧本事实 | 独立需求槽位、依赖、批次 | 路由交接 |
+| `production-router-handoff` | 当前阶段、项目绑定、任务和缺口 | Skill确认、任务单、激活指令 | 对应创作 Skill |
+| `approval-asset-registry` | 项目绑定；用户明确登记指令；唯一候选 | 项目数据绑定卡、正式资产登记、可调用映射 | 就绪审计、分镜 |
 | `generation-version-log` | 用户明确记录要求 | 可选生成/失败记录 | 复盘；不进入登记 |
 | `continuity-readiness-audit` | 正式登记与调用表、剧本状态 | 场次/生成单元就绪结论 | 分镜或返回补资产 |
 
@@ -24,7 +24,7 @@
 
 | Skill | 用户确认点 | 核心输出 | 下游 |
 |---|---|---|---|
-| `script-asset-breakdown` | 是否使用通用拆解 Skill | 候选资产、变体、缺口 | 资产需求计划 |
+| `script-asset-breakdown` | 是否使用通用拆解 Skill | 候选资产、预留正式资产ID、变体、缺口 | 资产需求计划 |
 | `style-lock-director` | 使用哪些专业 Skill；是否加载 Profile | 完整风格包、分类短执行卡 | 各资产/分镜 Skill |
 | `art-lookdev-direction` | 是否使用；是否加载美术 Profile | 世界、美术、材质、色彩规则 | 风格总控、资产生产 |
 | `cinematography-direction` | 是否使用；是否加载摄影 Profile | 项目/场戏摄影策略卡 | 镜头设计、Prompt |
@@ -59,6 +59,7 @@
 | 问题 | 返回 Skill |
 |---|---|
 | 剧本出处或状态不清 | `script-truth-index` |
+| 项目目录未绑定或跨项目数据混用 | `approval-asset-registry` 重建或复核绑定卡 |
 | 缺少资产或父子版本错误 | `asset-demand-plan` / 对应资产生产 Skill |
 | 人脸、场景、道具本体错误 | 对应资产生产 Skill + `image-prompt-production` |
 | 缺少场景机位视图 | `location-spatial-production` 补做 SV3 |
