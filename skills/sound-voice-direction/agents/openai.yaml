@@ -2,4 +2,6 @@ interface:
   display_name: "声音与声音资产"
   short_description: "设计Seedance镜头的声音身份、对白、环境声、音效与声音桥。"
   default_prompt: "使用 $sound-voice-direction 为当前镜头设计同步声音。"
+policy:
+  allow_implicit_invocation: false
 

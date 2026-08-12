@@ -2,4 +2,6 @@ interface:
   display_name: "剧本事实索引"
   short_description: "建立场次、原台词、事件、人物状态、连续性及出处事实索引。"
   default_prompt: "使用 $script-truth-index 为当前锁定剧本建立可追溯事实索引。"
+policy:
+  allow_implicit_invocation: false
 

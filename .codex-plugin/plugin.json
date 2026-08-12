@@ -1,0 +1,35 @@
+{
+  "name": "skillxc",
+  "version": "0.1.0",
+  "description": "面向真人写实 AI 影视项目的抽屉式生产控制与创作 Skill 系统，适配 GPT Image 2 与 Seedance 2.0。",
+  "author": {
+    "name": "sla20110526-alt",
+    "url": "https://github.com/sla20110526-alt"
+  },
+  "repository": "https://github.com/sla20110526-alt/SKillXC",
+  "homepage": "https://github.com/sla20110526-alt/SKillXC",
+  "keywords": [
+    "ai-film",
+    "film-production",
+    "gpt-image-2",
+    "seedance",
+    "skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "AI影视生产核心系统",
+    "shortDescription": "按阶段调用真人写实 AI 影视生产控制与创作 Skill。",
+    "longDescription": "面向已有剧本或生产内容明确的真人写实 AI 影视项目，提供项目锁定、资产生产与登记、场戏与镜头设计、正式 Prompt 生产及按需 QC 能力。",
+    "developerName": "sla20110526-alt",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "从当前剧本开始，询问我是否启用真人写实 AI 影视生产总流程。",
+      "列出当前阶段可调用的生产控制与创作 Skill，等待我确认。",
+      "使用生产路由 Skill 为当前任务生成最小交接包。"
+    ]
+  }
+}

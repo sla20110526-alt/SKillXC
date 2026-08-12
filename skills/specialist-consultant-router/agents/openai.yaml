@@ -2,4 +2,6 @@ interface:
   display_name: "专业顾问路由"
   short_description: "识别历史文化、物理、医学等专业核查需求并生成最小顾问包。"
   default_prompt: "使用 $specialist-consultant-router 判断当前任务需要哪些专业顾问。"
+policy:
+  allow_implicit_invocation: false
 

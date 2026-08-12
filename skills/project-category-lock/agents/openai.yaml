@@ -2,4 +2,6 @@ interface:
   display_name: "项目类别锁定"
   short_description: "通过问答锁定真人写实项目媒介、画幅、模型、边界和参考用途。"
   default_prompt: "使用 $project-category-lock 完成当前项目的类别与生产边界锁定。"
+policy:
+  allow_implicit_invocation: false
 

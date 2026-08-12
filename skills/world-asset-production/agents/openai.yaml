@@ -2,4 +2,6 @@ interface:
   display_name: "世界资产生产"
   short_description: "生产道具、载具、生物、怪物、图案文字和VFX视觉基准资产。"
   default_prompt: "使用 $world-asset-production 生产当前世界资产候选。"
+policy:
+  allow_implicit_invocation: false
 

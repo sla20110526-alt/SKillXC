@@ -2,4 +2,6 @@ interface:
   display_name: "表演指导"
   short_description: "把目标、策略、潜台词、倾听、眼神和身体行为转为可执行表演。"
   default_prompt: "使用 $acting-direction 为当前场戏建立可执行表演节拍。"
+policy:
+  allow_implicit_invocation: false
 

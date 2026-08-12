@@ -2,4 +2,6 @@ interface:
   display_name: "剧作与场戏节拍"
   short_description: "从锁定剧本提取目标、信息顺序、潜台词、权力变化和场戏节拍。"
   default_prompt: "使用 $dramaturgy-scene-beats 分析当前场戏的剧作与节拍。"
+policy:
+  allow_implicit_invocation: false
 

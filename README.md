@@ -17,6 +17,14 @@
 
 全部 Skill 位于 [`skills/`](skills/)。项目数据默认采用 Markdown 卡片、CSV 表格与 JSON Schema 检查。
 
+## Codex 接入
+
+- [插件清单](.codex-plugin/plugin.json) 将本仓库作为一套可持续更新的 `skillxc` 插件提供。
+- [仓库级规则](AGENTS.md) 约束中央源、调用确认、维护边界和安装拓扑。
+- 本地开发态通过用户级 Skill 目录中的链接直接读取 `skills/`，不复制 Skill；中央源更新后各项目读取到同一版本。
+- `production-router-handoff` 是唯一可自动识别的总路由入口；其余 25 个 Skill 必须在用户确认后显式调用。
+- 个人插件市场入口与直接链接是两种接入方式，不同时启用，避免同名 Skill 重复发现。
+
 ## 当前硬规则
 
 - 只有用户明确说“登记这张”“确认登记”等，结果才进入正式资产登记表和可调用资产表。

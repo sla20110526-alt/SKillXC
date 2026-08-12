@@ -2,4 +2,6 @@ interface:
   display_name: "场景空间资产生产"
   short_description: "用GPT Image 2建立场景母图、空间圣经和剧情所需多视图。"
   default_prompt: "使用 $location-spatial-production 生产当前场景空间资产候选。"
+policy:
+  allow_implicit_invocation: false
 
