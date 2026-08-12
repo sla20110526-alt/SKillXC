@@ -39,11 +39,11 @@
 7. 分类资产生产：人物、场景或世界资产 + `image-prompt-production`。
 8. `approval-asset-registry`：只有“登记这张”“确认登记”等明确指令才把预留 ID 的正式版本写入绑定项目的登记表和可调用表；正式名称采用用户指定名称。
 9. `continuity-readiness-audit`：分镜前只核对当前绑定项目的正式可调用资产。
-10. `dramaturgy-scene-beats` → `directing-blocking` → `acting-direction`。
+10. 重要角色第一次进入场戏生产时，先由 `acting-direction` 模式 A 建立一角色一份的项目级表演母档并由用户确认生效；然后执行 `dramaturgy-scene-beats` → `directing-blocking` → `acting-direction` 模式 B。剧作与导演读取母档最小切片，表演指导再结合节拍和调度制作本场表演卡。后续场戏继承当前有效母档，只重做场戏适配；简单角色可在任务单写明理由后跳过母档。
 11. `cinematography-direction` 以“场戏摄影约束”模式继承全片摄影规则卡，把已定场戏、调度和表演翻译为本场摄影边界；不重复询问摄影 Profile，不决定逐镜方案。
 12. `shot-visual-design` 形成逐镜草案 → `editing-rhythm` 提出镜头数量、顺序、时长和切点修订 → `shot-visual-design` 作为分镜表唯一写入者写回剪辑修订。
 13. `cinematography-direction` 以“逐镜摄影审核”模式检查当前草案的摄影一致性与物理可执行性 → `shot-visual-design` 写回不改变叙事功能的摄影技术修正 → `sound-voice-direction`。
-14. `video-prompt-production` 按分镜组/镜头版本交付带稳定 ID 和版本的 Seedance 2.0 Prompt；用户放行后在外部人工复制生成。生产对话把 Prompt 放行和生成结果可用分开回显，不写项目进度表。
+14. `continuity-readiness-audit` 做生成单元就绪审计，核对分镜版本、正式资产、当前有效表演母档和场戏表演卡引用后，`video-prompt-production` 才交付带稳定 ID 和版本的 Seedance 2.0 Prompt；用户放行后在外部人工复制生成。生产对话把 Prompt 放行和生成结果可用分开回显，不写项目进度表。
 15. 用户明确要求同步本对话进度时，生产对话输出同步包，由独立 `generation-version-log` 对话写入绑定项目的镜头生产进度表；项目结束也可汇总各对话同步包。用户确认“镜头可用”即可，不要求上传视频。
 16. 用户需要时调用 `video-qc-review` 独立诊断；默认只分析，明确要求后才登记 QC 记录。
 
@@ -58,6 +58,7 @@
 - 大师 Profile 独立存放；对应阶段询问用户后才调取，用完只下传短执行卡。
 - 摄影 Profile 的常规询问点只有风格锁定中的“全片摄影基线”；场戏约束、镜头设计、逐镜摄影审核与 Prompt 生产只继承规则卡。只有用户明确要求摄影重释，或全片规则不能完成已成立的场戏风格断裂时，才经用户确认建立限时场戏例外。
 - `shot-visual-design` 是分镜表唯一写入者。摄影指导只建立规则与审核摄影实现，不重新决定镜头叙事功能，也不直接改分镜表。
+- `acting-direction` 是表演母档和场戏表演卡的唯一写入者。母档按项目和角色建立并独立版本化，不按每场重建；场戏临时目标、伤势、道具动作和调度不固化进母档。母档属于创作控制数据，不进入人物或声音资产登记。
 - 分镜组、单镜头和正式 Prompt 使用稳定 ID 与独立版本。组内任一变化形成新分镜组快照；只递增实际改变镜头的镜头版本；每次完整 Prompt 重写递增 Prompt 版本。
 - “Prompt 已放行生成”和“生成结果可用”是两个状态。“继续”“不错”“可以”不自动改变正式状态；含糊的“上一组通过”必须按上下文确认对象。
 - 外部人工生成是当前正式节点；本系统暂不提交 Seedance 任务、查询进度或下载视频。

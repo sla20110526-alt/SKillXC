@@ -43,9 +43,9 @@
 
 | Skill | 用户确认点 | 核心输出 | 下游 |
 |---|---|---|---|
-| `dramaturgy-scene-beats` | 是否使用；是否加载剧作 Profile | 戏剧目标、信息、潜台词和节拍 | 导演、表演 |
-| `directing-blocking` | 是否使用；是否加载导演 Profile | 观众视点、人物调度和空间关系 | 场戏摄影约束、镜头设计 |
-| `acting-direction` | 是否使用 | 目标、策略、倾听、眼神和身体行为 | 场戏摄影约束、镜头设计、Prompt |
+| `acting-direction` | 是否使用；母档模式或场戏适配模式；母档版本是否确认生效 | 角色表演母档表/卡；场戏表演卡与下游短切片 | 母档先交剧作/导演；场戏卡交摄影、镜头、声音、Prompt |
+| `dramaturgy-scene-beats` | 是否使用；是否加载剧作 Profile；表演母档版本 | 戏剧目标、信息、潜台词和节拍 | 导演、场戏表演适配 |
+| `directing-blocking` | 是否使用；是否加载导演 Profile；表演母档版本 | 观众视点、人物调度和空间关系 | 场戏表演适配 |
 | `shot-visual-design` | 是否使用；继承哪些摄影规则卡 | 带分镜组/镜头稳定ID与版本的分镜表；剪辑与摄影审核写回；校验报告 | 剪辑节奏、逐镜摄影审核、Prompt生产 |
 | `editing-rhythm` | 是否使用；是否加载剪辑 Profile | 时长、切点、动作接点、生成单元修订 | 镜头设计写回后转逐镜摄影审核 |
 | `sound-voice-direction` | 是否使用 | 声音身份、对白、环境和声音桥 | Prompt生产 |
@@ -70,6 +70,7 @@
 | 戏剧目标或信息顺序错误 | `dramaturgy-scene-beats` |
 | 人物走位或观众视点错误 | `directing-blocking` |
 | 表演僵硬、夸张或缺少反应 | `acting-direction` |
+| 重要角色没有当前有效表演母档，或下游临时编写人物性格 | `acting-direction` 先建立/更新母档，再重做场戏表演卡 |
 | 构图、景别、机位或运镜平庸 | `shot-visual-design` |
 | 视场/透视、物理距离、景深/焦点、曝光、支撑或运动物理实现冲突 | `cinematography-direction` 逐镜摄影审核；由 `shot-visual-design` 写回技术修正 |
 | 运镜无法在既定时长或生成单元内完成 | `editing-rhythm` 修订；由 `shot-visual-design` 写回后重新做逐镜摄影审核 |

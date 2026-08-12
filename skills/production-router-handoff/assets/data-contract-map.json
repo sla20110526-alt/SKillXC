@@ -37,6 +37,11 @@
       "card": "skills/asset-demand-plan/assets/生产批次计划模板.md"
     },
     {
+      "template": "skills/acting-direction/assets/角色表演母档表模板.csv",
+      "schema": "skills/acting-direction/assets/acting-master.schema.json",
+      "card": "skills/acting-direction/assets/角色表演母档模板.md"
+    },
+    {
       "template": "skills/production-router-handoff/assets/任务索引模板.csv",
       "schema": "skills/production-router-handoff/assets/handoff-task.schema.json",
       "card": "skills/production-router-handoff/assets/创作任务单模板.md"

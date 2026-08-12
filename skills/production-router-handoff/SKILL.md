@@ -27,6 +27,7 @@ description: 根据项目数据绑定、当前阶段、资产类型和缺口选�
 - 分镜表只允许 `shot-visual-design` 写入；`cinematography-direction` 在逐镜阶段只输出审核卡，由镜头视觉设计写回不改变叙事功能的技术修正。
 - 分镜、正式 Prompt 与可用镜头遵循 [版本状态规则](references/shot-prompt-version-state.md)。Prompt 放行和生成结果可用是两个状态；不得用一个“通过”覆盖两者。
 - 生产对话只维护轻量检查点并继续生产，不写镜头生产进度表。只有用户明确要求同步时才输出同步包和专用记录对话激活指令，由 `generation-version-log` 写绑定项目的进度表。
+- 重要角色首次进入 `dramaturgy-scene-beats` 与 `directing-blocking` 前，路由 `acting-direction` 模式 A 建立或核对当前有效的角色表演母档；剧作、导演、镜头或 Prompt Skill 不得临时补写。简单角色可在任务单写明跳过理由。
 - 首次进入具体项目时核对项目 ID、项目数据根目录和 `项目数据绑定卡.md`；未绑定时路由到 `approval-asset-registry` 建立待确认绑定卡，不在中央 Skill 仓库创建项目数据。
 
 ## 任务单必须包含
@@ -35,6 +36,7 @@ description: 根据项目数据绑定、当前阶段、资产类型和缺口选�
 - 项目 ID、项目数据绑定卡路径与版本
 - 当前需求槽位或镜头范围
 - 涉及镜头时填写分镜组 ID/版本、镜头 ID/版本集合、生成单元 ID；涉及正式 Prompt 时再填写 Prompt ID/版本
+- 涉及角色表演时填写表演工作模式、表演母档 ID/版本，或简单角色跳过母档的理由
 - 已确认输入及版本
 - 必须继承、允许变化、禁止变化
 - 需要加载的 Skill 与已确认 Profile
