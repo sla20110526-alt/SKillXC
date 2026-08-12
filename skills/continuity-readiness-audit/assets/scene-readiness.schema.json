@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "场次资产就绪审计",
   "type": "object",
-  "required": ["项目ID", "场次ID", "剧本版本", "缺口", "场次就绪结论", "复核日期"],
+  "required": ["项目ID", "场次ID", "剧本版本", "声音需求结论", "声音身份卡与版本", "正式声音资产与版本", "临时声音决定依据", "缺口", "场次就绪结论", "复核日期"],
   "properties": {
     "项目ID": {"type": "string", "minLength": 1},
     "场次ID": {"type": "string", "minLength": 1},
@@ -13,7 +13,10 @@
     "光影状态": {"type": "string"},
     "道具载具": {"type": "string"},
     "生物怪物与VFX": {"type": "string"},
-    "声音资产": {"type": "string"},
+    "声音需求结论": {"type": "string", "enum": ["正式声音资产齐备", "待用户选择临时声音或补资产", "用户已确认临时声音", "本场无需独立声音资产"]},
+    "声音身份卡与版本": {"type": "string", "minLength": 1},
+    "正式声音资产与版本": {"type": "string", "minLength": 1},
+    "临时声音决定依据": {"type": "string", "minLength": 1},
     "缺口": {"type": "string"},
     "场次就绪结论": {"type": "string", "enum": ["可继续", "有条件继续", "暂停"]},
     "复核日期": {"type": "string", "minLength": 1}

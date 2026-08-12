@@ -42,6 +42,11 @@
       "card": "skills/acting-direction/assets/角色表演母档模板.md"
     },
     {
+      "template": "skills/sound-voice-direction/assets/角色声音身份表模板.csv",
+      "schema": "skills/sound-voice-direction/assets/voice-identity.schema.json",
+      "card": "skills/sound-voice-direction/assets/角色声音身份卡模板.md"
+    },
+    {
       "template": "skills/production-router-handoff/assets/任务索引模板.csv",
       "schema": "skills/production-router-handoff/assets/handoff-task.schema.json",
       "card": "skills/production-router-handoff/assets/创作任务单模板.md"

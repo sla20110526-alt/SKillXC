@@ -13,6 +13,11 @@
     "文件路径": {"type": "string", "minLength": 1},
     "平台引用名": {"type": "string", "minLength": 1},
     "可调用范围": {"type": "string", "minLength": 1},
+    "声音类别": {"type": "string", "enum": ["", "角色声音参考音频"]},
+    "关联说话者ID": {"type": "string"},
+    "关联声音身份卡ID与版本": {"type": "string"},
+    "调用方式": {"type": "string", "enum": ["", "直接音频参考", "声音描述参考", "外部配音参考", "使用时核对"]},
+    "音频污染与限制": {"type": "string"},
     "父正式资产ID": {"type": ["string", "null"]},
     "连续性备注": {"type": "string"},
     "状态": {"type": "string", "enum": ["可调用", "停用", "历史", "待复核"]}

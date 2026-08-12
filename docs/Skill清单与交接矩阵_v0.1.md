@@ -48,7 +48,7 @@
 | `directing-blocking` | 是否使用；是否加载导演 Profile；表演母档版本 | 观众视点、人物调度和空间关系 | 场戏表演适配 |
 | `shot-visual-design` | 是否使用；继承哪些摄影规则卡 | 带分镜组/镜头稳定ID与版本的分镜表；剪辑与摄影审核写回；校验报告 | 剪辑节奏、逐镜摄影审核、Prompt生产 |
 | `editing-rhythm` | 是否使用；是否加载剪辑 Profile | 时长、切点、动作接点、生成单元修订 | 镜头设计写回后转逐镜摄影审核 |
-| `sound-voice-direction` | 是否使用 | 声音身份、对白、环境和声音桥 | Prompt生产 |
+| `sound-voice-direction` | 是否使用；身份建档/独立候选/场戏适配；缺失正式声音时选择补资产或临时声音 | 声音身份卡、独立音频候选卡、场戏声音卡 | 明确登记后转登记；场戏卡转就绪审计和Prompt生产 |
 | `video-prompt-production` | 是否使用；分镜与摄影审核是否完成 | 带稳定ID/版本的Seedance正式Prompt；轻量状态检查点；按需同步包 | 外部人工生成；独立进度同步 |
 
 ## 独立资料与审查类
@@ -70,6 +70,9 @@
 | 戏剧目标或信息顺序错误 | `dramaturgy-scene-beats` |
 | 人物走位或观众视点错误 | `directing-blocking` |
 | 表演僵硬、夸张或缺少反应 | `acting-direction` |
+| 角色声音身份漂移或缺少稳定边界 | `sound-voice-direction` 模式 A 建档或更新身份卡 |
+| 发声角色缺少正式声音资产 | `sound-voice-direction` 模式 B 补做/上传候选，或由用户明确选择模式 C 的Seedance临时声音 |
+| 声音可以但来自Seedance可用镜头，想跨镜复用 | 先提取独立音频文件，再经 `sound-voice-direction` 模式 B 核对并明确登记 |
 | 重要角色没有当前有效表演母档，或下游临时编写人物性格 | `acting-direction` 先建立/更新母档，再重做场戏表演卡 |
 | 构图、景别、机位或运镜平庸 | `shot-visual-design` |
 | 视场/透视、物理距离、景深/焦点、曝光、支撑或运动物理实现冲突 | `cinematography-direction` 逐镜摄影审核；由 `shot-visual-design` 写回技术修正 |
