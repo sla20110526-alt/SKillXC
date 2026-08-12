@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "资产需求槽位",
+  "type": "object",
+  "required": ["需求槽位ID", "资产类型", "资产名称", "剧本出处", "优先级", "完成定义", "当前状态"],
+  "properties": {
+    "需求槽位ID": {"type": "string", "minLength": 1},
+    "资产类型": {"type": "string"},
+    "资产名称": {"type": "string", "minLength": 1},
+    "基础或变体": {"type": "string"},
+    "父需求槽位ID": {"type": ["string", "null"]},
+    "剧本出处": {"type": "string", "minLength": 1},
+    "关联场次": {"type": "string"},
+    "优先级": {"type": "string", "enum": ["P0", "P1", "P2"]},
+    "必须继承": {"type": "string"},
+    "允许变化": {"type": "string"},
+    "禁止变化": {"type": "string"},
+    "必要交付视图": {"type": "string"},
+    "前置依赖": {"type": "string"},
+    "负责Skill": {"type": "string"},
+    "完成定义": {"type": "string", "minLength": 1},
+    "当前状态": {"type": "string", "enum": ["待确认", "待生产", "生产中", "已有正式资产", "暂缓"]}
+  },
+  "additionalProperties": false
+}
+

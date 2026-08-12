@@ -1,0 +1,5 @@
+interface:
+  display_name: "风格锁定总控"
+  short_description: "组织真人写实项目的测试资产、专业决策及分类风格短执行卡。"
+  default_prompt: "使用 $style-lock-director 组织当前项目的风格锁定流程。"
+

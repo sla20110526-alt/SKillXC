@@ -1,0 +1,5 @@
+interface:
+  display_name: "视频QC审查"
+  short_description: "按需诊断Seedance镜头问题，默认只分析且不保存失败记录。"
+  default_prompt: "使用 $video-qc-review 检查当前生成镜头，但不要自动记录失败原因。"
+

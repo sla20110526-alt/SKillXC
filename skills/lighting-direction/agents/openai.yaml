@@ -1,0 +1,5 @@
+interface:
+  display_name: "灯光指导"
+  short_description: "建立有来源的光源地图、人物受光、曝光与跨视图灯光连续性。"
+  default_prompt: "使用 $lighting-direction 为当前场景建立可追溯灯光方案。"
+

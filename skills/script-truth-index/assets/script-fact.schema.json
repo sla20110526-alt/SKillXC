@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "剧本事实条目",
+  "type": "object",
+  "required": ["事实ID", "场次ID", "事实类型", "主体", "事实内容", "剧本出处", "信息标签"],
+  "properties": {
+    "事实ID": {"type": "string", "minLength": 1},
+    "场次ID": {"type": "string", "minLength": 1},
+    "事实类型": {"type": "string"},
+    "主体": {"type": "string"},
+    "事实内容": {"type": "string", "minLength": 1},
+    "原台词": {"type": "string"},
+    "剧本出处": {"type": "string", "minLength": 1},
+    "信息标签": {"type": "string", "enum": ["SCRIPT_EXPLICIT", "SCRIPT_INFERRED", "USER_LOCKED", "UNKNOWN"]},
+    "连续性方向": {"type": "string"},
+    "歧义或缺口": {"type": "string"}
+  },
+  "additionalProperties": false
+}
+

@@ -1,0 +1,5 @@
+interface:
+  display_name: "图片Prompt生产"
+  short_description: "为GPT Image 2装配、检查、精简和修订图片资产Prompt。"
+  default_prompt: "使用 $image-prompt-production 装配当前资产的GPT Image 2 Prompt。"
+

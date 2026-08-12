@@ -1,0 +1,5 @@
+interface:
+  display_name: "摄影指导"
+  short_description: "根据戏剧目标规划观众距离、机位、透视、曝光和摄影机运动。"
+  default_prompt: "使用 $cinematography-direction 为当前项目或场戏制定摄影策略。"
+

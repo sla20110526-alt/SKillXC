@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "正式分镜镜头",
+  "type": "object",
+  "required": [
+    "镜头编号",
+    "生成单元",
+    "对应剧本事实ID",
+    "时长秒",
+    "本镜叙事任务",
+    "为什么需要本镜",
+    "观众视点",
+    "景别对象",
+    "景别",
+    "第一帧状态",
+    "稳定结束状态",
+    "为什么选择本机位与运镜"
+  ],
+  "properties": {
+    "镜头编号": {"type": "string", "minLength": 1},
+    "生成单元": {"type": "string", "minLength": 1},
+    "对应剧本事实ID": {"type": "string", "minLength": 1},
+    "时长秒": {"type": "number", "exclusiveMinimum": 0},
+    "本镜叙事任务": {"type": "string", "minLength": 1},
+    "为什么需要本镜": {"type": "string", "minLength": 1},
+    "观众视点": {"type": "string", "minLength": 1},
+    "场景视图ID": {"type": "string"},
+    "景别对象": {"type": "string", "minLength": 1},
+    "景别": {"type": "string", "minLength": 1},
+    "摄影机高度与角度": {"type": "string"},
+    "侧别与遮挡": {"type": "string"},
+    "距离视场与透视": {"type": "string"},
+    "构图重心与负空间": {"type": "string"},
+    "运镜": {"type": "string"},
+    "运镜触发与停止": {"type": "string"},
+    "人物调度与表演": {"type": "string"},
+    "原台词": {"type": "string"},
+    "调用正式资产": {"type": "string"},
+    "声音": {"type": "string"},
+    "第一帧状态": {"type": "string", "minLength": 1},
+    "稳定结束状态": {"type": "string", "minLength": 1},
+    "剪辑接点": {"type": "string"},
+    "为什么选择本机位与运镜": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}
+

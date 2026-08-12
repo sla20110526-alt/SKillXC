@@ -1,0 +1,5 @@
+interface:
+  display_name: "连续性与就绪审计"
+  short_description: "核查正式资产连续性、版本影响及场次和镜头生成就绪程度。"
+  default_prompt: "使用 $continuity-readiness-audit 审计当前场次或镜头的生产就绪度。"
+

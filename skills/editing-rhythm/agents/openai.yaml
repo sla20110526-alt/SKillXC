@@ -1,0 +1,5 @@
+interface:
+  display_name: "剪辑与节奏"
+  short_description: "规划镜头数量、时长、切点、反应、动作接点和生成单元。"
+  default_prompt: "使用 $editing-rhythm 为当前分镜规划剪辑节奏和生成单元。"
+

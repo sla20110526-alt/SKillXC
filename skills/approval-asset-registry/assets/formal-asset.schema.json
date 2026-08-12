@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "正式登记资产",
+  "type": "object",
+  "required": [
+    "正式资产ID",
+    "需求槽位ID",
+    "版本",
+    "资产类型",
+    "资产名称",
+    "文件路径",
+    "正式用途",
+    "登记指令原文",
+    "状态"
+  ],
+  "properties": {
+    "正式资产ID": {"type": "string", "minLength": 1},
+    "需求槽位ID": {"type": "string", "minLength": 1},
+    "版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "资产类型": {"type": "string", "enum": ["人物", "服装妆造", "场景", "场景视图", "光影", "道具", "载具", "生物怪物", "VFX", "图案文字", "声音"]},
+    "资产名称": {"type": "string", "minLength": 1},
+    "父正式资产ID": {"type": ["string", "null"]},
+    "文件路径": {"type": "string", "minLength": 1},
+    "剧本出处": {"type": "string"},
+    "关联场次": {"type": "string"},
+    "必须继承": {"type": "string"},
+    "允许变化": {"type": "string"},
+    "正式用途": {"type": "string", "minLength": 1},
+    "模型": {"type": "string"},
+    "登记指令原文": {"type": "string", "minLength": 1},
+    "登记日期": {"type": "string"},
+    "状态": {"type": "string", "enum": ["可调用", "停用", "历史", "待复核"]}
+  },
+  "additionalProperties": false
+}
+
