@@ -1,7 +1,7 @@
 interface:
   display_name: "影视大师Profile资料库"
-  short_description: "按用户明确选择调取导演、摄影、美术、编剧及剪辑方法Profile。"
-  default_prompt: "使用 $film-profile-library 列出当前阶段可选择的Profile。"
+  short_description: "按用户明确选择和限定作用域调取专业方法Profile，摄影阶段遵循基线与例外生命周期。"
+  default_prompt: "使用 $film-profile-library 按当前专业阶段和有效作用域列出可选择的Profile。"
 policy:
   allow_implicit_invocation: false
 

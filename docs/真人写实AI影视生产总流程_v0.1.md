@@ -21,14 +21,16 @@
 3. `script-truth-index`：建立不含创作建议的剧本事实索引。
 4. `script-asset-breakdown`：识别候选资产与状态变化，并预留项目内稳定正式资产 ID；预留不等于登记。
 5. `asset-demand-plan`：沿用预留正式资产 ID，建立独立需求槽位、依赖与生产批次；需求不是正式资产版本。
-6. `style-lock-director`：用户确认专业 Skill 与可选 Profile 后完成风格测试和短执行卡。
+6. `style-lock-director`：用户确认专业 Skill 与可选 Profile 后完成风格测试和短执行卡；摄影在此以“全片摄影基线”模式询问一次 Profile，并形成全片摄影规则卡。
 7. 分类资产生产：人物、场景或世界资产 + `image-prompt-production`。
 8. `approval-asset-registry`：只有“登记这张”“确认登记”等明确指令才把预留 ID 的正式版本写入绑定项目的登记表和可调用表；正式名称采用用户指定名称。
 9. `continuity-readiness-audit`：分镜前只核对当前绑定项目的正式可调用资产。
 10. `dramaturgy-scene-beats` → `directing-blocking` → `acting-direction`。
-11. `shot-visual-design` → `cinematography-direction` → `editing-rhythm` → `sound-voice-direction`。
-12. 用户确认分镜后，`video-prompt-production` 装配 Seedance 2.0 Prompt 并生成可用镜头。
-13. 用户需要时调用 `video-qc-review` 独立诊断；默认只分析，明确要求后才登记 QC 记录。
+11. `cinematography-direction` 以“场戏摄影约束”模式继承全片摄影规则卡，把已定场戏、调度和表演翻译为本场摄影边界；不重复询问摄影 Profile，不决定逐镜方案。
+12. `shot-visual-design` 形成逐镜草案 → `editing-rhythm` 提出镜头数量、顺序、时长和切点修订 → `shot-visual-design` 作为分镜表唯一写入者写回剪辑修订。
+13. `cinematography-direction` 以“逐镜摄影审核”模式检查当前草案的摄影一致性与物理可执行性 → `shot-visual-design` 写回不改变叙事功能的摄影技术修正 → `sound-voice-direction`。
+14. 用户确认分镜后，`video-prompt-production` 装配 Seedance 2.0 Prompt 并生成可用镜头。
+15. 用户需要时调用 `video-qc-review` 独立诊断；默认只分析，明确要求后才登记 QC 记录。
 
 ## 硬规则
 
@@ -39,6 +41,8 @@
 - 人物采用一张五视图总览卡：左1/3为正面特写和3/4侧面特写，右2/3为正面、侧面、背面全身。
 - 人物资产画幅按排版需要，不跟随成片画幅。
 - 大师 Profile 独立存放；对应阶段询问用户后才调取，用完只下传短执行卡。
+- 摄影 Profile 的常规询问点只有风格锁定中的“全片摄影基线”；场戏约束、镜头设计、逐镜摄影审核与 Prompt 生产只继承规则卡。只有用户明确要求摄影重释，或全片规则不能完成已成立的场戏风格断裂时，才经用户确认建立限时场戏例外。
+- `shot-visual-design` 是分镜表唯一写入者。摄影指导只建立规则与审核摄影实现，不重新决定镜头叙事功能，也不直接改分镜表。
 - 项目数据默认：Markdown 卡片供人确认，CSV 保存多行权威记录，JSON Schema 检查表头和逐行结构；所有项目 CSV 行携带项目 ID，检查报告写入绑定项目目录。用户指定特定格式时记录例外并服从用户。
 - 结构检查通过不等于用户批准、正式登记、业务引用或创作质量通过；对应责任 Skill 仍须完成业务复核。
 - 分镜每镜必须解释“为什么需要本镜”与“为什么选择本机位和运镜”。

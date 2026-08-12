@@ -5,7 +5,8 @@
 - 控制类 Skill 管理事实、版本、计划、批准和就绪，不代替创作判断。
 - 创作类 Skill 生产方案和候选，不宣布资产已登记。
 - 进入任何通用创作 Skill 前先说明用途并询问用户是否确认使用。
-- 进入导演、摄影、美术、编剧/剧作、剪辑阶段时，再询问是否从 Profile 资料库调取谁。
+- 进入导演、美术、编剧/剧作、剪辑的方法建立阶段时，再询问是否从 Profile 资料库调取谁。摄影只在建立或重建全片摄影基线时常规询问一次；后续继承摄影规则卡。
+- 分镜表只有 `shot-visual-design` 可以写入；摄影指导的逐镜意见经审核卡返回，由镜头视觉设计写回。
 - 下游只读取当前任务需要的最小数据切片。
 - 项目数据使用人读 Markdown 卡、CSV 多行记录和 JSON Schema 检查；单次创作短卡由任务索引追踪，不重复制造专用 CSV。
 - 每次结构化数据交接附校验报告；结构通过不替代用户批准、正式登记和业务复核。
@@ -29,7 +30,7 @@
 | `script-asset-breakdown` | 是否使用通用拆解 Skill | 拆解卡、候选/缺口表、预留正式资产ID、校验报告 | 资产需求计划 |
 | `style-lock-director` | 使用哪些专业 Skill；是否加载 Profile | 完整风格包、分类短执行卡 | 各资产/分镜 Skill |
 | `art-lookdev-direction` | 是否使用；是否加载美术 Profile | 世界、美术、材质、色彩规则 | 风格总控、资产生产 |
-| `cinematography-direction` | 是否使用；是否加载摄影 Profile | 项目/场戏摄影策略卡 | 镜头设计、Prompt |
+| `cinematography-direction` | 是否使用；全片基线时是否加载摄影 Profile | 全片摄影规则卡；场戏摄影约束卡；逐镜摄影审核卡 | 镜头设计；摄影审核写回 |
 | `lighting-direction` | 是否使用 | 光源地图、受光与曝光卡 | 场景资产、镜头 Prompt |
 | `specialist-consultant-router` | 是否使用；准确与艺术化边界 | 最小顾问问题与结论卡 | 美术、资产、调度 |
 | `character-asset-production` | 是否使用；每次候选是否明确登记 | 选脸、单张五视图总览卡、人物变体 | 正式登记 |
@@ -42,10 +43,10 @@
 | Skill | 用户确认点 | 核心输出 | 下游 |
 |---|---|---|---|
 | `dramaturgy-scene-beats` | 是否使用；是否加载剧作 Profile | 戏剧目标、信息、潜台词和节拍 | 导演、表演 |
-| `directing-blocking` | 是否使用；是否加载导演 Profile | 观众视点、人物调度和空间关系 | 镜头设计 |
-| `acting-direction` | 是否使用 | 目标、策略、倾听、眼神和身体行为 | 镜头设计、Prompt |
-| `shot-visual-design` | 是否使用；是否加载摄影 Profile | 分镜设计卡、逐镜表、校验报告 | 剪辑、用户确认 |
-| `editing-rhythm` | 是否使用；是否加载剪辑 Profile | 时长、切点、动作接点、生成单元 | 分镜定稿 |
+| `directing-blocking` | 是否使用；是否加载导演 Profile | 观众视点、人物调度和空间关系 | 场戏摄影约束、镜头设计 |
+| `acting-direction` | 是否使用 | 目标、策略、倾听、眼神和身体行为 | 场戏摄影约束、镜头设计、Prompt |
+| `shot-visual-design` | 是否使用；继承哪些摄影规则卡 | 分镜设计卡、逐镜表；剪辑与摄影审核写回；校验报告 | 剪辑节奏、逐镜摄影审核、用户确认 |
+| `editing-rhythm` | 是否使用；是否加载剪辑 Profile | 时长、切点、动作接点、生成单元修订 | 镜头设计写回后转逐镜摄影审核 |
 | `sound-voice-direction` | 是否使用 | 声音身份、对白、环境和声音桥 | Prompt生产 |
 | `video-prompt-production` | 是否使用；分镜是否确认 | Seedance 2.0正式Prompt | 外部生成可用镜头 |
 
@@ -69,6 +70,9 @@
 | 人物走位或观众视点错误 | `directing-blocking` |
 | 表演僵硬、夸张或缺少反应 | `acting-direction` |
 | 构图、景别、机位或运镜平庸 | `shot-visual-design` |
+| 视场/透视、物理距离、景深/焦点、曝光、支撑或运动物理实现冲突 | `cinematography-direction` 逐镜摄影审核；由 `shot-visual-design` 写回技术修正 |
+| 运镜无法在既定时长或生成单元内完成 | `editing-rhythm` 修订；由 `shot-visual-design` 写回后重新做逐镜摄影审核 |
+| 已定场戏需要突破全片摄影规则 | `cinematography-direction` 先说明冲突并请求用户确认限时场戏例外 |
 | 时长、切点或动作衔接错误 | `editing-rhythm` |
 | 设计正确但 Seedance 未执行 | `video-prompt-production` 精简或拆单元 |
 | 需要系统诊断视频问题 | `video-qc-review` |

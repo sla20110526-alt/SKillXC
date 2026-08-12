@@ -12,7 +12,8 @@
 - 生产任务先进入 `production-router-handoff`，由它判断当前阶段和最小调用集合。
 - 除总路由入口外，专业 Skill 和通用 Skill 必须在向用户说明用途并获得确认后显式调用。
 - 每次只加载当前阶段真正需要的 Skill；不得一次加载全部 Skill 或全部大师 Profile。
-- 大师 Profile 只在用户明确选择后调取，并且只在指定阶段和作用域内生效。
+- 大师 Profile 只在用户明确选择后调取，并且只在指定阶段和作用域内生效。摄影 Profile 只在建立/重建全片摄影基线时常规询问；后续继承摄影规则卡，除非用户明确确认限时场戏例外。
+- `shot-visual-design` 是分镜表唯一写入者；`cinematography-direction` 先建立全片/场戏摄影规则，后做逐镜摄影审核，不直接改分镜表或重新决定叙事功能。
 - 没有具体项目或项目数据目录时，只维护工作流，不创建虚构项目数据。
 - 具体项目必须先由 `approval-asset-registry` 确认项目 ID、项目数据根目录和绑定卡；所有项目数据读写必须解析到绑定目录内，禁止跨项目串表。
 - 项目数据默认遵循 `skills/production-router-handoff/references/project-data-contract.md`：人读卡、CSV 行数据、JSON Schema 检查三层分工；结构检查不得替代批准和业务复核。
