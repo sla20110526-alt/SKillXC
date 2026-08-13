@@ -1,0 +1,42 @@
+# 任务成果索引规则
+
+## 两张索引的唯一职责
+
+- `tasks/任务索引.csv`：任务调度源。记录谁在什么阶段处理什么范围、任务单版本和任务状态。
+- `tasks/任务成果索引.csv`：任务产物源。记录同一任务产生的一项或多项成果的稳定 ID、独立版本、路径、精确上游引用和当前可交接状态。
+
+任务与成果是一对多关系。只有 `已激活 / 执行中 / 已返回` 的任务版本可以成为成果来源；待确认或已取消任务不能产出可追踪成果。不得把任务单版本当作成果版本，也不得用任务“已返回”推断某项成果已经可交接。
+
+## 进入任务成果索引的内容
+
+没有其他专用权威索引的任务产物进入本索引，例如场戏节拍卡、导演调度卡、场戏表演卡、场戏摄影约束、逐镜摄影审核、剪辑节奏卡、场戏声音卡、资产生产卡、空间/对象/生命体/VFX 定义与数据集、图片或视频 Prompt、风格测试评审卡、风格锁定包和顾问任务成果。
+
+项目长期创作基线、表演母档、声音身份、正式资产、分镜、生成版本、镜头进度和正式 QC 记录继续使用各自专用权威表；如果其中某个过程同时产生一张无专用索引的任务短卡，可以额外在本索引登记该短卡，但不得复制专用表的全部行数据。
+
+## 状态和版本
+
+- 新成果版本先以 `草案 + 当前有效=否` 入表。
+- 责任 Skill 完成业务复核后，使用激活事务改为 `可交接 + 是`；同一成果 ID 的旧当前版在同一事务中改为 `已替代 + 否`。
+- 已知上游换版或引用有效性未决时，由责任流程明确执行“标记待复核”；影响分析本身只列清单，不写状态。
+- 内容没有变化、责任 Skill 明确确认继续兼容时，可以在同一版本上执行“复核后继续使用”；不得伪造新版本。
+- 内容、适用范围、成果类型、成果路径或上游精确引用实质变化时建立下一版本。成果文件正文的任何字节变化都会改变指纹，因此即使只改错字或排版，也必须建立下一成果版本；只改变索引里的状态、状态依据、复核日期等管理字段不升级内容版本。
+- 成果文件名必须包含稳定 ID 与版本，已经入表的旧版成果文件保持不可变；建立新版本时写新文件路径，不得覆盖旧文件后让其内容指纹失真。
+- `可交接` 不是批准词：资产仍需明确登记，Prompt 仍需明确放行，生成结果仍需用户确认可用。
+- 普通创作短卡由责任 Skill 完成其业务与结构复核后即可激活为可交接；风格包还必须满足自身批量放行门；图片/视频 Prompt 必须等用户明确放行该精确版本或可唯一定位地按该版进入生成后才激活，激活事务的操作依据必须以 `用户原文：` 保存该原文。失败候选、生成结果状态和镜头可用结论不写成本索引的 Prompt 成果状态。
+
+## 原子事务
+
+使用 `scripts/update_task_artifact_index.py`。它把新表写到临时文件，完成 Schema、项目 ID、任务引用、版本链、当前有效唯一性、路径和内容指纹检查后，先备份原表再替换；失败恢复原表。
+
+```powershell
+python scripts/update_task_artifact_index.py init --project-root "<项目数据根目录>" --project-id "<项目ID>"
+python scripts/update_task_artifact_index.py check --project-root "<项目数据根目录>" --project-id "<项目ID>"
+python scripts/update_task_artifact_index.py draft --project-root "<项目数据根目录>" --payload "<草案操作JSON>"
+python scripts/update_task_artifact_index.py activate --project-root "<项目数据根目录>" --payload "<激活操作JSON>"
+python scripts/update_task_artifact_index.py mark-review --project-root "<项目数据根目录>" --payload "<待复核操作JSON>"
+python scripts/update_task_artifact_index.py confirm-review --project-root "<项目数据根目录>" --payload "<复核继续使用JSON>"
+python scripts/update_task_artifact_index.py invalidate --project-root "<项目数据根目录>" --payload "<失效操作JSON>"
+python scripts/update_task_artifact_index.py impact --project-root "<项目数据根目录>" --project-id "<项目ID>" --upstream-ref "<被替代ID@版本>"
+```
+
+状态操作 JSON 至少包含 `项目ID`、唯一 `事务ID`、`操作日期`、`操作依据` 和 `目标`；目标项使用 `成果ID`、`成果版本`。草案操作把完整索引行放在 `记录` 数组。成果路径一律写项目根目录内相对路径；上游引用使用精确 `ID@版本`，多项以中文分号分隔，并允许项目控制卡的 `v001` 与 Profile 的 `v1.0` 两类既有版本格式。`impact` 永远只读；它不代替责任 Skill 的兼容性判断。

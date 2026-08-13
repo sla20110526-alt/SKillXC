@@ -175,6 +175,10 @@ class ManifestRegressionTests(unittest.TestCase):
         pattern = spec.get("pattern")
         if isinstance(pattern, str) and pattern == "^v[0-9]{3,}$":
             return "v001"
+        if isinstance(pattern, str) and pattern == "^(不适用|v[0-9]{3,})$":
+            return "不适用"
+        if isinstance(pattern, str) and pattern == "^[A-Z][A-Z0-9-]+$":
+            return "ART-TEST-001"
         if isinstance(pattern, str) and pattern == "^v[0-9]+\\.[0-9]+$":
             return "v0.1"
         if isinstance(pattern, str) and pattern == "^ASP-[A-Z0-9-]+$":

@@ -21,7 +21,7 @@
 - 分镜组、镜头和正式 Prompt 使用稳定 ID 与独立版本；Prompt“已放行生成”和生成结果“可用”不得合并为一个“通过”。生产对话只维护轻量检查点，明确同步后由 `generation-version-log` 专用记录对话写项目进度表。
 - 没有具体项目或项目数据目录时，只维护工作流，不创建虚构项目数据。
 - 具体项目必须先由 `approval-asset-registry` 确认项目 ID、项目数据根目录和绑定卡；所有项目数据读写必须解析到绑定目录内，禁止跨项目串表。
-- 项目数据默认遵循 `skills/production-router-handoff/references/project-data-contract.md`：人读卡、CSV 行数据、JSON Schema 检查三层分工；结构检查不得替代批准和业务复核。
+- 项目数据默认遵循 `skills/production-router-handoff/references/project-data-contract.md`：人读卡、CSV 行数据、JSON Schema 检查三层分工；结构检查不得替代批准和业务复核。`tasks/任务索引.csv` 只负责任务调度；无专用权威表的任务产物按 `skills/production-router-handoff/references/task-artifact-index.md` 写入 `tasks/任务成果索引.csv`，任务与成果是一对多关系。
 
 ## 维护边界
 

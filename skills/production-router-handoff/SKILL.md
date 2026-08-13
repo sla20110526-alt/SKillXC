@@ -23,6 +23,7 @@ description: 根据项目数据绑定、当前阶段、资产类型和缺口选�
 - 资产类型明确且单一时直接提出对应分类生产 Skill，不强制加载 `world-asset-production`；混合、类别不清或生产顺序冲突时才先确认并加载该二级路由。它只返回拆分与路由，不与分类生产 Skill 同时写资产设计。
 - 不把整个剧本、完整资产总表或完整 Profile 库塞进每个对话。
 - 控制 Skill 只管理事实和状态；创作 Skill 只产生候选方案。
+- `tasks/任务索引.csv` 只负责任务调度；没有专用权威索引的任务产物统一进入 `tasks/任务成果索引.csv`。一项任务可以产生多项独立成果，任务状态不得代替成果状态。
 - Prompt 装配 Skill 不重新导演；登记 Skill 不修改创作结果。
 - 上游资产改变时，把任务退回真正负责的 Skill，不在下游打补丁。
 - 登记新资产版本后读取资产状态传播表；任务切片不得包含 `待复核/停用/历史` 资产。待复核资产先交责任生产 Skill 比较，再由用户明确决定沿用或重做；只有 `approval-asset-registry` 可写状态和当前兼容依赖。
@@ -38,6 +39,7 @@ description: 根据项目数据绑定、当前阶段、资产类型和缺口选�
 
 - 项目、阶段、当前目标和完成定义
 - 项目 ID、项目数据绑定卡路径与版本
+- 任务索引与任务成果索引的绑定卡相对路径
 - 当前需求槽位或镜头范围
 - 涉及资产时填写资产工作模式（不适用/直接分类生产/世界资产二级路由）、正式资产类型和唯一责任生产 Skill；二级路由任务另写待拆分身份与返回 `asset-demand-plan` 的条件
 - 人物任务另填人物资产工作模式和父/附加资产精确版本；脸母图与五视图卡必须来自两个预留正式资产 ID，五视图、服装、状态和交互任务不得越过未登记父层
@@ -61,11 +63,11 @@ description: 根据项目数据绑定、当前阶段、资产类型和缺口选�
 
 ## 数据交接门
 
-项目数据默认遵循 [项目数据三层契约](references/project-data-contract.md)：Markdown 卡片负责确认和摘要，CSV 负责多行记录，JSON Schema 负责结构检查。创作 Skill 的单次短卡不机械复制成专用 CSV，而是由本任务的 `任务索引.csv` 建立结构化追踪。
+项目数据默认遵循 [项目数据三层契约](references/project-data-contract.md)：Markdown 卡片负责确认和摘要，CSV 负责多行记录，JSON Schema 负责结构检查。任务单由 `tasks/任务索引.csv` 追踪；没有专用权威索引的创作短卡、Prompt、任务数据集、组合快照和审查记录由 `tasks/任务成果索引.csv` 追踪，规则见 [任务成果索引](references/task-artifact-index.md)。
 
-下游交接前，使用 `scripts/validate_project_data.py` 检查本次涉及的 CSV 与 Schema；真实项目必须传入项目 ID，并把 `数据校验报告.md` 写到绑定项目数据目录。结构不通过时暂停交接。结构通过不代表资产批准、创作通过或业务引用有效。
+下游交接前，先用 `scripts/update_task_artifact_index.py check` 检查任务—成果引用、版本链、路径、指纹和当前版本唯一性，再使用 `scripts/validate_project_data.py` 检查本次涉及的 CSV 与 Schema；真实项目必须传入项目 ID，并把 `数据校验报告.md` 写到绑定项目数据目录。只有成果为 `可交接 + 当前有效=是` 才能作为当前任务产物被下游精确引用。结构通过不代表资产批准、Prompt 放行、生成结果可用或其他业务引用有效。
 
 ## 输出
 
-使用 [交接对象](references/handoff-contracts.md)、`assets/创作任务单模板.md`、`assets/任务索引模板.csv` 与 `assets/handoff-task.schema.json` 生成 Markdown 任务单、新对话激活指令和任务索引行。信息不足但不影响方向时标缺口；缺口会改变创作方向时暂停询问。
+使用 [交接对象](references/handoff-contracts.md)、`assets/创作任务单模板.md`、`assets/任务索引模板.csv` 与 `assets/handoff-task.schema.json` 生成 Markdown 任务单、新对话激活指令和任务索引行。任务返回后，责任 Skill 使用 `assets/任务成果索引说明卡模板.md`、两份任务成果操作 JSON、`assets/任务成果索引模板.csv`、`assets/task-artifact.schema.json` 和 `scripts/update_task_artifact_index.py`，一次原子事务写入一项或多项成果。信息不足但不影响方向时标缺口；缺口会改变创作方向时暂停询问。
 

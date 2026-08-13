@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "任务成果索引",
+  "description": "记录任务产物的稳定身份、版本、路径、依赖与可交接状态；不记录任务调度状态，也不构成资产登记或用户批准。",
+  "type": "object",
+  "required": ["项目ID", "成果ID", "成果版本", "上一成果版本", "成果类别", "成果类型", "成果名称", "责任Skill", "来源任务ID", "来源任务单版本", "适用范围", "成果状态", "当前有效", "成果路径", "上游精确引用集合", "内容指纹SHA256", "内容变更摘要", "状态依据", "记录日期", "复核日期"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "成果ID": {"type": "string", "pattern": "^[A-Z][A-Z0-9-]+$"},
+    "成果版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "上一成果版本": {"type": "string", "pattern": "^(不适用|v[0-9]{3,})$"},
+    "成果类别": {"type": "string", "enum": ["创作短卡", "任务数据集", "Prompt", "组合快照", "审查记录", "顾问任务"]},
+    "成果类型": {"type": "string", "minLength": 1},
+    "成果名称": {"type": "string", "minLength": 1},
+    "责任Skill": {"type": "string", "minLength": 1},
+    "来源任务ID": {"type": "string", "minLength": 1},
+    "来源任务单版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "适用范围": {"type": "string", "minLength": 1},
+    "成果状态": {"type": "string", "enum": ["草案", "可交接", "待复核", "已替代", "已失效"]},
+    "当前有效": {"type": "string", "enum": ["是", "否"]},
+    "成果路径": {"type": "string", "minLength": 1},
+    "上游精确引用集合": {"type": "string", "minLength": 1},
+    "内容指纹SHA256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "内容变更摘要": {"type": "string", "minLength": 1},
+    "状态依据": {"type": "string", "minLength": 1},
+    "记录日期": {"type": "string", "minLength": 1},
+    "复核日期": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

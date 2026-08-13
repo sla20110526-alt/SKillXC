@@ -31,6 +31,8 @@ description: 将真人写实人物、场景、道具/载具、特殊生物/怪�
 
 使用 [GPT Image 2图片Prompt交付卡模板](assets/GPT Image 2图片Prompt交付卡模板.md) 固化输入、版本和当前检查点；详细装配与分流读取 [GPT Image 2图片Prompt合同](references/gpt-image-2-prompt-contract.md)。
 
+交付卡作为 `Prompt` 类任务成果写入任务成果索引：首次交付先为 `草案 + 当前有效=否`；用户明确说本版 Prompt 通过、确认使用，或可唯一定位地按本版进入生成后，才激活为 `可交接 + 是`。该状态只表示本版 Prompt 是当前生成依据，不等于图片候选通过、正式资产登记或生成失败记录。
+
 ## 图片工作模式
 
 每次交付只能选择一种：
@@ -107,3 +109,4 @@ description: 将真人写实人物、场景、道具/载具、特殊生物/怪�
 - `PRESERVE EXACTLY / CHANGE / ONLY CHANGE` 与生成后检查清单
 - 当前轻量检查点
 - 结果回流后的问题归属、下一版本或上游返回节点
+- 任务成果索引草案/激活事务结果；不写正式资产登记表

@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-13-style-lock-maturity",
+  "manifest_revision": "2026-08-13-task-artifact-index",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
@@ -96,6 +96,11 @@
       "template": "skills/production-router-handoff/assets/任务索引模板.csv",
       "schema": "skills/production-router-handoff/assets/handoff-task.schema.json",
       "card": "skills/production-router-handoff/assets/创作任务单模板.md"
+    },
+    {
+      "template": "skills/production-router-handoff/assets/任务成果索引模板.csv",
+      "schema": "skills/production-router-handoff/assets/task-artifact.schema.json",
+      "card": "skills/production-router-handoff/assets/任务成果索引说明卡模板.md"
     },
     {
       "template": "skills/approval-asset-registry/assets/项目数据绑定索引模板.csv",
