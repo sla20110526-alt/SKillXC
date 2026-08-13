@@ -32,7 +32,7 @@ class ControlVersionTests(unittest.TestCase):
         self.sequence += 1
         return f"CCV-TEST-{self.sequence:03d}"
 
-    def card(self, card_id: str, version: str, body: str, source: str = "CCS-STYLE-LOCK@v001") -> str:
+    def card(self, card_id: str, version: str, body: str, source: str = "CCS-STYLE-LOCK@v002") -> str:
         relative = f"creative-control/baselines/{card_id}@{version}.md"
         path = self.root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -70,7 +70,7 @@ class ControlVersionTests(unittest.TestCase):
         card_id: str,
         version: str,
         body: str,
-        source: str = "CCS-STYLE-LOCK@v001",
+        source: str = "CCS-STYLE-LOCK@v002",
         control_object: str = "全项目",
         control_type: str = "项目风格锁定基线",
         input_refs: str = "无",
@@ -295,6 +295,10 @@ class ControlVersionTests(unittest.TestCase):
     def test_rejects_source_for_another_control_type(self) -> None:
         with self.assertRaisesRegex(CONTROL.ControlVersionError, "控制类型与中央源定义不对应"):
             self.draft(self.row("CC-STYLE-001", "v001", "规则", "CCS-LIGHTING@v001"))
+
+    def test_new_draft_rejects_replaced_source_definition(self) -> None:
+        with self.assertRaisesRegex(CONTROL.ControlVersionError, "必须引用中央目录当前源版本"):
+            self.draft(self.row("CC-STYLE-001", "v001", "规则", "CCS-STYLE-LOCK@v001"))
 
     def test_rejects_profile_from_wrong_department(self) -> None:
         row = self.row("CC-STYLE-001", "v001", "规则")

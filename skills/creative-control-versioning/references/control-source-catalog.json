@@ -1,17 +1,18 @@
 {
-  "catalog_version": "v001",
+  "catalog_version": "v002",
   "sources": [
     {
       "source_id": "CCS-STYLE-LOCK",
-      "current_version": "v001",
-      "available_versions": ["v001"],
+      "current_version": "v002",
+      "available_versions": ["v001", "v002"],
       "control_type": "项目风格锁定基线",
       "owner_skill": "style-lock-director",
       "definition_paths": [
+        "skills/style-lock-director/references/CCS-STYLE-LOCK@v001.md",
         "skills/style-lock-director/assets/项目风格锁定基线卡模板.md"
       ],
       "available_versions_policy": "append-only",
-      "change_summary": "首次建立可版本化的项目风格锁定基线定义"
+      "change_summary": "把项目风格基线收敛为上游风格意图、参考用途映射和专业待回答问题，明确四卡有向依赖、P0测试与组合快照边界"
     },
     {
       "source_id": "CCS-ART-LOOKDEV",

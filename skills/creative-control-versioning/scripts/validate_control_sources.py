@@ -77,8 +77,8 @@ def validate() -> list[str]:
         if not isinstance(paths, list) or not paths:
             errors.append(f"{label}: definition_paths 必须是非空数组")
             continue
-        current_ref = f"{source_id}@{current}"
-        reference_found = False
+        required_refs = {f"{source_id}@{version}" for version in versions}
+        found_refs: set[str] = set()
         for value in paths:
             path = (REPO_ROOT / str(value)).resolve()
             try:
@@ -89,10 +89,11 @@ def validate() -> list[str]:
             if not path.is_file():
                 errors.append(f"{label}: definition_path 不存在：{value}")
                 continue
-            if current_ref in path.read_text(encoding="utf-8-sig"):
-                reference_found = True
-        if not reference_found:
-            errors.append(f"{label}: 定义文件中没有当前源引用 {current_ref}")
+            content = path.read_text(encoding="utf-8-sig")
+            found_refs.update(ref for ref in required_refs if ref in content)
+        missing_refs = sorted(required_refs - found_refs)
+        if missing_refs:
+            errors.append(f"{label}: 定义文件中缺少已发布源引用 {missing_refs}")
     return errors
 
 

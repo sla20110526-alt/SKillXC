@@ -1,7 +1,7 @@
 interface:
   display_name: "风格锁定总控"
-  short_description: "组织真人写实项目的测试资产、专业决策及分类风格短执行卡。"
-  default_prompt: "使用 $style-lock-director 组织当前项目的风格锁定流程。"
+  short_description: "组织四卡基线、P0风格测试和批量生产放行。"
+  default_prompt: "使用 $style-lock-director 判断当前风格锁定模式，组织四卡依赖链、P0测试与下游短执行切片。"
 policy:
   allow_implicit_invocation: false
 
