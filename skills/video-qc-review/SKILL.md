@@ -5,6 +5,8 @@ description: 独立分析Seedance 2.0生成镜头的身份、表演、动作物�
 
 # 视频 QC 审查
 
+遵守 [轻量生产与严格记录合同](../production-router-handoff/references/interaction-modes.md)。即时诊断属于轻量生产，不写项目文件；正式记录和项目复盘记录只有用户明确授权后才进入严格记录。
+
 ## 三种模式
 
 - 即时诊断：分析当前视频/截图，默认模式，不保存记录。
@@ -32,5 +34,5 @@ description: 独立分析Seedance 2.0生成镜头的身份、表演、动作物�
 - 最小修订方向
 - 是否需要重做分镜、补人物/场景/声音等资产、更新声音身份、拆分生成单元或重写 Prompt
 
-默认不写文件。用户明确要求正式记录时才使用 `assets/视频QC记录卡模板.md` 与 `assets/视频QC记录模板.csv`，每行携带项目 ID，并用 `assets/video-qc.schema.json` 检查；通用规则见 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md)。Schema 通过不等于镜头可用或问题已经解决。
+默认不写文件。用户明确要求正式记录或项目复盘记录时，生产对话先使用 `assets/视频QC记录对话激活指令模板.md` 冻结范围和授权原文，再由独立对话使用 `assets/视频QC记录卡模板.md` 与 `assets/视频QC记录模板.csv` 写入；每行携带项目 ID，并用 `assets/video-qc.schema.json` 检查。通用规则见 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md)。Schema 通过不等于镜头可用或问题已经解决。
 

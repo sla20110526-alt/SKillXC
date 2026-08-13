@@ -13,6 +13,11 @@ from pathlib import Path
 IMPLICIT_PATTERN = re.compile(
     r"(?m)^\s*allow_implicit_invocation:\s*(true|false)\s*$", re.IGNORECASE
 )
+DISPLAY_NAME_PATTERN = re.compile(r'(?m)^\s*display_name:\s*"([^"]+)"\s*$')
+SHORT_DESCRIPTION_PATTERN = re.compile(
+    r'(?m)^\s*short_description:\s*"([^"]+)"\s*$'
+)
+DEFAULT_PROMPT_PATTERN = re.compile(r'(?m)^\s*default_prompt:\s*"([^"]+)"\s*$')
 
 
 def _configure_utf8_stdio() -> None:
@@ -122,6 +127,19 @@ def validate(root: Path) -> list[str]:
         actual_implicit = matches[0].lower() == "true"
         if actual_implicit != (name in implicit_set):
             errors.append(f"隐式调用策略与清单不一致：{name}")
+        display_names = DISPLAY_NAME_PATTERN.findall(agent_text)
+        short_descriptions = SHORT_DESCRIPTION_PATTERN.findall(agent_text)
+        default_prompts = DEFAULT_PROMPT_PATTERN.findall(agent_text)
+        if len(display_names) != 1:
+            errors.append(f"display_name必须且只能声明一次：{name}")
+        if len(short_descriptions) != 1:
+            errors.append(f"short_description必须且只能声明一次：{name}")
+        elif not 25 <= len(short_descriptions[0]) <= 64:
+            errors.append(f"short_description必须为25至64个字符：{name}")
+        if len(default_prompts) != 1:
+            errors.append(f"default_prompt必须且只能声明一次：{name}")
+        elif f"${name}" not in default_prompts[0]:
+            errors.append(f"default_prompt必须明确调用对应Skill：{name}")
 
     plugin = _read_json(root / ".codex-plugin/plugin.json", errors)
     if plugin and (plugin.get("name") != "skillxc" or plugin.get("skills") != "./skills/"):

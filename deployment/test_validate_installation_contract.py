@@ -55,6 +55,19 @@ class InstallationContractTests(unittest.TestCase):
             manifest_path.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
             self.assertTrue(any("保持未安装" in error for error in validator.validate(root)))
 
+    def test_short_description_length_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = self._copy_contract_files(Path(temp))
+            agent_path = root / "skills/acting-direction/agents/openai.yaml"
+            text = agent_path.read_text(encoding="utf-8")
+            text = validator.SHORT_DESCRIPTION_PATTERN.sub(
+                '  short_description: "过短"', text
+            )
+            agent_path.write_text(text, encoding="utf-8")
+            self.assertTrue(
+                any("25至64个字符" in error for error in validator.validate(root))
+            )
+
     @staticmethod
     def _copy_contract_files(target: Path) -> Path:
         for relative in (

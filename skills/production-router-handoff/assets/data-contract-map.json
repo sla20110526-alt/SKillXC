@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-13-profile-stage-handoff-contract-v1.1",
+  "manifest_revision": "2026-08-14-s05-interaction-mode-contract",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",

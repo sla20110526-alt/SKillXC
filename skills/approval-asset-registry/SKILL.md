@@ -5,6 +5,8 @@ description: 执行AI影视资产的项目数据目录绑定、用户批准门�
 
 # 资产审批与登记
 
+遵守 [轻量生产与严格记录合同](../production-router-handoff/references/interaction-modes.md)。生产对话只显示候选结论和是否明确登记的决定点；正式绑定、登记、状态传播和待复核解除均属于严格记录，由专用登记对话执行。
+
 ## 项目绑定门
 
 每次登记前必须读取当前项目的 `项目数据绑定卡.md`，核对：
@@ -18,7 +20,7 @@ description: 执行AI影视资产的项目数据目录绑定、用户批准门�
 
 不得从当前工作目录猜测项目，不得把项目数据根目录指向 SKillXC 中央仓库、Skill 安装/持久化目录或它们的子目录，也不得读取另一个项目的登记表补全当前项目。路径校验细则见 [项目数据绑定规则](references/project-data-binding.md)。
 
-若没有绑定卡，提醒用户指定或确认项目数据根目录，使用 `assets/项目数据绑定卡模板.md` 生成待确认卡。获得确认后才能初始化该项目的任务索引、任务成果索引、正式资产登记表、可调用资产表和资产状态传播表。若用户尚未指定具体项目，只说明所需信息，不创建虚构项目目录或数据。
+若没有绑定卡，提醒用户指定或确认项目数据根目录，使用 `assets/项目数据绑定卡模板.md` 生成待确认卡；生产对话再附 `assets/项目绑定对话激活指令模板.md`，由严格记录对话完成绑定。获得确认后才能初始化该项目的任务索引、任务成果索引、正式资产登记表、可调用资产表和资产状态传播表。若用户尚未指定具体项目，只说明所需信息，不创建虚构项目目录或数据。
 
 绑定确认后，同时初始化或更新 `项目数据绑定索引.csv`，每个绑定卡版本一行；使用 `assets/project-data-binding.schema.json` 检查。任务调度与任务产物必须分别初始化为 `tasks/任务索引.csv` 和 `tasks/任务成果索引.csv`，使用 `production-router-handoff` 的模板和 Schema，不得继续写入 `control/任务索引.csv`。若上游已有用户确认的项目锁定卡，原样保存到绑定目录并建立 `项目锁定索引.csv`，不得改写锁定内容；若没有则只初始化绑定数据，不虚构锁定卡。项目锁定、事实索引、计划、任务、登记、就绪、分镜和按需记录各自保存在绑定项目目录，不写入中央 Skill 仓库。
 
@@ -92,7 +94,7 @@ python scripts/update_asset_registry.py confirm-compatible --project-root <项�
 
 ## 数据契约
 
-使用 `assets/项目数据绑定卡模板.md`、`assets/项目数据绑定索引模板.csv`、`assets/登记申请模板.md`、`assets/登记对话激活指令模板.md`、`assets/正式资产登记表模板.csv`、`assets/可调用资产表模板.csv`、`assets/资产状态传播表模板.csv`、`assets/正式资产登记操作模板.json`、`assets/待复核兼容确认操作模板.json` 和 `assets/登记回执模板.md`。项目任务两表另使用 `production-router-handoff/assets/任务索引模板.csv`、`任务成果索引模板.csv`、对应两个 Schema 和任务成果事务脚本。绑定、资产和任务数据分别通过各自 Schema 与业务事务检查；通用规则见 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md)。
+使用 `assets/项目数据绑定卡模板.md`、`assets/项目数据绑定索引模板.csv`、`assets/项目绑定对话激活指令模板.md`、`assets/登记申请模板.md`、`assets/登记对话激活指令模板.md`、`assets/正式资产登记表模板.csv`、`assets/可调用资产表模板.csv`、`assets/资产状态传播表模板.csv`、`assets/正式资产登记操作模板.json`、`assets/待复核兼容确认操作模板.json` 和 `assets/登记回执模板.md`。项目任务两表另使用 `production-router-handoff/assets/任务索引模板.csv`、`任务成果索引模板.csv`、对应两个 Schema 和任务成果事务脚本。绑定、资产和任务数据分别通过各自 Schema 与业务事务检查；通用规则见 [项目数据三层契约](../production-router-handoff/references/project-data-contract.md)。
 
 失败原因只在用户明确要求调用 `generation-version-log` 时记录。本 Skill 不维护失败档案。
 

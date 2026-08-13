@@ -1,6 +1,6 @@
 interface:
   display_name: "场景空间资产生产"
-  short_description: "建立可追溯锚点、场景母图、多视图及光影状态候选。"
+  short_description: "建立可追溯空间锚点、场景母图、多视图及光影状态候选。"
   default_prompt: "使用 $location-spatial-production 按空间圣经和精确版本链生产或复核当前场景资产。"
 policy:
   allow_implicit_invocation: false

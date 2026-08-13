@@ -1,6 +1,6 @@
 interface:
   display_name: "风格锁定总控"
-  short_description: "组织四卡基线、P0风格测试和批量生产放行。"
+  short_description: "组织四卡基线、P0风格测试、冲突诊断和批量生产放行。"
   default_prompt: "使用 $style-lock-director 判断当前风格锁定模式，组织四卡依赖链、P0测试与下游短执行切片。"
 policy:
   allow_implicit_invocation: false

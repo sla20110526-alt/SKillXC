@@ -1,6 +1,6 @@
 interface:
   display_name: "特殊生物与怪物资产生产"
-  short_description: "建立可追溯生命体形态、解剖锚点、运动与变体资产。"
+  short_description: "建立可追溯生命体形态、解剖锚点、运动约束与变体资产。"
   default_prompt: "使用 $creature-monster-production 按形态定义和精确版本链生产或复核当前特殊生物、怪物或交互组合资产。"
 policy:
   allow_implicit_invocation: false

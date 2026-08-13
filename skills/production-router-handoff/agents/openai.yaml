@@ -1,7 +1,7 @@
 interface:
   display_name: "生产路由与交接"
-  short_description: "核对项目绑定，路由最小Skill，并校验跨对话数据交接包。"
-  default_prompt: "使用 $production-router-handoff 核对项目绑定，路由当前任务，生成任务索引并校验最小交接包。"
+  short_description: "轻量路由当前任务，后台保留完整交接，并按授权进入严格记录。"
+  default_prompt: "使用 $production-router-handoff 以轻量生产模式路由当前任务，只显示必要决定点并在后台保留完整交接。"
 policy:
   allow_implicit_invocation: true
 
