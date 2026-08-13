@@ -36,7 +36,7 @@
 4. `script-asset-breakdown`：识别候选资产与状态变化，并预留项目内稳定正式资产 ID；预留不等于登记。
 5. `asset-demand-plan`：沿用预留正式资产 ID，建立独立需求槽位、依赖与生产批次；需求不是正式资产版本。
 6. `style-lock-director`：用户确认专业 Skill 与可选 Profile 后完成风格测试；责任 Skill 按“项目风格基线 → 美术 LookDev → 全片摄影 → 项目灯光”建立长期基线，最终风格包在任务单中组合四张当前有效卡，不反向改写上游版本。`creative-control-versioning` 只在专用控制对话中为草案建立项目版本；用户明确确认后才生效，中央源或 Profile 版本不随项目调用升级。
-7. 分类资产生产：人物进入 `character-asset-production`，场景进入 `location-spatial-production`，道具/载具/图案文字进入 `prop-vehicle-production`，特殊生物/怪物进入 `creature-monster-production`，VFX进入 `vfx-asset-production` 先做独立资产判定，再按需搭配 `image-prompt-production`。混合或类别不清的需求先经 `world-asset-production` 拆分生产顺序；它不产出候选。跨类别组合必须先分别生产并登记基础身份，再制作交互候选。有台词、独白或持续画外发声且需要跨镜连续的角色，由 `sound-voice-direction` 模式 A 建立声音身份卡，按项目需要进入模式 B 生产独立声音候选。无台词角色、环境/动作声和逐场声音表现不建立独立声音资产。
+7. 分类资产生产：人物进入 `character-asset-production`，场景进入 `location-spatial-production`，道具/载具/图案文字进入 `prop-vehicle-production`，特殊生物/怪物进入 `creature-monster-production`，VFX进入 `vfx-asset-production` 先做独立资产判定。产图任务由唯一责任资产 Skill 先确认设计卡，再搭配 `image-prompt-production` 选择新生成或参考编辑，交付带稳定 ID/版本的 GPT Image 2 完整 Prompt；结果必须返回原责任资产 Skill 验收。混合或类别不清的需求先经 `world-asset-production` 拆分生产顺序；它不产出候选。跨类别组合必须先分别生产并登记基础身份，再制作交互候选。有台词、独白或持续画外发声且需要跨镜连续的角色，由 `sound-voice-direction` 模式 A 建立声音身份卡，按项目需要进入模式 B 生产独立声音候选。无台词角色、环境/动作声和逐场声音表现不建立独立声音资产。
 8. `approval-asset-registry`：只有“登记这张”“登记这段声音”“确认登记”等明确指令才把预留 ID 的正式版本写入绑定项目的登记表和可调用表；正式名称采用用户指定名称。
 9. `continuity-readiness-audit`：分镜前只核对当前绑定项目的正式可调用资产。
 10. 重要角色第一次进入场戏生产时，先由 `acting-direction` 模式 A 建立一角色一份的项目级表演母档，再由 `creative-control-versioning` 执行版本入表和用户确认生效；然后执行 `dramaturgy-scene-beats` → `directing-blocking` → `acting-direction` 模式 B。剧作与导演读取母档最小切片，表演指导再结合节拍和调度制作本场表演卡。后续场戏继承当前有效母档，只重做场戏适配；简单角色可在任务单写明理由后跳过母档。
@@ -59,6 +59,7 @@
 - 道具/载具基础对象、状态变体、图案文字母版、对象表面应用和对象装配使用不同正式资产 ID。图案文字先做正视清洁母版并逐字校对，再作为附加版本应用到指定对象锚点；对象交互接口不作为图片资产。载具外观由对象 Skill 负责，可拍摄舱内由场景空间 Skill 另建母图并把载具版本列为附加依赖。
 - 生物/怪物基础形态、结构变体、生理状态和持物穿戴组合使用不同正式资产 ID。每个形态交付一张生命体总览卡，并以形态定义、解剖锚点和独立版本化运动约束集支持 Seedance；形态/运动数据不是图片资产。可停留且跨镜复用的转化阶段另建结构变体，单镜中间形变与能量/物质过渡交 VFX 和正式镜头 Prompt。
 - `world-asset-production` 只做二级路由，不设计资产、不写 Prompt、不生成候选。人物、场景、道具/载具、生物/怪物、VFX 各有唯一责任生产 Skill；同一资产身份不得由多个 Skill 同时改写。
+- 图片 Prompt 使用稳定 `图片PromptID@版本`，只由任务索引追踪，不进入正式资产登记表。完整正文、参考用途/顺序、平台设置、上游生产卡或正式依赖改变时递增版本；相同输入原样再次生成不升级。`image-prompt-production` 只翻译已确认设计，候选业务验收和登记申请仍由唯一责任资产 Skill 负责。
 - VFX 只有需要跨镜保持同一视觉身份、叙事上必须被认出、独立审批或复杂接触反复调用时才建立图片资产。正式角色分为 `VFX视觉母版 → VFX状态变体 / VFX接触参考`：状态变体只依赖一个母版或上一状态，接触参考依赖一个母版/状态并附加已登记接触环境。一次性普通尘土、火花、飞溅等不登记图片资产，先由 VFX Skill 给出单镜执行条款，再进入分镜与正式 Prompt。VFX定义、时序表、接触表、阶段审查板和单镜条款都是任务数据，不进入正式资产表，也不能互相替代。
 - 大师 Profile 独立存放；对应阶段询问用户后才调取，用完只下传短执行卡。
 - 中央源定义版本、Profile 卡片版本和项目控制卡版本独立递增。只有维护中央原始内容才升级中央源/Profile；项目首次采用从 `v001` 建卡，内容或精确引用实质变化才建下一项目版本；状态变化不另建版本。

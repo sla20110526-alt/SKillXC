@@ -93,7 +93,7 @@ description: 为真人写实项目设计、生产和复核GPT Image 2场景空�
 
 ## Prompt 回流、登记与复核
 
-向 `image-prompt-production` 交付场景生产卡、目标视图摄影机卡、锚点投影切片、空间依据与附加资产精确版本、光源继承和 `PRESERVE EXACTLY / CHANGE / ONLY CHANGE`。用户回传结果后从空间结构、锚点、尺度、遮挡、材质、光源和构图用途七层检查；根据用户调整方向重写完整输入和 Prompt，不在旧 Prompt 尾部叠加补丁。
+向 `image-prompt-production` 交付场景生产卡、目标视图摄影机卡、锚点投影切片、空间依据与附加资产精确版本、光源继承和 `PRESERVE EXACTLY / CHANGE / ONLY CHANGE`。用户回传结果后从空间结构、锚点、尺度、遮挡、材质、光源和构图用途七层检查；空间设计或投影错误由本 Skill 重写完整场景生产卡，再交后者建立下一 Prompt 版本，漏译、歧义、参考映射或模型随机偏差直接返回后者处理。本 Skill 不自行维护第二份完整 Prompt，也不在旧 Prompt 尾部叠加补丁。
 
 只有“登记这张”“确认登记”等明确指向唯一候选的措辞才输出登记申请及登记对话激活指令。“不错”“继续”“这个方向”“就用这张”不触发登记；失败或待调整图片不登记，失败原因只有用户明确要求才转 `generation-version-log`。
 

@@ -195,6 +195,8 @@ class ManifestRegressionTests(unittest.TestCase):
             return "未登记"
         if isinstance(pattern, str) and pattern == "^(不适用|[^@；]+@v[0-9]{3,})$":
             return "不适用"
+        if isinstance(pattern, str) and pattern == "^(IPR-[^@；]+@v[0-9]{3,}|不适用(?:（[^）]+）)?)$":
+            return "不适用"
         if isinstance(pattern, str) and pattern == "^[a-f0-9]{64}$":
             return "0" * 64
         if field == "项目ID":

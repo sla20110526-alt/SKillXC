@@ -226,6 +226,9 @@ def _validate_pair_business(
             raise RegistryError(f"同一正式资产ID存在多个可调用版本：{asset_key} -> {versions}")
     for row in formal_rows:
         self_reference = _reference(row)
+        prompt_reference = row["生产图片PromptID与版本"]
+        if row["资产类型"] == "声音" and not prompt_reference.startswith("不适用"):
+            raise RegistryError(f"声音资产不得携带图片Prompt来源：{self_reference}")
         production_dependencies = _production_dependencies(row)
         parent_dependencies = _split_references(row["生产依据父资产ID与版本"])
         extra_dependencies = _split_references(row["生产依据附加资产ID与版本"])

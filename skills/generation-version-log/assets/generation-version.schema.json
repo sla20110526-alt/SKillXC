@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "生成版本记录",
   "type": "object",
-  "required": ["项目ID", "生成批次ID", "目标需求槽位或镜头", "模型", "Prompt版本", "Prompt路径或正文", "结论对象", "用户结论", "记录日期"],
+  "required": ["项目ID", "生成批次ID", "目标需求槽位或镜头", "Prompt类型", "PromptID", "模型", "Prompt版本", "Prompt路径或正文", "结论对象", "用户结论", "记录日期"],
   "properties": {
     "项目ID": {"type": "string", "minLength": 1},
     "生成批次ID": {"type": "string", "minLength": 1},
@@ -11,7 +11,8 @@
     "分镜组版本": {"type": "string"},
     "镜头ID与版本集合": {"type": "string"},
     "生成单元ID": {"type": "string"},
-    "正式PromptID": {"type": "string"},
+    "Prompt类型": {"type": "string", "enum": ["图片Prompt", "正式视频Prompt", "声音生成Prompt", "其他Prompt"]},
+    "PromptID": {"type": "string", "minLength": 1},
     "模型": {"type": "string", "minLength": 1},
     "平台设置": {"type": "string"},
     "Prompt版本": {"type": "string", "minLength": 1},

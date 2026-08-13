@@ -67,6 +67,7 @@ class RegistryTransactionTests(unittest.TestCase):
             "资产类型": "人物" if asset_id.startswith("CHR") else "服装妆造",
             "资产名称": asset_id,
             "资产角色": role,
+            "生产图片PromptID与版本": f"IPR-{asset_id}@v001",
             "生产依据父资产ID与版本": parent,
             "生产依据附加资产ID与版本": extras,
             "当前兼容依赖资产ID与版本": compatible,
@@ -251,11 +252,19 @@ class RegistryTransactionTests(unittest.TestCase):
     def test_first_registration_writes_all_three_tables(self) -> None:
         result = self.register(self.formal_row("CHR-001", "v001", "基础"))
         self.assertEqual(result["写入结论"], "通过")
-        self.assertEqual(len(self.table("正式资产登记表.csv")), 1)
+        formal_rows = self.table("正式资产登记表.csv")
+        self.assertEqual(len(formal_rows), 1)
+        self.assertEqual(formal_rows[0]["生产图片PromptID与版本"], "IPR-CHR-001@v001")
         self.assertEqual(len(self.table("可调用资产表.csv")), 1)
         events = self.table("资产状态传播表.csv")
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0]["传播对象"], "新登记版本")
+
+    def test_sound_asset_rejects_image_prompt_provenance(self) -> None:
+        invalid = self.formal_row("VOC-001", "v001", "声音基线")
+        invalid["资产类型"] = "声音"
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "声音资产不得携带图片Prompt来源"):
+            self.register(invalid)
 
     def test_asset_types_route_to_unique_production_skills(self) -> None:
         expected = {
