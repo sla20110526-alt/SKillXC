@@ -18,6 +18,11 @@
       "load_policy": "on-demand-current-summary"
     },
     {
+      "path": "docs/剩余工作与完成验收总表_v0.1.md",
+      "role": "真人写实第一版后续建设的唯一范围、顺序和完成验收清单；不参与具体项目创作推理",
+      "load_policy": "maintenance-planning-only"
+    },
+    {
       "path": "docs/真人写实AI影视生产总流程_v0.1.md",
       "role": "真人写实闭环的现行总流程",
       "load_policy": "on-demand-current-rule"
