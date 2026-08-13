@@ -40,6 +40,14 @@ BASELINE_INPUTS_BY_SOURCE = {
 }
 
 
+def _configure_utf8_stdio() -> None:
+    """Keep CLI diagnostics machine-readable on Windows without env overrides."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
+
+
 KINDS = {
     "baseline": {
         "default_index": "creative-control/项目创作基线索引.csv",
@@ -776,6 +784,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    _configure_utf8_stdio()
     try:
         result = _run(_parse_args())
     except (ControlVersionError, OSError, csv.Error, json.JSONDecodeError) as exc:

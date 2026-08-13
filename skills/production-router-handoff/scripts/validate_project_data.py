@@ -36,6 +36,14 @@ SUPPORTED_PROPERTY_KEYS = {
 SUPPORTED_TYPES = {"null", "string", "boolean", "integer", "number", "object", "array"}
 
 
+def _configure_utf8_stdio() -> None:
+    """Keep CLI diagnostics machine-readable on Windows without env overrides."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
+
+
 def _schema_types(spec: dict[str, Any]) -> list[str]:
     value = spec.get("type")
     if isinstance(value, str):
@@ -370,6 +378,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    _configure_utf8_stdio()
     args = _parse_args()
     default_root = Path(__file__).resolve().parents[3]
     root = Path(args.root).resolve() if args.root else default_root

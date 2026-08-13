@@ -28,6 +28,16 @@ DEFAULT_CONTROL_INDEX = "creative-control/项目创作基线索引.csv"
 VERSION_RE = re.compile(r"^v([0-9]{3,})$")
 REFERENCE_RE = re.compile(r"^[^@；]+@v(?:[0-9]{3,}|[0-9]+\.[0-9]+)$")
 TRANSACTION_RE = re.compile(r"^TAI-[A-Z0-9-]+$")
+
+
+def _configure_utf8_stdio() -> None:
+    """Keep CLI diagnostics machine-readable on Windows without env overrides."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
+
+
 ALLOWED_SOURCE_TASK_STATUSES = {"已激活", "执行中", "已返回"}
 STYLE_REVIEW_TYPES = {"风格测试与评审卡", "P0风格测试与评审卡"}
 STYLE_PACKAGE_TYPE = "风格锁定包"
@@ -682,6 +692,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    _configure_utf8_stdio()
     try:
         result = _run(_parse_args())
     except (TaskArtifactError, OSError, csv.Error, json.JSONDecodeError) as exc:

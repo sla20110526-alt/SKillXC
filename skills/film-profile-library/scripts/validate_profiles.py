@@ -32,6 +32,16 @@ DEFAULT_EXPECTED_STAGE = {
     "编剧／剧作": "剧作与场戏节拍",
     "剪辑": "剪辑与节奏",
 }
+
+
+def _configure_utf8_stdio() -> None:
+    """Keep CLI diagnostics machine-readable on Windows without env overrides."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
+
+
 EVIDENCE_MARKS = {"用户提供", "直接观察", "来源支持", "分析性归纳"}
 REPOSITORY_SNAPSHOT_PATTERN = re.compile(r"^- 仓库快照：\[[^]]+\]\(([^)]+\.md)\)", re.M)
 PROHIBITED_SOURCE_LOCATORS = ("聊天记录", "生产对话", "Git 历史", "Git历史", "旧提交")
@@ -533,6 +543,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    _configure_utf8_stdio()
     args = _parse_args()
     root = Path(args.root).resolve() if args.root else Path(__file__).resolve().parents[1]
     result = validate_library(root)

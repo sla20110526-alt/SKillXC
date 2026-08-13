@@ -46,6 +46,16 @@ PAIR_FIELDS = (
     "状态依据",
     "状态更新时间",
 )
+
+
+def _configure_utf8_stdio() -> None:
+    """Keep CLI diagnostics machine-readable on Windows without env overrides."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
+
+
 DEPENDENT_ROLES = {"五视图基础卡", "服装妆造", "状态变体", "交互组合", "场景视图", "光影状态", "对象表面应用", "对象装配", "生物结构变体", "生物状态变体", "生物交互组合", "VFX状态变体", "VFX接触参考"}
 VERSION_RE = re.compile(r"^v([0-9]{3,})$")
 REFERENCE_RE = re.compile(r"^([^@；]+)@(v[0-9]{3,})$")
@@ -1001,6 +1011,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    _configure_utf8_stdio()
     try:
         result = _run(_parse_args())
     except (RegistryError, OSError, csv.Error) as exc:

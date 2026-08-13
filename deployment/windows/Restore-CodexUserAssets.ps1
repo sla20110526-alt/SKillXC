@@ -159,6 +159,34 @@ $centralSkillDirectories = @(Get-ChildItem -LiteralPath $centralSkills -Director
 if ($centralSkillDirectories.Count -ne [int]$manifest.central_skill_count) {
     throw "Central skill count mismatch. Expected $($manifest.central_skill_count), found $($centralSkillDirectories.Count)."
 }
+$expectedCentralSkillNames = [string[]]@($manifest.skillxc_activation.central_skill_names | Sort-Object)
+$actualCentralSkillNames = [string[]]@($centralSkillDirectories | ForEach-Object { $_.Name } | Sort-Object)
+if (($actualCentralSkillNames -join "`n") -cne ($expectedCentralSkillNames -join "`n")) {
+    $missing = @($expectedCentralSkillNames | Where-Object { $_ -notin $actualCentralSkillNames })
+    $extra = @($actualCentralSkillNames | Where-Object { $_ -notin $expectedCentralSkillNames })
+    throw "Central skill name mismatch. Missing=$($missing -join ','); extra=$($extra -join ',')."
+}
+if ([string]$manifest.skillxc_activation.mode -ne 'direct-skill-links' -or
+    [bool]$manifest.skillxc_activation.plugin_must_be_installed) {
+    throw 'Unsupported activation contract: recovery requires direct Skill links and an uninstalled skillxc plugin.'
+}
+foreach ($skillDirectory in $centralSkillDirectories) {
+    if (-not (Test-Path -LiteralPath (Join-Path $skillDirectory.FullName 'SKILL.md') -PathType Leaf)) {
+        throw "Central Skill is missing SKILL.md: $($skillDirectory.FullName)"
+    }
+    if (-not (Test-Path -LiteralPath (Join-Path $skillDirectory.FullName 'agents\openai.yaml') -PathType Leaf)) {
+        throw "Central Skill is missing agents/openai.yaml: $($skillDirectory.FullName)"
+    }
+}
+
+$pluginManifestPath = Join-Path $centralRepository '.codex-plugin\plugin.json'
+if (-not (Test-Path -LiteralPath $pluginManifestPath -PathType Leaf)) {
+    throw "Central plugin manifest is missing: $pluginManifestPath"
+}
+$pluginManifest = Get-Content -LiteralPath $pluginManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
+if ([string]$pluginManifest.name -ne 'skillxc' -or [string]$pluginManifest.skills -ne './skills/') {
+    throw 'Central plugin manifest must use name=skillxc and skills=./skills/.'
+}
 
 foreach ($localSkillName in @($manifest.local_skills)) {
     $localSkillPath = Join-Path $persistentSkills ([string]$localSkillName)
@@ -240,9 +268,27 @@ try {
             $errors.Add("Marketplace entry count is not one for plugin: $pluginName")
         }
     }
+    $skillxcEntries = @($marketplace.plugins | Where-Object { $_.name -eq 'skillxc' })
+    if ($skillxcEntries.Count -eq 1) {
+        $skillxcEntry = $skillxcEntries[0]
+        if ([string]$marketplace.name -ne [string]$manifest.skillxc_activation.marketplace.name -or
+            [string]$skillxcEntry.source.source -ne [string]$manifest.skillxc_activation.marketplace.source -or
+            [string]$skillxcEntry.source.path -ne [string]$manifest.skillxc_activation.marketplace.path -or
+            [string]$skillxcEntry.policy.installation -ne [string]$manifest.skillxc_activation.marketplace.installation_policy) {
+            $errors.Add('skillxc marketplace entry does not match the AVAILABLE local-source contract.')
+        }
+    }
 }
 catch {
     $errors.Add("Marketplace JSON is invalid: $($_.Exception.Message)")
+}
+
+$allowedPersistentSkillNames = [string[]]@($expectedCentralSkillNames + @($manifest.local_skills) | Sort-Object)
+$actualPersistentSkillNames = [string[]]@(Get-ChildItem -LiteralPath $persistentSkills -Directory -Force | ForEach-Object { $_.Name } | Sort-Object)
+if (($actualPersistentSkillNames -join "`n") -cne ($allowedPersistentSkillNames -join "`n")) {
+    $missing = @($allowedPersistentSkillNames | Where-Object { $_ -notin $actualPersistentSkillNames })
+    $extra = @($actualPersistentSkillNames | Where-Object { $_ -notin $allowedPersistentSkillNames })
+    $errors.Add("Persistent Skill entry set mismatch; missing=$($missing -join ','); extra=$($extra -join ',').")
 }
 
 if ($errors.Count -gt 0) {
@@ -252,10 +298,20 @@ if ($errors.Count -gt 0) {
     throw "Recovery validation failed with $($errors.Count) error(s)."
 }
 
+$runtimeValidator = Join-Path $recoveryDirectory 'Test-CodexSkillRuntime.ps1'
+if (-not (Test-Path -LiteralPath $runtimeValidator -PathType Leaf)) {
+    throw "Missing Codex runtime validator: $runtimeValidator"
+}
+& $runtimeValidator -RepositoryRoot $centralRepository -UserHome $UserHome
+if ($LASTEXITCODE -ne 0) {
+    throw "Codex runtime validator failed with exit code $LASTEXITCODE."
+}
+
 Write-Host "Persistent root: $persistentRoot"
 Write-Host "Codex user entry: $codexEntry"
 Write-Host "Central skills validated: $($centralSkillDirectories.Count)"
 Write-Host "Local skills validated: $(@($manifest.local_skills).Count)"
 Write-Host "Plugins validated: $(@($manifest.plugins).Count)"
 Write-Host "Persistent trees verified: $(@($manifest.integrity).Count)"
+Write-Host "Activation mode: $($manifest.skillxc_activation.mode); skillxc@personal not installed"
 Write-Host 'Recovery validation passed.'

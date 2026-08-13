@@ -16,6 +16,14 @@ SOURCE_ID_RE = re.compile(r"^CCS-[A-Z0-9-]+$")
 VERSION_RE = re.compile(r"^v([0-9]{3,})$")
 
 
+def _configure_utf8_stdio() -> None:
+    """Keep CLI diagnostics machine-readable on Windows without env overrides."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
+
+
 def validate() -> list[str]:
     errors: list[str] = []
     try:
@@ -113,6 +121,7 @@ def validate() -> list[str]:
 
 
 def main() -> int:
+    _configure_utf8_stdio()
     errors = validate()
     if errors:
         for error in errors:

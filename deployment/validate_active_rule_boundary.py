@@ -28,6 +28,16 @@ FORBIDDEN_REFERENCE_PATTERNS = (
     re.compile(r"历史归档[\\/]"),
     re.compile(r"historical[-_ ]archive[\\/]", re.I),
 )
+
+
+def _configure_utf8_stdio() -> None:
+    """Keep CLI diagnostics machine-readable on Windows without env overrides."""
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            reconfigure(encoding="utf-8", errors="replace")
+
+
 IGNORED_PARTS = {".git", "__pycache__"}
 REFERENCE_SCAN_EXEMPT = {
     "deployment/validate_active_rule_boundary.py",
@@ -191,6 +201,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    _configure_utf8_stdio()
     errors = validate(Path(_parse_args().root))
     if errors:
         for error in errors:
