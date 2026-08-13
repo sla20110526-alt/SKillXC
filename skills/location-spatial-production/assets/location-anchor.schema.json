@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "场景空间锚点",
+  "type": "object",
+  "required": ["项目ID", "空间圣经ID", "空间圣经版本", "空间依据资产ID与版本", "锚点ID", "锚点名称", "锚点类别", "局部位置或分区", "连接与相邻关系", "可移动性", "母图可见状态", "事实来源", "锁定级别"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "空间圣经ID": {"type": "string", "minLength": 1},
+    "空间圣经版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "空间依据资产ID与版本": {"type": "string", "pattern": "^[^@；]+@v[0-9]{3,}$"},
+    "锚点ID": {"type": "string", "minLength": 1},
+    "锚点名称": {"type": "string", "minLength": 1},
+    "锚点类别": {"type": "string", "enum": ["结构", "开口", "通道", "家具", "灯具", "固定道具", "自然地貌", "水体", "道路", "活动区", "其他"]},
+    "局部位置或分区": {"type": "string", "minLength": 1},
+    "尺寸与尺度": {"type": "string"},
+    "附着面与朝向": {"type": "string"},
+    "连接与相邻关系": {"type": "string", "minLength": 1},
+    "可移动性": {"type": "string", "enum": ["固定", "可移动但当前锁定", "可移动", "待确认"]},
+    "母图可见状态": {"type": "string", "enum": ["完整可见", "部分可见", "不可见", "待确认"]},
+    "事实来源": {"type": "string", "enum": ["母图可见", "用户锁定", "剧本明确", "已登记补充视图", "推断待确认", "未知"]},
+    "锁定级别": {"type": "string", "enum": ["可见锁定", "关系锁定", "推断待确认", "未知禁止补写"]},
+    "允许变化": {"type": "string"},
+    "备注": {"type": "string"}
+  },
+  "additionalProperties": false
+}

@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-13-character-asset-maturity",
+  "manifest_revision": "2026-08-13-location-spatial-maturity",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
@@ -36,6 +36,16 @@
       "template": "skills/asset-demand-plan/assets/资产依赖关系模板.csv",
       "schema": "skills/asset-demand-plan/assets/asset-dependency.schema.json",
       "card": "skills/asset-demand-plan/assets/生产批次计划模板.md"
+    },
+    {
+      "template": "skills/location-spatial-production/assets/场景空间锚点表模板.csv",
+      "schema": "skills/location-spatial-production/assets/location-anchor.schema.json",
+      "card": "skills/location-spatial-production/assets/场景空间生产卡模板.md"
+    },
+    {
+      "template": "skills/location-spatial-production/assets/场景视图投影表模板.csv",
+      "schema": "skills/location-spatial-production/assets/location-view-projection.schema.json",
+      "card": "skills/location-spatial-production/assets/场景空间生产卡模板.md"
     },
     {
       "template": "skills/acting-direction/assets/角色表演母档表模板.csv",

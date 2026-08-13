@@ -89,6 +89,22 @@ class RegistryTransactionTests(unittest.TestCase):
             "状态更新时间": "2026-08-13",
         }
 
+    def spatial_row(
+        self,
+        asset_id: str,
+        version: str,
+        asset_type: str,
+        role: str,
+        parent: str = "不适用",
+        extras: str = "不适用",
+    ) -> dict[str, str]:
+        row = self.formal_row(asset_id, version, role, parent, extras)
+        row["资产类型"] = asset_type
+        row["正式用途"] = "真人写实场景空间资产"
+        row["必须继承"] = "空间结构、锚点、尺度、材质和光源逻辑"
+        row["允许变化"] = "当前槽位指定视图或状态"
+        return row
+
     @staticmethod
     def callable_row(formal: dict[str, str]) -> dict[str, str]:
         return {
@@ -411,6 +427,75 @@ class RegistryTransactionTests(unittest.TestCase):
             result["待复核派生资产"],
             ["CHR-CARD-001@v001", "CST-001@v001"],
         )
+
+    def test_location_master_view_and_lighting_use_exact_chain(self) -> None:
+        self.register(self.spatial_row("SCN-MASTER-001", "v001", "场景", "场景母图"))
+        self.register(
+            self.spatial_row(
+                "SCN-VIEW-001", "v001", "场景视图", "场景视图", "SCN-MASTER-001@v001"
+            )
+        )
+        self.register(
+            self.spatial_row(
+                "LGT-001", "v001", "光影", "光影状态", "SCN-VIEW-001@v001"
+            )
+        )
+        rows = {(row["正式资产ID"], row["版本"]): row for row in self.table("正式资产登记表.csv")}
+        self.assertEqual(rows[("SCN-VIEW-001", "v001")]["生产依据父资产ID与版本"], "SCN-MASTER-001@v001")
+        self.assertEqual(rows[("LGT-001", "v001")]["生产依据父资产ID与版本"], "SCN-VIEW-001@v001")
+
+    def test_location_view_rejects_non_spatial_parent(self) -> None:
+        self.register(self.formal_row("PRP-001", "v001", "独立对象"))
+        invalid = self.spatial_row(
+            "SCN-VIEW-001", "v001", "场景视图", "场景视图", "PRP-001@v001"
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "父版本必须是已登记场景母图或场景状态"):
+            self.register(invalid)
+
+    def test_location_view_type_rejects_wrong_role(self) -> None:
+        invalid = self.spatial_row("SCN-VIEW-001", "v001", "场景视图", "基础")
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "场景视图资产必须使用场景视图角色"):
+            self.register(invalid)
+
+    def test_location_master_rejects_parent_dependency(self) -> None:
+        self.register(self.spatial_row("SCN-BASE-001", "v001", "场景", "基础"))
+        invalid = self.spatial_row(
+            "SCN-MASTER-001", "v001", "场景", "场景母图", "SCN-BASE-001@v001"
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "场景母图不得带父资产"):
+            self.register(invalid)
+
+    def test_location_state_requires_location_master_or_state_parent(self) -> None:
+        self.register(self.formal_row("CHR-001", "v001", "基础"))
+        invalid = self.spatial_row(
+            "SCN-STATE-001", "v001", "场景", "状态变体", "CHR-001@v001"
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "场景状态变体的父版本必须是"):
+            self.register(invalid)
+
+    def test_lighting_state_rejects_non_spatial_parent(self) -> None:
+        self.register(self.formal_row("CHR-001", "v001", "基础"))
+        invalid = self.spatial_row("LGT-001", "v001", "光影", "光影状态", "CHR-001@v001")
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "父版本必须是已登记场景母图、场景状态或场景视图"):
+            self.register(invalid)
+
+    def test_lighting_type_rejects_wrong_role(self) -> None:
+        invalid = self.spatial_row("LGT-001", "v001", "光影", "基础")
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "光影资产必须使用光影状态角色"):
+            self.register(invalid)
+
+    def test_new_location_master_propagates_to_view_and_lighting(self) -> None:
+        self.register(self.spatial_row("SCN-MASTER-001", "v001", "场景", "场景母图"))
+        self.register(
+            self.spatial_row(
+                "SCN-VIEW-001", "v001", "场景视图", "场景视图", "SCN-MASTER-001@v001"
+            )
+        )
+        self.register(
+            self.spatial_row("LGT-001", "v001", "光影", "光影状态", "SCN-VIEW-001@v001")
+        )
+        result = self.register(self.spatial_row("SCN-MASTER-001", "v002", "场景", "场景母图"))
+        self.assertEqual(result["待复核派生资产"], ["LGT-001@v001", "SCN-VIEW-001@v001"])
 
 
 if __name__ == "__main__":

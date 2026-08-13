@@ -246,6 +246,50 @@ def _validate_pair_business(
                 )
             if face_row["正式资产ID"] == row["正式资产ID"]:
                 raise RegistryError(f"人物脸母图与五视图基础卡必须使用不同正式资产ID：{self_reference}")
+        if row["资产角色"] == "场景母图":
+            if row["资产类型"] != "场景":
+                raise RegistryError(f"场景母图必须登记为场景资产：{self_reference}")
+            if parent_dependencies:
+                raise RegistryError(f"场景母图不得带父资产生产依据：{self_reference}")
+        if row["资产类型"] == "场景视图" and row["资产角色"] != "场景视图":
+            raise RegistryError(f"场景视图资产必须使用场景视图角色：{self_reference}")
+        if row["资产类型"] == "光影" and row["资产角色"] != "光影状态":
+            raise RegistryError(f"光影资产必须使用光影状态角色：{self_reference}")
+        if row["资产类型"] == "场景" and row["资产角色"] == "状态变体":
+            if len(parent_dependencies) != 1:
+                raise RegistryError(f"场景状态变体必须只依赖一个场景母图或上一状态版本：{self_reference}")
+            state_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if state_parent is None or state_parent["资产类型"] != "场景" or state_parent["资产角色"] not in {"场景母图", "状态变体"}:
+                raise RegistryError(
+                    f"场景状态变体的父版本必须是已登记场景母图或场景状态：{self_reference} -> {parent_dependencies[0]}"
+                )
+            if state_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"场景母图/上一状态与场景状态变体必须使用不同正式资产ID：{self_reference}")
+        if row["资产角色"] == "场景视图":
+            if row["资产类型"] != "场景视图" or len(parent_dependencies) != 1:
+                raise RegistryError(f"场景视图必须是场景视图资产并只依赖一个空间父版本：{self_reference}")
+            spatial_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if spatial_parent is None or spatial_parent["资产类型"] != "场景" or spatial_parent["资产角色"] not in {"场景母图", "状态变体"}:
+                raise RegistryError(
+                    f"场景视图的父版本必须是已登记场景母图或场景状态：{self_reference} -> {parent_dependencies[0]}"
+                )
+            if spatial_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"场景母图/状态与场景视图必须使用不同正式资产ID：{self_reference}")
+        if row["资产角色"] == "光影状态":
+            if row["资产类型"] != "光影" or len(parent_dependencies) != 1:
+                raise RegistryError(f"光影状态必须是光影资产并只依赖一个空间图父版本：{self_reference}")
+            light_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            allowed_light_parents = {
+                ("场景", "场景母图"),
+                ("场景", "状态变体"),
+                ("场景视图", "场景视图"),
+            }
+            if light_parent is None or (light_parent["资产类型"], light_parent["资产角色"]) not in allowed_light_parents:
+                raise RegistryError(
+                    f"光影状态的父版本必须是已登记场景母图、场景状态或场景视图：{self_reference} -> {parent_dependencies[0]}"
+                )
+            if light_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"空间图与光影状态必须使用不同正式资产ID：{self_reference}")
         for dependency in production_dependencies:
             if dependency == self_reference:
                 raise RegistryError(f"资产不能把自身列为生产依据：{self_reference}")
