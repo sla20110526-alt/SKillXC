@@ -25,6 +25,8 @@ description: 将已审核的候选资产转成需求槽位、父子依赖、优�
 
 声音槽位只对应需要独立参考音频的说话者，一名说话者的基础声音身份默认一个槽位，负责 Skill 为 `sound-voice-direction`。完成定义至少包含：已生效的声音身份卡或简单说话者跳过理由、可独立播放且可唯一定位的音频文件、授权/来源说明、污染与调用范围，以及用户明确登记后的正式版本。环境底声、动作音效、逐场声音表现和临时镜头内声音不得建立需求槽位。
 
+分类责任必须写成唯一生产 Skill：人物/服装妆造 → `character-asset-production`；场景/场景视图/光影 → `location-spatial-production`；道具/载具/图案文字 → `prop-vehicle-production`；生物怪物 → `creature-monster-production`；VFX → `vfx-asset-production`；声音 → `sound-voice-direction`。`world-asset-production` 只能作为类别不清或混合需求的临时路由责任；它完成拆分后必须把槽位改交具体生产 Skill。跨类别组合先排各基础资产登记，再排组合候选。
+
 ## 资产类型
 
 人物、服装/妆造、场景、光影状态、道具、载具、特殊生物/怪物、VFX、图案/文字、角色声音参考音频。

@@ -19,6 +19,9 @@ from typing import Any
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 ASSETS = SKILL_ROOT / "assets"
 VALIDATOR_PATH = SKILL_ROOT.parent / "production-router-handoff/scripts/validate_project_data.py"
+ASSET_RESPONSIBILITY_MAP_PATH = (
+    SKILL_ROOT.parent / "world-asset-production/assets/asset-responsibility-map.json"
+)
 DEPENDENCY_FIELDS = (
     "生产依据父资产ID与版本",
     "生产依据附加资产ID与版本",
@@ -51,6 +54,36 @@ EVENT_RE = re.compile(r"^ASP-[A-Z0-9-]+$")
 
 class RegistryError(Exception):
     pass
+
+
+def _load_asset_responsibility_map() -> dict[str, str]:
+    try:
+        document = json.loads(ASSET_RESPONSIBILITY_MAP_PATH.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise RegistryError(f"无法读取资产责任映射：{exc}") from exc
+    router = document.get("secondary_router") if isinstance(document, dict) else None
+    if (
+        not isinstance(router, dict)
+        or router.get("skill") != "world-asset-production"
+        or router.get("may_produce_candidates") is not False
+    ):
+        raise RegistryError("资产责任映射必须把world-asset-production锁定为不产候选的二级路由")
+    routes = document.get("asset_type_routes") if isinstance(document, dict) else None
+    if not isinstance(routes, dict) or not routes:
+        raise RegistryError("资产责任映射缺少非空 asset_type_routes")
+    normalized: dict[str, str] = {}
+    for asset_type, skill in routes.items():
+        if not isinstance(asset_type, str) or not asset_type:
+            raise RegistryError("资产责任映射包含空资产类型")
+        if not isinstance(skill, str) or not skill:
+            raise RegistryError(f"资产责任映射缺少责任Skill：{asset_type!r}")
+        if skill == "world-asset-production":
+            raise RegistryError(f"二级路由不得成为正式资产生产者：{asset_type!r}")
+        normalized[asset_type] = skill
+    return normalized
+
+
+ASSET_RESPONSIBILITY = _load_asset_responsibility_map()
 
 
 def _load_validator() -> Any:
@@ -346,13 +379,10 @@ def _write_transaction(
 
 def _responsible_skill(row: dict[str, str]) -> str:
     asset_type = row["资产类型"]
-    if asset_type in {"人物", "服装妆造"}:
-        return "character-asset-production"
-    if asset_type in {"场景", "场景视图", "光影"}:
-        return "location-spatial-production"
-    if asset_type == "声音":
-        return "sound-voice-direction"
-    return "world-asset-production"
+    try:
+        return ASSET_RESPONSIBILITY[asset_type]
+    except KeyError as exc:
+        raise RegistryError(f"资产类型没有唯一责任生产Skill：{asset_type!r}") from exc
 
 
 def _propagation_row(

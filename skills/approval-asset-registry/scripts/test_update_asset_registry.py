@@ -195,6 +195,48 @@ class RegistryTransactionTests(unittest.TestCase):
         self.assertEqual(len(events), 1)
         self.assertEqual(events[0]["传播对象"], "新登记版本")
 
+    def test_asset_types_route_to_unique_production_skills(self) -> None:
+        expected = {
+            "人物": "character-asset-production",
+            "服装妆造": "character-asset-production",
+            "场景": "location-spatial-production",
+            "场景视图": "location-spatial-production",
+            "光影": "location-spatial-production",
+            "道具": "prop-vehicle-production",
+            "载具": "prop-vehicle-production",
+            "图案文字": "prop-vehicle-production",
+            "生物怪物": "creature-monster-production",
+            "VFX": "vfx-asset-production",
+            "声音": "sound-voice-direction",
+        }
+        for asset_type, skill in expected.items():
+            with self.subTest(asset_type=asset_type):
+                self.assertEqual(REGISTRY._responsible_skill({"资产类型": asset_type}), skill)
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "没有唯一责任生产Skill"):
+            REGISTRY._responsible_skill({"资产类型": "未知"})
+
+    def test_responsibility_map_covers_formal_schema_and_real_skills(self) -> None:
+        map_document = json.loads(
+            REGISTRY.ASSET_RESPONSIBILITY_MAP_PATH.read_text(encoding="utf-8")
+        )
+        self.assertEqual(map_document["secondary_router"]["skill"], "world-asset-production")
+        self.assertIs(map_document["secondary_router"]["may_produce_candidates"], False)
+        schema_paths = (
+            SKILL_ROOT / "assets/formal-asset.schema.json",
+            SKILL_ROOT / "assets/callable-asset.schema.json",
+            SKILL_ROOT.parent / "script-asset-breakdown/assets/asset-candidate.schema.json",
+        )
+        route_types = set(REGISTRY.ASSET_RESPONSIBILITY)
+        for schema_path in schema_paths:
+            with self.subTest(schema=schema_path.name):
+                schema = json.loads(schema_path.read_text(encoding="utf-8"))
+                self.assertEqual(route_types, set(schema["properties"]["资产类型"]["enum"]))
+        skills_root = SKILL_ROOT.parent
+        for skill in set(REGISTRY.ASSET_RESPONSIBILITY.values()):
+            with self.subTest(skill=skill):
+                self.assertTrue((skills_root / skill / "SKILL.md").is_file())
+                self.assertNotEqual(skill, "world-asset-production")
+
     def test_rejects_pair_mismatch_outside_state_fields(self) -> None:
         formal = self.formal_row("CHR-001", "v001", "基础")
         callable_row = self.callable_row(formal)

@@ -38,7 +38,10 @@
 | `specialist-consultant-router` | 是否使用；准确与艺术化边界 | 最小顾问问题与结论卡 | 美术、资产、调度 |
 | `character-asset-production` | 是否使用；每次候选是否明确登记 | 选脸、单张五视图总览卡、人物变体 | 正式登记 |
 | `location-spatial-production` | 是否使用；母图/视图是否明确登记 | 母图、空间圣经、光源图、多视图 | 正式登记、导演调度 |
-| `world-asset-production` | 是否使用；候选是否明确登记 | 道具、载具、生物、怪物、VFX资产 | 正式登记 |
+| `world-asset-production` | 混合/类别不清时是否使用；下游生产Skill是否确认 | 资产身份拆分、唯一责任Skill、依赖与生产顺序；不产候选 | 对应分类资产Skill |
+| `prop-vehicle-production` | 是否使用；对象本体/状态/交互模式；候选是否明确登记 | 道具、载具、图案文字的身份卡、总览卡定义与候选验收 | 图片Prompt；明确登记后转登记 |
+| `creature-monster-production` | 是否使用；基础/结构变体/状态变体；候选是否明确登记 | 生物/怪物身份卡、总览卡定义、运动约束与候选验收 | 图片Prompt；明确登记后转登记 |
+| `vfx-asset-production` | 是否需要独立资产；是否使用；候选是否明确登记 | VFX视觉母版定义、时序/环境接触卡与候选验收 | 图片/镜头Prompt；明确登记后转登记 |
 | `image-prompt-production` | 是否使用 | GPT Image 2 Prompt与修订 | 外部生成；再回资产 Skill |
 
 ## 场戏与镜头创作类
@@ -68,7 +71,12 @@
 | 项目目录未绑定或跨项目数据混用 | `approval-asset-registry` 重建或复核绑定卡 |
 | 项目重要创作控制卡版本、中央源/Profile引用或生效状态冲突 | 内容返回责任专业Skill；版本和状态交 `creative-control-versioning` |
 | 缺少资产或父子版本错误 | `asset-demand-plan` / 对应资产生产 Skill |
-| 人脸、场景、道具本体错误 | 对应资产生产 Skill + `image-prompt-production` |
+| 人脸或人物身份错误 | `character-asset-production` + `image-prompt-production` |
+| 场景构造或视图错误 | `location-spatial-production` + `image-prompt-production` |
+| 道具、载具、图案文字本体错误 | `prop-vehicle-production` + `image-prompt-production` |
+| 生物/怪物解剖、身份或运动约束错误 | `creature-monster-production` + `image-prompt-production` |
+| VFX视觉身份、发光、接触或时序错误 | `vfx-asset-production`；静帧返回图片Prompt，镜头执行返回视频Prompt |
+| 混合资产未拆分、责任不清或生产顺序冲突 | `world-asset-production` 重新路由；缺槽位时返回 `asset-demand-plan` |
 | 缺少场景机位视图 | `location-spatial-production` 补做 SV3 |
 | 戏剧目标或信息顺序错误 | `dramaturgy-scene-beats` |
 | 人物走位或观众视点错误 | `directing-blocking` |

@@ -29,7 +29,7 @@
     },
     {
       "path": "skills",
-      "role": "27个现行生产Skill的唯一内容源",
+      "role": "30个现行生产Skill的唯一内容源",
       "load_policy": "skill-metadata-then-explicit-activation"
     },
     {

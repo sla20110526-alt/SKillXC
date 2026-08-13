@@ -6,13 +6,13 @@
 
 ## 目录职责
 
-- `skills/`：27 个 SKillXC Skill 的中央仓库链接，以及两个小云雀本地 Skill 的实体文件。
+- `skills/`：30 个 SKillXC Skill 的中央仓库链接，以及两个小云雀本地 Skill 的实体文件。
 - `plugins/marketplace.json`：个人插件市场清单。
 - `plugins/plugins/skillxc`：指向 SKillXC 中央仓库的插件入口。
 - `plugins/plugins/cowart`：Cowart 的持久化插件源，供系统重装后重新安装。
 - `recovery/`：恢复脚本、安装清单与恢复说明。
 
-不要在 `skills/` 中复制或直接改写 SKillXC 的 27 个 Skill。应修改中央 Git 仓库，再由链接自动生效。
+不要在 `skills/` 中复制或直接改写 SKillXC 的 30 个 Skill。应修改中央 Git 仓库，再由链接自动生效。
 
 ## 重装 Windows 后
 

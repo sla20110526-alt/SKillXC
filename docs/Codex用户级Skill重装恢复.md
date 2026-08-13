@@ -18,7 +18,7 @@ Codex 仍从标准用户入口 `%USERPROFILE%\.agents\skills` 发现 Skill，实
 
 ## 内容来源
 
-- 27 个 AI 影视生产 Skill：通过目录链接读取 SKillXC 中央仓库。
+- 30 个 AI 影视生产 Skill：通过目录链接读取 SKillXC 中央仓库。
 - 两个小云雀 Skill：D 盘实体副本。
 - `skillxc` 插件：通过目录链接读取中央仓库。
 - Cowart 插件：D 盘实体副本；重装系统后需要从个人插件市场重新安装。

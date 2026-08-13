@@ -30,6 +30,8 @@ description: 从锁定的剧本事实索引识别真人写实项目所需的人�
 - 声音：只把需要跨镜复用的角色声音参考音频拆成独立资产。对有台词、独白或持续画外发声且需要声音连续的说话者，每人最多先预留一个基础声音资产 ID；语言、口音、音色等稳定边界由 `sound-voice-direction` 的声音身份卡管理。
 - 无台词角色不建立声音资产。环境底声、动作音效、非语言反应、逐场声音表现和 Seedance 临时镜头内声音只进入场次/镜头声音需求，不进入候选资产表，也不预留正式资产 ID。
 
+向资产需求计划交接时使用以下责任路由：人物/服装妆造 → `character-asset-production`；场景/场景视图/光影 → `location-spatial-production`；道具/载具/图案文字 → `prop-vehicle-production`；生物怪物 → `creature-monster-production`；VFX → `vfx-asset-production`；声音 → `sound-voice-direction`。一个描述混合多个可独立复用身份时分别预留 ID，并用父子/附加关系连接；类别仍不清时在资产信息缺口表把责任 Skill 写为 `world-asset-production`，不得把它写成候选资产的正式生产者。候选资产表不新增“负责Skill”列，唯一责任字段由 `asset-demand-plan` 写入资产需求总表。
+
 ## 信息来源
 
 每项标记 `剧本明确 / 用户锁定 / 创作建议 / 待确认`。创作建议不得伪装成剧本事实。

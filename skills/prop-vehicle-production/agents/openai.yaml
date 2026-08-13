@@ -1,0 +1,6 @@
+interface:
+  display_name: "道具与载具资产生产"
+  short_description: "用GPT Image 2生产道具、载具及其图案文字资产。"
+  default_prompt: "使用 $prop-vehicle-production 生产当前道具或载具资产候选。"
+policy:
+  allow_implicit_invocation: false

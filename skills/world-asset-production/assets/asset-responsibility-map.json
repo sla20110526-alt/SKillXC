@@ -1,0 +1,26 @@
+{
+  "map_version": "1.0.0",
+  "purpose": "定义正式资产类型的唯一责任生产Skill；world-asset-production只处理类别不清、混合身份或生产顺序冲突，不是正式资产生产者。",
+  "secondary_router": {
+    "skill": "world-asset-production",
+    "allowed_when": [
+      "资产类别不清",
+      "单一需求混合多个可复用资产身份",
+      "跨类别生产顺序或依赖冲突"
+    ],
+    "may_produce_candidates": false
+  },
+  "asset_type_routes": {
+    "人物": "character-asset-production",
+    "服装妆造": "character-asset-production",
+    "场景": "location-spatial-production",
+    "场景视图": "location-spatial-production",
+    "光影": "location-spatial-production",
+    "道具": "prop-vehicle-production",
+    "载具": "prop-vehicle-production",
+    "生物怪物": "creature-monster-production",
+    "VFX": "vfx-asset-production",
+    "图案文字": "prop-vehicle-production",
+    "声音": "sound-voice-direction"
+  }
+}

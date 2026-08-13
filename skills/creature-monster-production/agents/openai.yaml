@@ -1,0 +1,6 @@
+interface:
+  display_name: "特殊生物与怪物资产生产"
+  short_description: "用GPT Image 2锁定特殊生物、变体和怪物的结构与运动。"
+  default_prompt: "使用 $creature-monster-production 生产当前特殊生物或怪物资产候选。"
+policy:
+  allow_implicit_invocation: false
