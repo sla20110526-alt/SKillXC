@@ -67,6 +67,11 @@
       "card": "skills/approval-asset-registry/assets/登记回执模板.md"
     },
     {
+      "template": "skills/approval-asset-registry/assets/资产状态传播表模板.csv",
+      "schema": "skills/approval-asset-registry/assets/asset-state-propagation.schema.json",
+      "card": "skills/approval-asset-registry/assets/登记回执模板.md"
+    },
+    {
       "template": "skills/generation-version-log/assets/生成版本记录模板.csv",
       "schema": "skills/generation-version-log/assets/generation-version.schema.json",
       "card": "skills/generation-version-log/assets/生成版本记录卡模板.md"

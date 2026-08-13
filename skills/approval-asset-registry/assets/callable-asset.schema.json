@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "可调用资产映射",
   "type": "object",
-  "required": ["项目ID", "绑定卡版本", "正式资产ID", "版本", "资产类型", "资产名称", "文件路径", "平台引用名", "可调用范围", "状态"],
+  "required": ["项目ID", "绑定卡版本", "正式资产ID", "版本", "资产类型", "资产名称", "资产角色", "文件路径", "平台引用名", "可调用范围", "生产依据父资产ID与版本", "生产依据附加资产ID与版本", "当前兼容依赖资产ID与版本", "状态", "状态依据", "状态更新时间"],
   "properties": {
     "项目ID": {"type": "string", "minLength": 1},
     "绑定卡版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
@@ -10,17 +10,22 @@
     "版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
     "资产类型": {"type": "string", "enum": ["人物", "服装妆造", "场景", "场景视图", "光影", "道具", "载具", "生物怪物", "VFX", "图案文字", "声音"]},
     "资产名称": {"type": "string", "minLength": 1},
+    "资产角色": {"type": "string", "enum": ["基础", "服装妆造", "状态变体", "交互组合", "场景母图", "场景视图", "光影状态", "独立对象", "声音基线", "其他"]},
     "文件路径": {"type": "string", "minLength": 1},
     "平台引用名": {"type": "string", "minLength": 1},
     "可调用范围": {"type": "string", "minLength": 1},
-    "声音类别": {"type": "string", "enum": ["", "角色声音参考音频"]},
+    "声音类别": {"type": "string", "enum": ["", "不适用", "角色声音参考音频"]},
     "关联说话者ID": {"type": "string"},
     "关联声音身份卡ID与版本": {"type": "string"},
-    "调用方式": {"type": "string", "enum": ["", "直接音频参考", "声音描述参考", "外部配音参考", "使用时核对"]},
+    "调用方式": {"type": "string", "enum": ["", "不适用", "直接音频参考", "声音描述参考", "外部配音参考", "使用时核对"]},
     "音频污染与限制": {"type": "string"},
-    "父正式资产ID": {"type": ["string", "null"]},
+    "生产依据父资产ID与版本": {"type": "string", "minLength": 1},
+    "生产依据附加资产ID与版本": {"type": "string", "minLength": 1},
+    "当前兼容依赖资产ID与版本": {"type": "string", "minLength": 1},
     "连续性备注": {"type": "string"},
-    "状态": {"type": "string", "enum": ["可调用", "停用", "历史", "待复核"]}
+    "状态": {"type": "string", "enum": ["可调用", "停用", "历史", "待复核"]},
+    "状态依据": {"type": "string", "minLength": 1},
+    "状态更新时间": {"type": "string", "minLength": 1}
   },
   "additionalProperties": false
 }

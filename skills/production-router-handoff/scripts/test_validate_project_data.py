@@ -177,6 +177,8 @@ class ManifestRegressionTests(unittest.TestCase):
             return "v001"
         if isinstance(pattern, str) and pattern == "^v[0-9]+\\.[0-9]+$":
             return "v0.1"
+        if isinstance(pattern, str) and pattern == "^ASP-[A-Z0-9-]+$":
+            return "ASP-TEST-001"
         if field == "项目ID":
             return "PRJ-TEST"
         return "测试值" if int(spec.get("minLength", 0)) > 0 else ""

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "资产状态传播记录",
+  "type": "object",
+  "required": ["项目ID", "绑定卡版本", "传播事件ID", "触发动作", "触发正式资产ID", "被替代版本", "当前新版本", "传播对象", "受影响正式资产ID", "受影响版本", "受影响需求槽位ID", "依赖路径", "原状态", "传播后状态", "影响场次", "下游复核范围", "传播处理状态", "责任Skill", "传播依据", "用户处理原文", "处理日期", "记录日期"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "绑定卡版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "传播事件ID": {"type": "string", "pattern": "^ASP-[A-Z0-9-]+$"},
+    "触发动作": {"type": "string", "enum": ["登记新版本", "确认继续可用"]},
+    "触发正式资产ID": {"type": "string", "minLength": 1},
+    "被替代版本": {"type": "string", "minLength": 1},
+    "当前新版本": {"type": "string", "minLength": 1},
+    "传播对象": {"type": "string", "enum": ["新登记版本", "被替代旧版本", "派生资产", "兼容确认", "复核解除"]},
+    "受影响正式资产ID": {"type": "string", "minLength": 1},
+    "受影响版本": {"type": "string", "minLength": 1},
+    "受影响需求槽位ID": {"type": "string", "minLength": 1},
+    "依赖路径": {"type": "string", "minLength": 1},
+    "原状态": {"type": "string", "minLength": 1},
+    "传播后状态": {"type": "string", "minLength": 1},
+    "影响场次": {"type": "string", "minLength": 1},
+    "下游复核范围": {"type": "string", "minLength": 1},
+    "传播处理状态": {"type": "string", "enum": ["已完成", "待复核", "已复核继续", "已重新登记"]},
+    "责任Skill": {"type": "string", "minLength": 1},
+    "传播依据": {"type": "string", "minLength": 1},
+    "用户处理原文": {"type": "string"},
+    "处理日期": {"type": "string"},
+    "记录日期": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

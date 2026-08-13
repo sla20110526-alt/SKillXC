@@ -10,11 +10,17 @@
     "版本",
     "资产类型",
     "资产名称",
+    "资产角色",
+    "生产依据父资产ID与版本",
+    "生产依据附加资产ID与版本",
+    "当前兼容依赖资产ID与版本",
     "文件路径",
     "正式用途",
     "登记指令原文",
     "登记日期",
-    "状态"
+    "状态",
+    "状态依据",
+    "状态更新时间"
   ],
   "properties": {
     "项目ID": {"type": "string", "minLength": 1},
@@ -24,13 +30,16 @@
     "版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
     "资产类型": {"type": "string", "enum": ["人物", "服装妆造", "场景", "场景视图", "光影", "道具", "载具", "生物怪物", "VFX", "图案文字", "声音"]},
     "资产名称": {"type": "string", "minLength": 1},
-    "父正式资产ID": {"type": ["string", "null"]},
+    "资产角色": {"type": "string", "enum": ["基础", "服装妆造", "状态变体", "交互组合", "场景母图", "场景视图", "光影状态", "独立对象", "声音基线", "其他"]},
+    "生产依据父资产ID与版本": {"type": "string", "minLength": 1},
+    "生产依据附加资产ID与版本": {"type": "string", "minLength": 1},
+    "当前兼容依赖资产ID与版本": {"type": "string", "minLength": 1},
     "文件路径": {"type": "string", "minLength": 1},
     "剧本出处": {"type": "string"},
     "关联场次": {"type": "string"},
     "必须继承": {"type": "string"},
     "允许变化": {"type": "string"},
-    "声音类别": {"type": "string", "enum": ["", "角色声音参考音频"]},
+    "声音类别": {"type": "string", "enum": ["", "不适用", "角色声音参考音频"]},
     "关联说话者ID": {"type": "string"},
     "关联声音身份卡ID与版本": {"type": "string"},
     "声音来源与授权状态": {"type": "string"},
@@ -39,8 +48,9 @@
     "模型": {"type": "string"},
     "登记指令原文": {"type": "string", "minLength": 1},
     "登记日期": {"type": "string", "minLength": 1},
-    "状态": {"type": "string", "enum": ["可调用", "停用", "历史", "待复核"]}
+    "状态": {"type": "string", "enum": ["可调用", "停用", "历史", "待复核"]},
+    "状态依据": {"type": "string", "minLength": 1},
+    "状态更新时间": {"type": "string", "minLength": 1}
   },
   "additionalProperties": false
 }
-
