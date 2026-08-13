@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "视频QC记录",
   "type": "object",
-  "required": ["项目ID", "分镜组ID", "分镜组版本", "镜头ID", "镜头版本", "生成单元ID", "正式PromptID", "Prompt版本", "视频文件", "时间点", "可观察问题", "严重度", "问题类别", "归属Skill", "建议返回节点", "最小修订方向", "用户结论", "记录日期"],
+  "required": ["项目ID", "分镜组ID", "分镜组版本", "镜头ID", "镜头版本", "生成单元ID", "正式PromptID", "Prompt版本", "VFX依据版本或执行条款", "VFX阶段与接触检查", "视频文件", "时间点", "可观察问题", "严重度", "问题类别", "归属Skill", "建议返回节点", "最小修订方向", "用户结论", "记录日期"],
   "properties": {
     "项目ID": {"type": "string", "minLength": 1},
     "分镜组ID": {"type": "string", "minLength": 1},
@@ -12,6 +12,8 @@
     "生成单元ID": {"type": "string", "minLength": 1},
     "正式PromptID": {"type": "string", "minLength": 1},
     "Prompt版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "VFX依据版本或执行条款": {"type": "string", "minLength": 1},
+    "VFX阶段与接触检查": {"type": "string", "minLength": 1},
     "视频文件": {"type": "string", "minLength": 1},
     "时间点": {"type": "string", "minLength": 1},
     "可观察问题": {"type": "string", "minLength": 1},

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VFX时序阶段",
+  "type": "object",
+  "required": ["项目ID", "VFX定义ID", "VFX定义版本", "预留正式资产ID", "正式资产ID与版本", "时序集ID", "时序集版本", "阶段序号", "阶段", "进入条件", "持续时间范围", "来源位置", "方向与路径", "尺度范围", "速度变化", "材料行为", "亮度与曝光", "环境接触摘要", "结束条件", "禁止突变", "物理规则来源", "验证状态"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "VFX定义ID": {"type": "string", "minLength": 1},
+    "VFX定义版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "预留正式资产ID": {"type": "string", "minLength": 1},
+    "正式资产ID与版本": {"type": "string", "pattern": "^(未登记|不适用|[^@；]+@v[0-9]{3,})$"},
+    "时序集ID": {"type": "string", "minLength": 1},
+    "时序集版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "阶段序号": {"type": "integer", "enum": [1, 2, 3, 4, 5, 6]},
+    "阶段": {"type": "string", "enum": ["触发", "形成", "发展传播", "峰值", "衰减", "残留"]},
+    "进入条件": {"type": "string", "minLength": 1},
+    "持续时间范围": {"type": "string", "minLength": 1},
+    "来源位置": {"type": "string", "minLength": 1},
+    "方向与路径": {"type": "string", "minLength": 1},
+    "尺度范围": {"type": "string", "minLength": 1},
+    "速度变化": {"type": "string", "minLength": 1},
+    "材料行为": {"type": "string", "minLength": 1},
+    "亮度与曝光": {"type": "string", "minLength": 1},
+    "环境接触摘要": {"type": "string", "minLength": 1},
+    "结束条件": {"type": "string", "minLength": 1},
+    "禁止突变": {"type": "string", "minLength": 1},
+    "物理规则来源": {"type": "string", "enum": ["现实物理", "顾问结论", "用户锁定艺术化规则", "用户锁定超自然规则", "创作建议待确认", "资料不足"]},
+    "验证状态": {"type": "string", "enum": ["待确认", "已确认", "顾问已核对", "资料不足"]},
+    "备注": {"type": "string"}
+  },
+  "additionalProperties": false
+}

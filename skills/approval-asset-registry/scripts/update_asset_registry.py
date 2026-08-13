@@ -46,7 +46,7 @@ PAIR_FIELDS = (
     "状态依据",
     "状态更新时间",
 )
-DEPENDENT_ROLES = {"五视图基础卡", "服装妆造", "状态变体", "交互组合", "场景视图", "光影状态", "对象表面应用", "对象装配", "生物结构变体", "生物状态变体", "生物交互组合"}
+DEPENDENT_ROLES = {"五视图基础卡", "服装妆造", "状态变体", "交互组合", "场景视图", "光影状态", "对象表面应用", "对象装配", "生物结构变体", "生物状态变体", "生物交互组合", "VFX状态变体", "VFX接触参考"}
 VERSION_RE = re.compile(r"^v([0-9]{3,})$")
 REFERENCE_RE = re.compile(r"^([^@；]+)@(v[0-9]{3,})$")
 EVENT_RE = re.compile(r"^ASP-[A-Z0-9-]+$")
@@ -377,6 +377,45 @@ def _validate_pair_business(
                 attached_object = rows_by_reference.get((project_id, object_dependency))
                 if attached_object is None or attached_object["资产类型"] not in object_types or attached_object["资产角色"] not in object_parent_roles:
                     raise RegistryError(f"生物交互组合的附加版本必须全部是已登记道具/载具：{self_reference} -> {object_dependency}")
+        vfx_roles = {"VFX视觉母版", "VFX状态变体", "VFX接触参考"}
+        vfx_context_types = {"人物", "服装妆造", "场景", "场景视图", "光影", "道具", "载具", "生物怪物"}
+        if row["资产类型"] == "VFX" and row["资产角色"] not in vfx_roles:
+            raise RegistryError(f"VFX资产角色不符合VFX生产链：{self_reference}")
+        if row["资产角色"] in vfx_roles and row["资产类型"] != "VFX":
+            raise RegistryError(f"VFX资产角色必须登记为VFX：{self_reference}")
+        if row["资产角色"] == "VFX视觉母版":
+            if parent_dependencies:
+                raise RegistryError(f"VFX视觉母版不得带父资产生产依据：{self_reference}")
+            for source_dependency in extra_dependencies:
+                source_row = rows_by_reference.get((project_id, source_dependency))
+                if source_row is None or source_row["资产类型"] not in vfx_context_types:
+                    raise RegistryError(f"VFX视觉母版附加版本只能是已登记来源或触发实体：{self_reference} -> {source_dependency}")
+        if row["资产角色"] == "VFX状态变体":
+            if len(parent_dependencies) != 1 or extra_dependencies:
+                raise RegistryError(f"VFX状态变体必须只依赖一个视觉母版或上一状态：{self_reference}")
+            vfx_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if vfx_parent is None or (vfx_parent["资产类型"], vfx_parent["资产角色"]) not in {
+                ("VFX", "VFX视觉母版"),
+                ("VFX", "VFX状态变体"),
+            }:
+                raise RegistryError(f"VFX状态变体的父版本必须是已登记母版或上一状态：{self_reference} -> {parent_dependencies[0]}")
+            if vfx_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"VFX父版本与状态变体必须使用不同正式资产ID：{self_reference}")
+        if row["资产角色"] == "VFX接触参考":
+            if len(parent_dependencies) != 1 or not extra_dependencies:
+                raise RegistryError(f"VFX接触参考必须有一个VFX父版本和至少一个接触实体：{self_reference}")
+            vfx_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if vfx_parent is None or (vfx_parent["资产类型"], vfx_parent["资产角色"]) not in {
+                ("VFX", "VFX视觉母版"),
+                ("VFX", "VFX状态变体"),
+            }:
+                raise RegistryError(f"VFX接触参考的父版本必须是已登记视觉母版或状态：{self_reference} -> {parent_dependencies[0]}")
+            if vfx_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"VFX父版本与接触参考必须使用不同正式资产ID：{self_reference}")
+            for contact_dependency in extra_dependencies:
+                contact_row = rows_by_reference.get((project_id, contact_dependency))
+                if contact_row is None or contact_row["资产类型"] not in vfx_context_types:
+                    raise RegistryError(f"VFX接触参考的附加版本必须全部是已登记接触实体：{self_reference} -> {contact_dependency}")
         for dependency in production_dependencies:
             if dependency == self_reference:
                 raise RegistryError(f"资产不能把自身列为生产依据：{self_reference}")

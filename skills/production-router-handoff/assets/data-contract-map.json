@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-13-creature-monster-maturity",
+  "manifest_revision": "2026-08-13-vfx-maturity",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
@@ -66,6 +66,16 @@
       "template": "skills/creature-monster-production/assets/生命体运动约束表模板.csv",
       "schema": "skills/creature-monster-production/assets/creature-motion.schema.json",
       "card": "skills/creature-monster-production/assets/生命体资产生产卡模板.md"
+    },
+    {
+      "template": "skills/vfx-asset-production/assets/VFX时序阶段表模板.csv",
+      "schema": "skills/vfx-asset-production/assets/vfx-temporal.schema.json",
+      "card": "skills/vfx-asset-production/assets/VFX资产生产卡模板.md"
+    },
+    {
+      "template": "skills/vfx-asset-production/assets/VFX环境接触表模板.csv",
+      "schema": "skills/vfx-asset-production/assets/vfx-contact.schema.json",
+      "card": "skills/vfx-asset-production/assets/VFX资产生产卡模板.md"
     },
     {
       "template": "skills/acting-direction/assets/角色表演母档表模板.csv",

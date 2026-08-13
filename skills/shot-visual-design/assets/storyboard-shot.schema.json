@@ -19,6 +19,8 @@
     "景别对象",
     "景别",
     "生命体形态与运动约束集版本",
+    "VFX正式资产定义时序与接触版本",
+    "VFX本镜阶段与执行条款",
     "第一帧状态",
     "稳定结束状态",
     "为什么选择本机位与运镜"
@@ -49,6 +51,8 @@
     "原台词": {"type": "string"},
     "调用正式资产": {"type": "string"},
     "生命体形态与运动约束集版本": {"type": "string", "minLength": 1},
+    "VFX正式资产定义时序与接触版本": {"type": "string", "minLength": 1},
+    "VFX本镜阶段与执行条款": {"type": "string", "minLength": 1},
     "声音": {"type": "string"},
     "第一帧状态": {"type": "string", "minLength": 1},
     "稳定结束状态": {"type": "string", "minLength": 1},

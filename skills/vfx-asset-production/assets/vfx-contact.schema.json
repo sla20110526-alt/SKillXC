@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VFX环境接触",
+  "type": "object",
+  "required": ["项目ID", "VFX定义ID", "VFX定义版本", "预留正式资产ID", "正式资产ID与版本", "接触集ID", "接触集版本", "接触ID", "来源或触发资产ID与版本", "接触对象类别", "接触对象资产ID与版本", "接触区域与侧别", "发生阶段", "接触方式", "即时作用", "对象反应", "次级运动", "发光受光与曝光", "残留或恢复", "连续性要求", "事实来源", "验证状态"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "VFX定义ID": {"type": "string", "minLength": 1},
+    "VFX定义版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "预留正式资产ID": {"type": "string", "minLength": 1},
+    "正式资产ID与版本": {"type": "string", "pattern": "^(未登记|不适用|[^@；]+@v[0-9]{3,})$"},
+    "接触集ID": {"type": "string", "minLength": 1},
+    "接触集版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "接触ID": {"type": "string", "minLength": 1},
+    "来源或触发资产ID与版本": {"type": "string", "pattern": "^(不适用|[^@；]+@v[0-9]{3,})$"},
+    "接触对象类别": {"type": "string", "enum": ["人物", "服装妆造", "场景空间", "光影", "道具载具", "生物怪物", "空气水体地面", "其他"]},
+    "接触对象资产ID与版本": {"type": "string", "pattern": "^(不适用|[^@；]+@v[0-9]{3,})$"},
+    "接触区域与侧别": {"type": "string", "minLength": 1},
+    "发生阶段": {"type": "string", "minLength": 1},
+    "接触方式": {"type": "string", "minLength": 1},
+    "即时作用": {"type": "string", "minLength": 1},
+    "对象反应": {"type": "string", "minLength": 1},
+    "次级运动": {"type": "string", "minLength": 1},
+    "发光受光与曝光": {"type": "string", "minLength": 1},
+    "残留或恢复": {"type": "string", "minLength": 1},
+    "连续性要求": {"type": "string", "minLength": 1},
+    "事实来源": {"type": "string", "enum": ["剧本明确", "用户锁定", "正式资产可见", "顾问结论", "创作建议待确认", "未知"]},
+    "验证状态": {"type": "string", "enum": ["待确认", "已确认", "顾问已核对", "资料不足"]},
+    "备注": {"type": "string"}
+  },
+  "additionalProperties": false
+}

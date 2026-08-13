@@ -1,6 +1,6 @@
 interface:
   display_name: "VFX视觉资产生产"
-  short_description: "用GPT Image 2建立可复用VFX的视觉身份与时空行为基准。"
-  default_prompt: "使用 $vfx-asset-production 生产当前VFX视觉基准资产候选。"
+  short_description: "建立可追溯VFX身份、时序、接触与正式资产版本。"
+  default_prompt: "使用 $vfx-asset-production 判断并生产或复核当前VFX视觉资产、时序和环境接触规则。"
 policy:
   allow_implicit_invocation: false

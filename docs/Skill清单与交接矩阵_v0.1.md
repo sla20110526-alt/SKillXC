@@ -41,7 +41,7 @@
 | `world-asset-production` | 混合/类别不清时是否使用；下游生产Skill是否确认 | 资产身份拆分、唯一责任Skill、依赖与生产顺序；不产候选 | 对应分类资产Skill |
 | `prop-vehicle-production` | 是否使用；对象工作模式与交付形态；候选是否明确登记 | 对象生产卡、部件/交互锚点、对象总览卡、图案文字校对、载具舱内接口与候选验收 | 图片Prompt；明确登记后转登记；人物/生物组合或场景空间读取接口 |
 | `creature-monster-production` | 是否使用；生命体工作模式；父/附加版本；候选是否明确登记 | 生命体生产卡、形态定义、解剖锚点、运动约束集、单张总览卡、转化/VFX交接与候选验收 | 图片Prompt；明确登记后转登记；表演/调度/分镜读取运动切片 |
-| `vfx-asset-production` | 是否需要独立资产；是否使用；候选是否明确登记 | VFX视觉母版定义、时序/环境接触卡与候选验收 | 图片/镜头Prompt；明确登记后转登记 |
+| `vfx-asset-production` | 独立资产判定；工作模式；正式父/来源/接触版本；候选是否明确登记 | VFX生产卡、定义、时序/接触表、视觉母版/状态变体/接触参考或单镜执行条款、候选验收与登记回执绑定 | 图片Prompt或分镜/镜头Prompt；明确登记后转登记 |
 | `image-prompt-production` | 是否使用 | GPT Image 2 Prompt与修订 | 外部生成；再回资产 Skill |
 
 ## 场戏与镜头创作类
@@ -75,7 +75,7 @@
 | 场景构造或视图错误 | `location-spatial-production` + `image-prompt-production` |
 | 道具、载具、图案文字本体错误 | `prop-vehicle-production` + `image-prompt-production` |
 | 生物/怪物解剖、身份或运动约束错误 | `creature-monster-production` + `image-prompt-production` |
-| VFX视觉身份、发光、接触或时序错误 | `vfx-asset-production`；静帧返回图片Prompt，镜头执行返回视频Prompt |
+| VFX视觉身份、来源/路径、阶段、发光、接触或残留错误 | 定义/正式资产返回 `vfx-asset-production`；Prompt漏译返回 `video-prompt-production`；场景受光错误返回 `lighting-direction` |
 | 混合资产未拆分、责任不清或生产顺序冲突 | `world-asset-production` 重新路由；缺槽位时返回 `asset-demand-plan` |
 | 缺少场景机位视图 | `location-spatial-production` 补做 SV3 |
 | 戏剧目标或信息顺序错误 | `dramaturgy-scene-beats` |

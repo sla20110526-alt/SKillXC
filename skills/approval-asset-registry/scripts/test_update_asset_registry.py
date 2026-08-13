@@ -136,6 +136,21 @@ class RegistryTransactionTests(unittest.TestCase):
         row["允许变化"] = "当前槽位唯一结构、状态或交互变化"
         return row
 
+    def vfx_row(
+        self,
+        asset_id: str,
+        version: str,
+        role: str,
+        parent: str = "不适用",
+        extras: str = "不适用",
+    ) -> dict[str, str]:
+        row = self.formal_row(asset_id, version, role, parent, extras)
+        row["资产类型"] = "VFX"
+        row["正式用途"] = "真人写实可复用VFX视觉参考"
+        row["必须继承"] = "VFX定义、来源、材料层级、发光边界和物理规则"
+        row["允许变化"] = "当前槽位唯一状态或接触变化"
+        return row
+
     @staticmethod
     def callable_row(formal: dict[str, str]) -> dict[str, str]:
         return {
@@ -840,6 +855,142 @@ class RegistryTransactionTests(unittest.TestCase):
         )
         result = self.register(self.object_row("PRP-001", "v002", "道具", "独立对象"))
         self.assertEqual(result["待复核派生资产"], ["CRT-INTERACT-001@v001"])
+
+    def test_vfx_master_state_and_contact_chain(self) -> None:
+        self.register(self.object_row("PRP-SOURCE-001", "v001", "道具", "独立对象"))
+        self.register(
+            self.vfx_row(
+                "VFX-MASTER-001", "v001", "VFX视觉母版", extras="PRP-SOURCE-001@v001"
+            )
+        )
+        self.register(
+            self.vfx_row(
+                "VFX-STATE-001", "v001", "VFX状态变体", "VFX-MASTER-001@v001"
+            )
+        )
+        self.register(self.spatial_row("SCN-001", "v001", "场景", "场景母图"))
+        self.register(
+            self.vfx_row(
+                "VFX-CONTACT-001",
+                "v001",
+                "VFX接触参考",
+                "VFX-STATE-001@v001",
+                "SCN-001@v001",
+            )
+        )
+        rows = {(row["正式资产ID"], row["版本"]): row for row in self.table("正式资产登记表.csv")}
+        self.assertEqual(rows[("VFX-MASTER-001", "v001")]["生产依据附加资产ID与版本"], "PRP-SOURCE-001@v001")
+        self.assertEqual(rows[("VFX-CONTACT-001", "v001")]["生产依据父资产ID与版本"], "VFX-STATE-001@v001")
+
+    def test_vfx_rejects_wrong_roles_and_dependencies(self) -> None:
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "VFX资产角色不符合VFX生产链"):
+            self.register(self.vfx_row("VFX-LEGACY-001", "v001", "基础"))
+        self.register(self.vfx_row("VFX-MASTER-001", "v001", "VFX视觉母版"))
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "VFX视觉母版不得带父资产"):
+            self.register(
+                self.vfx_row(
+                    "VFX-MASTER-002", "v001", "VFX视觉母版", "VFX-MASTER-001@v001"
+                )
+            )
+        self.register(self.object_row("PRP-001", "v001", "道具", "独立对象"))
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "VFX状态变体的父版本必须是"):
+            self.register(
+                self.vfx_row(
+                    "VFX-STATE-001", "v001", "VFX状态变体", "PRP-001@v001"
+                )
+            )
+
+    def test_vfx_contact_rejects_missing_context_or_prior_contact_parent(self) -> None:
+        self.register(self.vfx_row("VFX-MASTER-001", "v001", "VFX视觉母版"))
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "至少一个接触实体"):
+            self.register(
+                self.vfx_row(
+                    "VFX-CONTACT-001", "v001", "VFX接触参考", "VFX-MASTER-001@v001"
+                )
+            )
+        self.register(self.object_row("PRP-001", "v001", "道具", "独立对象"))
+        self.register(
+            self.vfx_row(
+                "VFX-CONTACT-001",
+                "v001",
+                "VFX接触参考",
+                "VFX-MASTER-001@v001",
+                "PRP-001@v001",
+            )
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "父版本必须是已登记视觉母版或状态"):
+            self.register(
+                self.vfx_row(
+                    "VFX-CONTACT-002",
+                    "v001",
+                    "VFX接触参考",
+                    "VFX-CONTACT-001@v001",
+                    "PRP-001@v001",
+                )
+            )
+
+    def test_vfx_source_version_propagates_transitively(self) -> None:
+        self.register(self.object_row("PRP-SOURCE-001", "v001", "道具", "独立对象"))
+        self.register(
+            self.vfx_row(
+                "VFX-MASTER-001", "v001", "VFX视觉母版", extras="PRP-SOURCE-001@v001"
+            )
+        )
+        self.register(
+            self.vfx_row(
+                "VFX-STATE-001", "v001", "VFX状态变体", "VFX-MASTER-001@v001"
+            )
+        )
+        self.register(self.spatial_row("SCN-001", "v001", "场景", "场景母图"))
+        self.register(
+            self.vfx_row(
+                "VFX-CONTACT-001",
+                "v001",
+                "VFX接触参考",
+                "VFX-STATE-001@v001",
+                "SCN-001@v001",
+            )
+        )
+        source_result = self.register(self.object_row("PRP-SOURCE-001", "v002", "道具", "独立对象"))
+        self.assertEqual(
+            source_result["待复核派生资产"],
+            ["VFX-CONTACT-001@v001", "VFX-MASTER-001@v001", "VFX-STATE-001@v001"],
+        )
+
+    def test_vfx_master_version_propagates_to_state_and_contact(self) -> None:
+        self.register(self.vfx_row("VFX-MASTER-001", "v001", "VFX视觉母版"))
+        self.register(
+            self.vfx_row(
+                "VFX-STATE-001", "v001", "VFX状态变体", "VFX-MASTER-001@v001"
+            )
+        )
+        self.register(self.spatial_row("SCN-001", "v001", "场景", "场景母图"))
+        self.register(
+            self.vfx_row(
+                "VFX-CONTACT-001",
+                "v001",
+                "VFX接触参考",
+                "VFX-STATE-001@v001",
+                "SCN-001@v001",
+            )
+        )
+        result = self.register(self.vfx_row("VFX-MASTER-001", "v002", "VFX视觉母版"))
+        self.assertEqual(result["待复核派生资产"], ["VFX-CONTACT-001@v001", "VFX-STATE-001@v001"])
+
+    def test_vfx_contact_context_version_propagates_only_to_contact(self) -> None:
+        self.register(self.vfx_row("VFX-MASTER-001", "v001", "VFX视觉母版"))
+        self.register(self.spatial_row("SCN-001", "v001", "场景", "场景母图"))
+        self.register(
+            self.vfx_row(
+                "VFX-CONTACT-001",
+                "v001",
+                "VFX接触参考",
+                "VFX-MASTER-001@v001",
+                "SCN-001@v001",
+            )
+        )
+        result = self.register(self.spatial_row("SCN-001", "v002", "场景", "场景母图"))
+        self.assertEqual(result["待复核派生资产"], ["VFX-CONTACT-001@v001"])
 
 
 if __name__ == "__main__":
