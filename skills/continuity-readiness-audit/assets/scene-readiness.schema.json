@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "场次资产就绪审计",
   "type": "object",
-  "required": ["项目ID", "场次ID", "剧本版本", "道具载具", "生物怪物", "VFX视觉资产与时序", "资产状态传播事件", "待复核资产版本", "声音需求结论", "声音身份卡与版本", "正式声音资产与版本", "临时声音决定依据", "缺口", "场次就绪结论", "复核日期"],
+  "required": ["项目ID", "场次ID", "剧本版本", "道具载具", "生物怪物", "生物形态与运动约束集版本", "VFX视觉资产与时序", "资产状态传播事件", "待复核资产版本", "声音需求结论", "声音身份卡与版本", "正式声音资产与版本", "临时声音决定依据", "缺口", "场次就绪结论", "复核日期"],
   "properties": {
     "项目ID": {"type": "string", "minLength": 1},
     "场次ID": {"type": "string", "minLength": 1},
@@ -13,6 +13,7 @@
     "光影状态": {"type": "string"},
     "道具载具": {"type": "string", "minLength": 1},
     "生物怪物": {"type": "string", "minLength": 1},
+    "生物形态与运动约束集版本": {"type": "string", "minLength": 1},
     "VFX视觉资产与时序": {"type": "string", "minLength": 1},
     "资产状态传播事件": {"type": "string", "minLength": 1},
     "待复核资产版本": {"type": "string", "minLength": 1},

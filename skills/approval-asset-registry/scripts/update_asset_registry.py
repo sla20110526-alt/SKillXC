@@ -46,7 +46,7 @@ PAIR_FIELDS = (
     "状态依据",
     "状态更新时间",
 )
-DEPENDENT_ROLES = {"五视图基础卡", "服装妆造", "状态变体", "交互组合", "场景视图", "光影状态", "对象表面应用", "对象装配"}
+DEPENDENT_ROLES = {"五视图基础卡", "服装妆造", "状态变体", "交互组合", "场景视图", "光影状态", "对象表面应用", "对象装配", "生物结构变体", "生物状态变体", "生物交互组合"}
 VERSION_RE = re.compile(r"^v([0-9]{3,})$")
 REFERENCE_RE = re.compile(r"^([^@；]+)@(v[0-9]{3,})$")
 EVENT_RE = re.compile(r"^ASP-[A-Z0-9-]+$")
@@ -334,6 +334,49 @@ def _validate_pair_business(
                 component_row = rows_by_reference.get((project_id, object_dependency))
                 if component_row is None or component_row["资产类型"] not in object_types or component_row["资产角色"] not in object_parent_roles:
                     raise RegistryError(f"对象装配的附加版本必须全部是已登记道具/载具：{self_reference} -> {object_dependency}")
+        creature_shape_roles = {"生物基础形态", "生物结构变体", "生物状态变体"}
+        creature_roles = creature_shape_roles | {"生物交互组合"}
+        if row["资产类型"] == "生物怪物" and row["资产角色"] not in creature_roles:
+            raise RegistryError(f"生物怪物资产角色不符合生命体生产链：{self_reference}")
+        if row["资产角色"] in creature_roles and row["资产类型"] != "生物怪物":
+            raise RegistryError(f"生命体资产角色必须登记为生物怪物：{self_reference}")
+        if row["资产角色"] == "生物基础形态" and production_dependencies:
+            raise RegistryError(f"生物基础形态不得带生产依据：{self_reference}")
+        if row["资产角色"] == "生物结构变体":
+            if len(parent_dependencies) != 1 or extra_dependencies:
+                raise RegistryError(f"生物结构变体必须只依赖一个基础形态或上一结构变体：{self_reference}")
+            creature_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if creature_parent is None or (creature_parent["资产类型"], creature_parent["资产角色"]) not in {
+                ("生物怪物", "生物基础形态"),
+                ("生物怪物", "生物结构变体"),
+            }:
+                raise RegistryError(f"生物结构变体的父版本必须是已登记基础或结构形态：{self_reference} -> {parent_dependencies[0]}")
+            if creature_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"父形态与生物结构变体必须使用不同正式资产ID：{self_reference}")
+        if row["资产角色"] == "生物状态变体":
+            if len(parent_dependencies) != 1 or extra_dependencies:
+                raise RegistryError(f"生物状态变体必须只依赖一个正确生命体父版本：{self_reference}")
+            creature_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if creature_parent is None or (creature_parent["资产类型"], creature_parent["资产角色"]) not in {
+                ("生物怪物", "生物基础形态"),
+                ("生物怪物", "生物结构变体"),
+                ("生物怪物", "生物状态变体"),
+            }:
+                raise RegistryError(f"生物状态变体的父版本必须是已登记基础、结构或上一状态：{self_reference} -> {parent_dependencies[0]}")
+            if creature_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"父形态/上一状态与生物状态变体必须使用不同正式资产ID：{self_reference}")
+        if row["资产角色"] == "生物交互组合":
+            if len(parent_dependencies) != 1 or not extra_dependencies:
+                raise RegistryError(f"生物交互组合必须有一个生命体父版本和至少一个道具/载具：{self_reference}")
+            creature_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if creature_parent is None or creature_parent["资产类型"] != "生物怪物" or creature_parent["资产角色"] not in creature_shape_roles:
+                raise RegistryError(f"生物交互组合的父版本必须是已登记生命体：{self_reference} -> {parent_dependencies[0]}")
+            if creature_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"父生命体与生物交互组合必须使用不同正式资产ID：{self_reference}")
+            for object_dependency in extra_dependencies:
+                attached_object = rows_by_reference.get((project_id, object_dependency))
+                if attached_object is None or attached_object["资产类型"] not in object_types or attached_object["资产角色"] not in object_parent_roles:
+                    raise RegistryError(f"生物交互组合的附加版本必须全部是已登记道具/载具：{self_reference} -> {object_dependency}")
         for dependency in production_dependencies:
             if dependency == self_reference:
                 raise RegistryError(f"资产不能把自身列为生产依据：{self_reference}")

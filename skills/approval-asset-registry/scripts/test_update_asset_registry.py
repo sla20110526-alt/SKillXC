@@ -121,6 +121,21 @@ class RegistryTransactionTests(unittest.TestCase):
         row["允许变化"] = "当前槽位唯一变化"
         return row
 
+    def creature_row(
+        self,
+        asset_id: str,
+        version: str,
+        role: str,
+        parent: str = "不适用",
+        extras: str = "不适用",
+    ) -> dict[str, str]:
+        row = self.formal_row(asset_id, version, role, parent, extras)
+        row["资产类型"] = "生物怪物"
+        row["正式用途"] = "真人写实特殊生物或怪物资产"
+        row["必须继承"] = "形态身份、解剖锚点、尺度、表皮和运动约束"
+        row["允许变化"] = "当前槽位唯一结构、状态或交互变化"
+        return row
+
     @staticmethod
     def callable_row(formal: dict[str, str]) -> dict[str, str]:
         return {
@@ -683,6 +698,148 @@ class RegistryTransactionTests(unittest.TestCase):
         rows = {(row["正式资产ID"], row["版本"]): row for row in self.table("正式资产登记表.csv")}
         self.assertEqual(rows[("STA-001", "v001")]["资产角色"], "状态变体")
         self.assertEqual(rows[("INT-001", "v001")]["资产角色"], "交互组合")
+
+    def test_creature_shape_state_and_interaction_chain(self) -> None:
+        self.register(self.creature_row("CRT-BASE-001", "v001", "生物基础形态"))
+        self.register(
+            self.creature_row(
+                "CRT-STRUCT-001",
+                "v001",
+                "生物结构变体",
+                "CRT-BASE-001@v001",
+            )
+        )
+        self.register(
+            self.creature_row(
+                "CRT-STATE-001",
+                "v001",
+                "生物状态变体",
+                "CRT-STRUCT-001@v001",
+            )
+        )
+        self.register(self.object_row("PRP-HARNESS-001", "v001", "道具", "独立对象"))
+        self.register(
+            self.creature_row(
+                "CRT-INTERACT-001",
+                "v001",
+                "生物交互组合",
+                "CRT-STATE-001@v001",
+                "PRP-HARNESS-001@v001",
+            )
+        )
+        rows = {(row["正式资产ID"], row["版本"]): row for row in self.table("正式资产登记表.csv")}
+        self.assertEqual(rows[("CRT-STRUCT-001", "v001")]["生产依据父资产ID与版本"], "CRT-BASE-001@v001")
+        self.assertEqual(rows[("CRT-INTERACT-001", "v001")]["生产依据附加资产ID与版本"], "PRP-HARNESS-001@v001")
+
+    def test_creature_base_rejects_dependencies_and_wrong_role(self) -> None:
+        self.register(self.creature_row("CRT-OLDER-001", "v001", "生物基础形态"))
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "生物基础形态不得带生产依据"):
+            self.register(
+                self.creature_row(
+                    "CRT-BASE-001",
+                    "v001",
+                    "生物基础形态",
+                    "CRT-OLDER-001@v001",
+                )
+            )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "生物怪物资产角色不符合生命体生产链"):
+            self.register(self.creature_row("CRT-LEGACY-001", "v001", "基础"))
+
+    def test_creature_structure_rejects_state_parent(self) -> None:
+        self.register(self.creature_row("CRT-BASE-001", "v001", "生物基础形态"))
+        self.register(
+            self.creature_row(
+                "CRT-STATE-001", "v001", "生物状态变体", "CRT-BASE-001@v001"
+            )
+        )
+        invalid = self.creature_row(
+            "CRT-STRUCT-001", "v001", "生物结构变体", "CRT-STATE-001@v001"
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "父版本必须是已登记基础或结构形态"):
+            self.register(invalid)
+
+    def test_creature_state_rejects_object_parent(self) -> None:
+        self.register(self.object_row("PRP-001", "v001", "道具", "独立对象"))
+        invalid = self.creature_row(
+            "CRT-STATE-001", "v001", "生物状态变体", "PRP-001@v001"
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "父版本必须是已登记基础、结构或上一状态"):
+            self.register(invalid)
+
+    def test_creature_interaction_rejects_graphic_or_prior_interaction(self) -> None:
+        self.register(self.creature_row("CRT-BASE-001", "v001", "生物基础形态"))
+        self.register(self.object_row("GFX-001", "v001", "图案文字", "图案文字母版"))
+        invalid_extra = self.creature_row(
+            "CRT-INTERACT-001",
+            "v001",
+            "生物交互组合",
+            "CRT-BASE-001@v001",
+            "GFX-001@v001",
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "附加版本必须全部是已登记道具/载具"):
+            self.register(invalid_extra)
+        self.register(self.object_row("PRP-001", "v001", "道具", "独立对象"))
+        self.register(
+            self.creature_row(
+                "CRT-INTERACT-001",
+                "v001",
+                "生物交互组合",
+                "CRT-BASE-001@v001",
+                "PRP-001@v001",
+            )
+        )
+        invalid_parent = self.creature_row(
+            "CRT-INTERACT-002",
+            "v001",
+            "生物交互组合",
+            "CRT-INTERACT-001@v001",
+            "PRP-001@v001",
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "父版本必须是已登记生命体"):
+            self.register(invalid_parent)
+
+    def test_creature_base_version_propagates_transitively(self) -> None:
+        self.register(self.creature_row("CRT-BASE-001", "v001", "生物基础形态"))
+        self.register(
+            self.creature_row(
+                "CRT-STRUCT-001", "v001", "生物结构变体", "CRT-BASE-001@v001"
+            )
+        )
+        self.register(
+            self.creature_row(
+                "CRT-STATE-001", "v001", "生物状态变体", "CRT-STRUCT-001@v001"
+            )
+        )
+        self.register(self.object_row("PRP-001", "v001", "道具", "独立对象"))
+        self.register(
+            self.creature_row(
+                "CRT-INTERACT-001",
+                "v001",
+                "生物交互组合",
+                "CRT-STATE-001@v001",
+                "PRP-001@v001",
+            )
+        )
+        result = self.register(self.creature_row("CRT-BASE-001", "v002", "生物基础形态"))
+        self.assertEqual(
+            result["待复核派生资产"],
+            ["CRT-INTERACT-001@v001", "CRT-STATE-001@v001", "CRT-STRUCT-001@v001"],
+        )
+
+    def test_object_version_propagates_to_creature_interaction_only(self) -> None:
+        self.register(self.creature_row("CRT-BASE-001", "v001", "生物基础形态"))
+        self.register(self.object_row("PRP-001", "v001", "道具", "独立对象"))
+        self.register(
+            self.creature_row(
+                "CRT-INTERACT-001",
+                "v001",
+                "生物交互组合",
+                "CRT-BASE-001@v001",
+                "PRP-001@v001",
+            )
+        )
+        result = self.register(self.object_row("PRP-001", "v002", "道具", "独立对象"))
+        self.assertEqual(result["待复核派生资产"], ["CRT-INTERACT-001@v001"])
 
 
 if __name__ == "__main__":

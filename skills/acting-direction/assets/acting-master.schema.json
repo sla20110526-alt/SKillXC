@@ -59,6 +59,7 @@
     "依据场次范围": {"type": "string", "minLength": 1},
     "源定义引用": {"type": "string", "pattern": "^CCS-ACTING-MASTER@v[0-9]{3,}$"},
     "关联人物正式资产ID与版本": {"type": "string"},
+    "关联生物怪物正式资产ID与版本": {"type": "string"},
     "表演尺度与参考": {"type": "string", "minLength": 1},
     "稳定表演核心": {"type": "string", "minLength": 1},
     "贯穿目标与行动引擎": {"type": "string", "minLength": 1},

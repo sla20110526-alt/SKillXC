@@ -144,6 +144,9 @@ class ControlVersionTests(unittest.TestCase):
         row: dict[str, str] = {}
         for field, spec in schema["properties"].items():
             row[field] = str(spec.get("enum", ["测试"])[0])
+        for field in ("关联人物正式资产ID与版本", "关联生物怪物正式资产ID与版本"):
+            if field in row:
+                row[field] = "无"
         card_id = "AM-001" if kind == "acting" else "VI-001"
         subject_field = config["subject"][0]
         source = config["expected_source"] + "@v001"
@@ -417,6 +420,23 @@ class ControlVersionTests(unittest.TestCase):
             with index_path.open("r", encoding="utf-8-sig", newline="") as handle:
                 saved = list(csv.DictReader(handle))[0]
             self.assertEqual((saved[CONTROL.KINDS[kind]["status"]], saved["当前有效"]), ("已生效", "是"))
+
+    def test_voice_rejects_simultaneous_person_and_creature_asset_links(self) -> None:
+        self.execute_kind("voice", "init")
+        row = self.detailed_control_row("voice", "非人说话者稳定规则")
+        row["关联人物正式资产ID与版本"] = "CHR-001@v001"
+        row["关联生物怪物正式资产ID与版本"] = "CRT-001@v001"
+        with self.assertRaisesRegex(CONTROL.ControlVersionError, "不能同时关联人物和生物怪物"):
+            self.execute_kind(
+                "voice",
+                "draft",
+                {
+                    "项目ID": "PRJ-001",
+                    "事务ID": self.transaction_id(),
+                    "操作日期": "2026-08-13",
+                    "记录": [row],
+                },
+            )
 
 
 if __name__ == "__main__":

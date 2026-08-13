@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "生命体解剖锚点",
+  "type": "object",
+  "required": ["项目ID", "形态定义ID", "形态定义版本", "预留正式资产ID", "正式资产ID与版本", "锚点ID", "锚点名称", "锚点类别", "身体分区", "局部位置", "侧别", "数量", "连接或生长方式", "承重或功能", "活动范围", "静止状态", "可见状态", "事实来源", "锁定级别"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "形态定义ID": {"type": "string", "minLength": 1},
+    "形态定义版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "预留正式资产ID": {"type": "string", "minLength": 1},
+    "正式资产ID与版本": {"type": "string", "pattern": "^(未登记|[^@；]+@v[0-9]{3,})$"},
+    "锚点ID": {"type": "string", "minLength": 1},
+    "锚点名称": {"type": "string", "minLength": 1},
+    "锚点类别": {"type": "string", "enum": ["远景轮廓", "骨架关节", "承重支撑", "感觉器官", "呼吸器官", "攻击结构", "防御结构", "附肢", "固定不对称", "表皮分区", "尺度参照", "对象接触", "其他"]},
+    "身体分区": {"type": "string", "minLength": 1},
+    "局部位置": {"type": "string", "minLength": 1},
+    "侧别": {"type": "string", "enum": ["中线", "自身左侧", "自身右侧", "左右成对", "径向重复", "不适用"]},
+    "数量": {"type": "string", "minLength": 1},
+    "连接或生长方式": {"type": "string", "minLength": 1},
+    "承重或功能": {"type": "string", "minLength": 1},
+    "活动范围": {"type": "string", "minLength": 1},
+    "静止状态": {"type": "string", "minLength": 1},
+    "表皮分区": {"type": "string"},
+    "可见状态": {"type": "string", "enum": ["完整可见", "部分可见", "不可见", "待确认"]},
+    "事实来源": {"type": "string", "enum": ["生命体图可见", "剧本明确", "用户锁定", "顾问结论", "创作建议待确认", "未知"]},
+    "锁定级别": {"type": "string", "enum": ["可见锁定", "关系锁定", "推断待确认", "未知禁止补写"]},
+    "备注": {"type": "string"}
+  },
+  "additionalProperties": false
+}

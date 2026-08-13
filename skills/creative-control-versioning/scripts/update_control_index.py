@@ -338,6 +338,11 @@ def _validate_business(
         if row["项目ID"] != project_id:
             raise ControlVersionError(f"发现其他项目数据：{row['项目ID']}")
         _validate_source_and_profiles(row, config)
+        if config["id"] == "声音身份卡ID":
+            person_reference = row.get("关联人物正式资产ID与版本", "")
+            creature_reference = row.get("关联生物怪物正式资产ID与版本", "")
+            if person_reference not in {"", "无"} and creature_reference not in {"", "无"}:
+                raise ControlVersionError("声音身份卡不能同时关联人物和生物怪物正式资产")
         card_id = row[config["id"]]
         subject = tuple(row[field] for field in config["subject"])
         if subject in subject_ids and subject_ids[subject] != card_id:
