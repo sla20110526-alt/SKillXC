@@ -1,0 +1,55 @@
+{
+  "manifest_version": "1.0.0",
+  "purpose": "定义SKillXC现行规则源及各自加载策略，不包含历史讨论、聊天转录或接续记录；列入清单不等于允许一次性读取全部内容。",
+  "authority_order": [
+    {
+      "path": "AGENTS.md",
+      "role": "仓库维护、调用和历史隔离规则",
+      "load_policy": "automatic-instruction"
+    },
+    {
+      "path": "active-rule-sources.json",
+      "role": "现行来源和加载策略清单",
+      "load_policy": "manifest-only"
+    },
+    {
+      "path": "README.md",
+      "role": "现行入口和硬规则摘要",
+      "load_policy": "on-demand-current-summary"
+    },
+    {
+      "path": "docs/真人写实AI影视生产总流程_v0.1.md",
+      "role": "真人写实闭环的现行总流程",
+      "load_policy": "on-demand-current-rule"
+    },
+    {
+      "path": "docs/Skill清单与交接矩阵_v0.1.md",
+      "role": "现行Skill职责和交接矩阵",
+      "load_policy": "on-demand-current-rule"
+    },
+    {
+      "path": "skills",
+      "role": "27个现行生产Skill的唯一内容源",
+      "load_policy": "skill-metadata-then-explicit-activation"
+    },
+    {
+      "path": ".codex-plugin/plugin.json",
+      "role": "现行插件清单",
+      "load_policy": "discovery-metadata-only"
+    }
+  ],
+  "support_documents": [
+    {
+      "path": "docs/Codex用户级Skill重装恢复.md",
+      "role": "用户级安装和灾难恢复说明，不参与影视生产推理",
+      "load_policy": "explicit-support-only"
+    }
+  ],
+  "excluded_source_classes": [
+    "历史讨论正文",
+    "聊天或对话全文",
+    "对话接续记录",
+    "已被现行规则替代的旧流程副本"
+  ],
+  "historical_access_policy": "只有用户在当前指令中明确提供归档路径并明确要求读取、核对或比较历史时，才允许访问该指定归档；不得自行搜索外部目录、Git历史、旧提交、远端旧版本或缓存。"
+}

@@ -28,7 +28,9 @@
 - 修改 Skill 前遵循 Codex 的 `skill-creator` 规范；修改插件结构前遵循 `plugin-creator` 规范。
 - 修改源文件后必须检查 UTF-8、YAML/JSON 语法、内部链接、目录结构和调用边界。
 - 修改数据模板或 Schema 后必须更新 `skills/production-router-handoff/assets/data-contract-map.json`，并运行 `validate_project_data.py --manifest`；不得只增加 Schema 而不执行检查。
-- 历史讨论文档只作为档案，不得当作当前生产规则；当前规则以正式 Skill、插件清单和用户最新明确指令为准。
+- `ARCHIVE_EXPLICIT_ONLY`：历史讨论、聊天转录和接续记录不属于本仓库、插件或任何 Skill 的引用图。未收到用户在当前指令中明确提供的归档路径和“读取／核对／比较历史”要求时，禁止从外部目录、Git 历史、旧提交、远端旧版本或缓存中搜索、读取或引用这些内容。
+- 新任务的现行入口及其加载策略以 `active-rule-sources.json` 为准；列入清单不代表一次加载全部内容，Skill 正文仍须遵守“元数据发现后、用户确认再激活”的抽屉式边界。当前规则以用户最新明确指令、正式 Skill 和现行流程文件为准。
+- 提交前运行 `python deployment/validate_active_rule_boundary.py`；不得把历史正文、历史文件链接或通向外部归档的目录链接重新放入现行仓库。
 
 ## 安装拓扑
 
