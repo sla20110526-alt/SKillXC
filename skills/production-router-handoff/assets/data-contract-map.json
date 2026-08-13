@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-13-style-lock-four-card-chain",
+  "manifest_revision": "2026-08-13-profile-stage-handoff-contract-v1.1",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",

@@ -8,7 +8,7 @@ description: 分离并管理AI影视中央创作源版本、Profile版本和项�
 ## 三类版本不得混用
 
 1. `中央源定义版本`：SKillXC 中专业方法、必填结构或交接规则的版本。只有维护中央原始文件时升级；具体项目不得修改或升级。
-2. `Profile卡片版本`：由 `film-profile-library` 管理。项目只引用 `ProfileID@版本`，调用、选择或生成项目短卡不升级原 Profile。
+2. `Profile卡片版本`：由 `film-profile-library` 管理。项目只引用精确 `ProfileID@版本`，调用、选择或生成项目短卡不升级原 Profile；资料库发布新版也不自动替换项目固定引用。
 3. `项目控制卡版本`：绑定项目内的可执行决定。每个稳定控制卡 ID 从 `v001` 开始；只在项目决定实质变化时升级。
 
 完整边界和例子见 [版本模型](references/version-model.md)。中央源当前版本只从 [源定义目录](references/control-source-catalog.json) 读取，不凭记忆推断。

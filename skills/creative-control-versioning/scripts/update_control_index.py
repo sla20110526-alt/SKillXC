@@ -522,14 +522,6 @@ def _draft(payload: dict[str, Any], rows: list[dict[str, str]], config: dict[str
         source_id, source_version = source_match.groups()
         if _source_catalog()[source_id]["current"] != source_version:
             raise ControlVersionError(f"新草案必须引用中央目录当前源版本：{row[config['source']]}")
-        if config["profiles"]:
-            current_profiles = _profile_versions()
-            for reference in _split_refs(row[config["profiles"]]):
-                profile_match = PROFILE_REF_RE.fullmatch(reference)
-                assert profile_match is not None
-                profile_id, profile_version = profile_match.groups()
-                if current_profiles[profile_id] != profile_version:
-                    raise ControlVersionError(f"新草案必须引用Profile目录当前版本：{reference}")
         if config["required_baseline_inputs"] is not None:
             known_rows = {
                 f"{item[config['id']]}@{item[config['version']]}": item

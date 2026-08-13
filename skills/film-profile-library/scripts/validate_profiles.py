@@ -25,7 +25,7 @@ DEPARTMENT_PREFIX = {
     "编剧／剧作": "WRI",
     "剪辑": "EDI",
 }
-EXPECTED_STAGE = {
+DEFAULT_EXPECTED_STAGE = {
     "导演": "导演与人物调度",
     "摄影指导": "全片摄影基线",
     "美术／Production Design": "美术与 LookDev",
@@ -33,6 +33,17 @@ EXPECTED_STAGE = {
     "剪辑": "剪辑与节奏",
 }
 EVIDENCE_MARKS = {"用户提供", "直接观察", "来源支持", "分析性归纳"}
+REPOSITORY_SNAPSHOT_PATTERN = re.compile(r"^- 仓库快照：\[[^]]+\]\(([^)]+\.md)\)", re.M)
+PROHIBITED_SOURCE_LOCATORS = ("聊天记录", "生产对话", "Git 历史", "Git历史", "旧提交")
+EXPECTED_PHASE_CALLERS = {
+    ("导演", "项目风格意图基线"): "style-lock-director",
+    ("导演", "导演与人物调度"): "directing-blocking",
+    ("摄影指导", "全片摄影基线"): "cinematography-direction",
+    ("摄影指导", "用户明确确认的限时场戏摄影例外"): "cinematography-direction",
+    ("美术／Production Design", "美术与 LookDev"): "art-lookdev-direction",
+    ("编剧／剧作", "剧作与场戏节拍"): "dramaturgy-scene-beats",
+    ("剪辑", "剪辑与节奏"): "editing-rhythm",
+}
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -113,6 +124,15 @@ def _source_ids(sources_text: str) -> tuple[set[str], list[str]]:
     return set(ids), [f"sources.md: 来源ID重复：{item}" for item in duplicates]
 
 
+def _source_sections(sources_text: str) -> dict[str, str]:
+    matches = list(re.finditer(r"^### (SRC-[A-Z0-9-]+)\s*$", sources_text, re.M))
+    sections: dict[str, str] = {}
+    for index, match in enumerate(matches):
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(sources_text)
+        sections[match.group(1)] = sources_text[match.end():end]
+    return sections
+
+
 def _parse_catalog(text: str) -> tuple[list[dict[str, str]], list[str]]:
     records: list[dict[str, str]] = []
     errors: list[str] = []
@@ -145,6 +165,26 @@ def _parse_catalog(text: str) -> tuple[list[dict[str, str]], list[str]]:
             }
         )
     return records, errors
+
+
+def _parse_phase_routes(text: str) -> tuple[dict[tuple[str, str], str], list[str]]:
+    routes: dict[tuple[str, str], str] = {}
+    errors: list[str] = []
+    for line_number, line in enumerate(text.splitlines(), start=1):
+        if not line.startswith("|") or "`" not in line:
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) != 5:
+            continue
+        department, phase, caller_cell, _, _ = cells
+        caller_match = re.search(r"`([^`]+)`", caller_cell)
+        if not caller_match:
+            continue
+        key = (department, phase)
+        if key in routes:
+            errors.append(f"phase-routing.md: 第 {line_number} 行重复阶段 {key!r}")
+        routes[key] = caller_match.group(1)
+    return routes, errors
 
 
 def _validate_card(
@@ -184,6 +224,10 @@ def _validate_card(
     if len(method_ids) != len(set(method_ids)):
         errors.append(f"{label}: 方法ID重复")
     profile_id = record.get("ProfileID", "")
+    version = record.get("卡片版本", "")
+    profile_references = re.findall(r"^- Profile引用：`([^`]+)`\s*$", text, re.M)
+    if profile_references != [f"{profile_id}@{version}"]:
+        errors.append(f"{label}: 当前项目短执行卡的 Profile引用必须精确等于 {profile_id}@{version}")
     expected_method_prefix = profile_id.removeprefix("FP-") + "-M"
     for method_id in method_ids:
         if not method_id.startswith(expected_method_prefix):
@@ -217,10 +261,17 @@ def _validate_card(
     expected_prefix = DEPARTMENT_PREFIX.get(department or "")
     if expected_prefix and not profile_id.startswith(f"FP-{expected_prefix}-"):
         errors.append(f"{label}: ProfileID 部门前缀与专业部门不一致")
-    if department in EXPECTED_STAGE and record.get("适用阶段") != EXPECTED_STAGE[department]:
-        errors.append(f"{label}: {department} 的适用阶段必须为 {EXPECTED_STAGE[department]!r}")
-    if department == "摄影指导" and record.get("Profile本体失效点") != "全片摄影规则卡交付后":
-        errors.append(f"{label}: 摄影 Profile 必须在全片摄影规则卡交付后失效")
+    expected_stages = contract.get("allowed_stage_by_department", DEFAULT_EXPECTED_STAGE)
+    expected_expiry = contract.get("expiry_by_department", {})
+    expected_inheritance = contract.get("inheritance_by_department", {})
+    if department in expected_stages and record.get("适用阶段") != expected_stages[department]:
+        errors.append(f"{label}: {department} 的适用阶段必须为 {expected_stages[department]!r}")
+    if department in expected_expiry and record.get("Profile本体失效点") != expected_expiry[department]:
+        errors.append(f"{label}: {department} 的 Profile本体失效点必须为 {expected_expiry[department]!r}")
+    if department in expected_inheritance and record.get("可跨阶段继承") != expected_inheritance[department]:
+        errors.append(f"{label}: {department} 的可跨阶段继承必须为 {expected_inheritance[department]!r}")
+    if department in {"导演", "摄影指导"} and "- 双入口分流：" not in text:
+        errors.append(f"{label}: {department} Profile 缺少双入口分流说明")
 
     if "- 禁止下传：" not in text:
         errors.append(f"{label}: 当前项目短执行卡缺少“禁止下传”")
@@ -235,6 +286,7 @@ def validate_library(library_root: Path) -> dict[str, Any]:
     catalog_path = references / "catalog.md"
     sources_path = references / "sources.md"
     history_path = references / "profile-version-history.json"
+    phase_routing_path = references / "phase-routing.md"
     errors: list[str] = []
     try:
         schema = _read_json(schema_path)
@@ -246,11 +298,36 @@ def validate_library(library_root: Path) -> dict[str, Any]:
         errors.append("profile-card-schema.json: 顶层必须为封闭 object")
 
     try:
+        phase_routes, phase_errors = _parse_phase_routes(
+            phase_routing_path.read_text(encoding="utf-8-sig")
+        )
+        errors.extend(phase_errors)
+    except (OSError, UnicodeDecodeError) as exc:
+        phase_routes = {}
+        errors.append(f"无法读取 phase-routing.md：{exc}")
+    if phase_routes != EXPECTED_PHASE_CALLERS:
+        errors.append("phase-routing.md: 部门、允许阶段与责任Skill映射不完整或不一致")
+    for (department, phase), caller in EXPECTED_PHASE_CALLERS.items():
+        caller_path = library_root.parent / caller / "SKILL.md"
+        try:
+            caller_text = caller_path.read_text(encoding="utf-8-sig")
+        except (OSError, UnicodeDecodeError) as exc:
+            errors.append(f"phase-routing.md: 无法读取责任Skill {caller}：{exc}")
+            continue
+        if phase not in caller_text or "Profile" not in caller_text:
+            errors.append(f"phase-routing.md: {department} 的阶段 {phase} 未在责任Skill {caller} 中明确声明")
+
+    try:
         sources_text = sources_path.read_text(encoding="utf-8-sig")
         known_sources, source_errors = _source_ids(sources_text)
+        source_sections = _source_sections(sources_text)
         errors.extend(source_errors)
+        for value in PROHIBITED_SOURCE_LOCATORS:
+            if value in sources_text:
+                errors.append(f"sources.md: 仍含外部历史定位要求：{value}")
     except OSError as exc:
         known_sources = set()
+        source_sections = {}
         errors.append(f"无法读取 sources.md：{exc}")
 
     cards: dict[str, tuple[Path, dict[str, str]]] = {}
@@ -274,6 +351,29 @@ def validate_library(library_root: Path) -> dict[str, Any]:
             pass
     duplicate_methods = sorted({item for item in all_method_ids if all_method_ids.count(item) > 1})
     errors.extend(f"方法ID全库重复：{item}" for item in duplicate_methods)
+
+    used_sources = {
+        source_id
+        for _, record in cards.values()
+        for source_id in filter(None, record.get("来源ID", "").split("、"))
+    }
+    for source_id in sorted(used_sources):
+        section = source_sections.get(source_id, "")
+        snapshot_match = REPOSITORY_SNAPSHOT_PATTERN.search(section)
+        if not snapshot_match:
+            errors.append(f"sources.md: 卡片使用的来源 {source_id} 缺少仓库快照")
+            continue
+        snapshot_path = (references / snapshot_match.group(1)).resolve()
+        try:
+            snapshot_path.relative_to(references.resolve())
+        except ValueError:
+            errors.append(f"sources.md: {source_id} 的仓库快照越出 references 目录")
+            continue
+        if not snapshot_path.is_file():
+            errors.append(f"sources.md: {source_id} 的仓库快照不存在：{snapshot_match.group(1)}")
+        bad_locator = next((value for value in PROHIBITED_SOURCE_LOCATORS if value in section), None)
+        if bad_locator:
+            errors.append(f"sources.md: {source_id} 仍要求外部历史定位：{bad_locator}")
 
     try:
         catalog_records, catalog_errors = _parse_catalog(catalog_path.read_text(encoding="utf-8-sig"))
@@ -319,6 +419,7 @@ def validate_library(library_root: Path) -> dict[str, Any]:
             continue
         profile_id = item.get("profile_id")
         versions = item.get("available_versions")
+        definition_paths = item.get("definition_paths")
         if not isinstance(profile_id, str) or not profile_id:
             errors.append(f"profile-version-history.json: 第 {index + 1} 项缺少 profile_id")
             continue
@@ -336,6 +437,43 @@ def validate_library(library_root: Path) -> dict[str, Any]:
             ordered = sorted(versions, key=lambda value: tuple(int(part) for part in value[1:].split(".")))
             if versions != ordered:
                 errors.append(f"profile-version-history.json: {profile_id} 的历史版本必须按升序排列")
+        if not isinstance(definition_paths, dict) or set(definition_paths) != set(versions):
+            errors.append(f"profile-version-history.json: {profile_id} 的每个版本必须有且只有一个 definition_path")
+        else:
+            for version in versions:
+                relative_path = definition_paths.get(version)
+                if not isinstance(relative_path, str) or not relative_path:
+                    errors.append(f"profile-version-history.json: {profile_id}@{version} 的 definition_path 无效")
+                    continue
+                definition_path = (references / relative_path).resolve()
+                try:
+                    definition_path.relative_to(references.resolve())
+                except ValueError:
+                    errors.append(f"profile-version-history.json: {profile_id}@{version} 的定义越出 references 目录")
+                    continue
+                if not definition_path.is_file():
+                    errors.append(f"profile-version-history.json: {profile_id}@{version} 的定义文件不存在：{relative_path}")
+                    continue
+                try:
+                    definition_text = definition_path.read_text(encoding="utf-8-sig")
+                    definition_record, _, definition_errors = _extract_record(
+                        definition_text, f"{profile_id}@{version}"
+                    )
+                except (OSError, UnicodeDecodeError) as exc:
+                    errors.append(f"profile-version-history.json: 无法读取 {profile_id}@{version}：{exc}")
+                    continue
+                errors.extend(definition_errors)
+                if definition_record.get("ProfileID") != profile_id:
+                    errors.append(f"profile-version-history.json: {profile_id}@{version} 的定义 ProfileID 不一致")
+                if definition_record.get("卡片版本") != version:
+                    errors.append(f"profile-version-history.json: {profile_id}@{version} 的定义卡片版本不一致")
+                definition_references = re.findall(
+                    r"^- Profile引用：`([^`]+)`\s*$", definition_text, re.M
+                )
+                if definition_references != [f"{profile_id}@{version}"]:
+                    errors.append(
+                        f"profile-version-history.json: {profile_id}@{version} 的短执行卡Profile引用不一致"
+                    )
         history[profile_id] = versions
     history_count = len(history)
     if set(history) != set(cards):
@@ -350,6 +488,7 @@ def validate_library(library_root: Path) -> dict[str, Any]:
         "profiles": len(files),
         "catalog_rows": len(catalog_records),
         "history_rows": history_count,
+        "phase_routes": len(phase_routes),
         "sources": len(known_sources),
         "errors": errors,
     }
@@ -360,10 +499,11 @@ def _render_report(result: dict[str, Any]) -> str:
     lines = [
         "# Profile 资料库检查报告",
         "",
-        "Schema版本：v1.0",
+        "Schema版本：v1.1",
         f"Profile卡片数：{result['profiles']}",
         f"目录记录数：{result['catalog_rows']}",
         f"历史版本记录数：{result.get('history_rows', 0)}",
+        f"阶段调用路由数：{result.get('phase_routes', 0)}",
         f"来源ID数：{result['sources']}",
         f"结论：{'通过' if not errors else '未通过'}",
         "",
@@ -376,7 +516,7 @@ def _render_report(result: dict[str, Any]) -> str:
             "",
             "## 证据边界",
             "",
-            "本检查只证明卡片结构、字段取值、方法ID、成熟度/状态门槛、目录和来源ID引用一致；不证明作品归属、方法归因、创作者意图、AI适配效果或项目创作质量。",
+            "本检查只证明卡片结构、阶段/失效/继承合同、字段取值、方法ID、成熟度/状态门槛、目录、历史定义和仓库来源快照一致；不证明作品归属、方法归因、创作者意图、AI适配效果或项目创作质量。",
             "",
         ]
     )

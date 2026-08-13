@@ -307,6 +307,12 @@ class ControlVersionTests(unittest.TestCase):
         with self.assertRaisesRegex(CONTROL.ControlVersionError, "Profile专业部门不匹配"):
             self.draft(row)
 
+    def test_new_project_card_may_keep_published_historical_profile_version(self) -> None:
+        row = self.row("CC-STYLE-001", "v001", "继续采用原项目方法")
+        row["Profile引用集合"] = "FP-DIR-DAVID-FINCHER@v1.0"
+        self.draft(row)
+        self.assertEqual(self.rows()[0]["Profile引用集合"], "FP-DIR-DAVID-FINCHER@v1.0")
+
     def test_downstream_baseline_requires_current_active_upstream(self) -> None:
         self.draft(self.row("CC-STYLE-001", "v001", "风格规则"))
         art = self.row(
