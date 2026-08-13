@@ -21,12 +21,19 @@ VALIDATOR_PATH = SKILL_ROOT / "scripts/validate_project_data.py"
 TEMPLATE_PATH = SKILL_ROOT / "assets/任务成果索引模板.csv"
 SCHEMA_PATH = SKILL_ROOT / "assets/task-artifact.schema.json"
 TASK_SCHEMA_PATH = SKILL_ROOT / "assets/handoff-task.schema.json"
+CONTROL_SCHEMA_PATH = SKILL_ROOT.parent / "creative-control-versioning/assets/creative-control-baseline.schema.json"
 DEFAULT_INDEX = "tasks/任务成果索引.csv"
 DEFAULT_TASK_INDEX = "tasks/任务索引.csv"
+DEFAULT_CONTROL_INDEX = "creative-control/项目创作基线索引.csv"
 VERSION_RE = re.compile(r"^v([0-9]{3,})$")
 REFERENCE_RE = re.compile(r"^[^@；]+@v(?:[0-9]{3,}|[0-9]+\.[0-9]+)$")
 TRANSACTION_RE = re.compile(r"^TAI-[A-Z0-9-]+$")
 ALLOWED_SOURCE_TASK_STATUSES = {"已激活", "执行中", "已返回"}
+STYLE_REVIEW_TYPES = {"风格测试与评审卡", "P0风格测试与评审卡"}
+STYLE_PACKAGE_TYPE = "风格锁定包"
+STYLE_CONTROL_TYPES = {
+    "项目风格锁定基线", "美术LookDev基线", "全片摄影规则", "项目灯光基线",
+}
 
 
 class TaskArtifactError(Exception):
@@ -117,15 +124,75 @@ def _task_pairs(task_index: Path, project_id: str) -> set[tuple[str, str]]:
     return pairs
 
 
+def _style_control_refs(project_root: Path, project_id: str) -> tuple[dict[str, str], set[str]]:
+    path = _resolve_inside(project_root, DEFAULT_CONTROL_INDEX)
+    _schema_check(path, CONTROL_SCHEMA_PATH, project_id)
+    _, rows = _read_csv(path)
+    by_reference: dict[str, str] = {}
+    current_by_type: dict[str, str] = {}
+    current_rows: dict[str, dict[str, str]] = {}
+    for row in rows:
+        if row["项目ID"] != project_id:
+            raise TaskArtifactError(f"项目创作基线索引发现其他项目数据：{row['项目ID']}")
+        control_type = row["控制类型"]
+        if control_type not in STYLE_CONTROL_TYPES:
+            continue
+        reference = f"{row['控制卡ID']}@{row['项目卡版本']}"
+        by_reference[reference] = control_type
+        if row["当前有效"] == "是":
+            if row["控制卡状态"] != "已生效" or control_type in current_by_type:
+                raise TaskArtifactError(f"风格长期基线当前状态不唯一：{control_type}")
+            current_by_type[control_type] = reference
+            current_rows[control_type] = row
+    if set(current_by_type) != STYLE_CONTROL_TYPES:
+        missing = sorted(STYLE_CONTROL_TYPES - set(current_by_type))
+        raise TaskArtifactError(f"四张风格长期基线尚未全部当前生效：{missing}")
+    expected_direct = {
+        "项目风格锁定基线": None,
+        "美术LookDev基线": "项目风格锁定基线",
+        "全片摄影规则": "美术LookDev基线",
+        "项目灯光基线": "全片摄影规则",
+    }
+    for control_type, expected_type in expected_direct.items():
+        refs = _split_refs(current_rows[control_type]["输入控制卡引用集合"])
+        expected_refs = [] if expected_type is None else [current_by_type[expected_type]]
+        if refs != expected_refs:
+            raise TaskArtifactError(
+                f"当前四卡不是唯一直接上游链：{control_type} 应引用 {expected_refs or ['无']}，实际 {refs or ['无']}"
+            )
+    return by_reference, set(current_by_type.values())
+
+
+def _require_four_current_style_refs(
+    row: dict[str, str], project_root: Path, project_id: str, require_current: bool,
+) -> None:
+    by_reference, current = _style_control_refs(project_root, project_id)
+    references = _split_refs(row["上游精确引用集合"])
+    found = {reference for reference in references if reference in by_reference}
+    found_types = {by_reference[reference] for reference in found}
+    if found_types != STYLE_CONTROL_TYPES or len(found) != 4:
+        raise TaskArtifactError(
+            f"{row['成果类型']}必须各精确引用一张项目风格长期基线："
+            f"{row['成果ID']}@{row['成果版本']}"
+        )
+    if require_current and found != current:
+        raise TaskArtifactError(
+            f"{row['成果类型']}引用的四卡不是当前有效组合，旧成果不得用于新任务："
+            f"{row['成果ID']}@{row['成果版本']}"
+        )
+
+
 def _validate_business(
     rows: list[dict[str, str]],
     project_id: str,
     project_root: Path,
     task_pairs: set[tuple[str, str]],
+    allow_stale_style: bool = False,
 ) -> None:
     grouped: dict[str, list[dict[str, str]]] = {}
     seen: set[tuple[str, str]] = set()
     local_references = {f"{row['成果ID']}@{row['成果版本']}" for row in rows}
+    local_by_reference = {f"{row['成果ID']}@{row['成果版本']}": row for row in rows}
     for row in rows:
         if row["项目ID"] != project_id:
             raise TaskArtifactError(f"任务成果索引发现其他项目数据：{row['项目ID']}")
@@ -145,6 +212,15 @@ def _validate_business(
             raise TaskArtifactError(
                 f"Prompt成果激活必须在状态依据中保存以“用户原文：”开头的明确放行原文：{row['成果ID']}@{row['成果版本']}"
             )
+        if row["成果类型"] in STYLE_REVIEW_TYPES and row["成果类别"] != "审查记录":
+            raise TaskArtifactError("P0风格评审卡的成果类别必须为审查记录")
+        if row["成果类型"] == STYLE_PACKAGE_TYPE and row["成果类别"] != "组合快照":
+            raise TaskArtifactError("风格锁定包的成果类别必须为组合快照")
+        if row["成果类型"] in STYLE_REVIEW_TYPES | {STYLE_PACKAGE_TYPE}:
+            _require_four_current_style_refs(
+                row, project_root, project_id,
+                require_current=status == "可交接" and not allow_stale_style,
+            )
         if Path(row["成果路径"]).is_absolute():
             raise TaskArtifactError(f"成果路径必须使用项目根目录内相对路径：{row['成果路径']}")
         artifact_path = _resolve_inside(project_root, row["成果路径"])
@@ -152,6 +228,67 @@ def _validate_business(
             raise TaskArtifactError(f"成果文件不存在：{artifact_path}")
         if row["内容指纹SHA256"] != _fingerprint(artifact_path):
             raise TaskArtifactError(f"成果内容指纹与文件不一致：{artifact_path}")
+        if status == "可交接" and row["成果类型"] in STYLE_REVIEW_TYPES:
+            content = artifact_path.read_text(encoding="utf-8-sig")
+            content_lines = {line.strip() for line in content.splitlines()}
+            business_status_lines = {
+                line
+                for line in (
+                "评审业务状态：待执行",
+                "评审业务状态：测试中",
+                "评审业务状态：待用户判断",
+                "评审业务状态：需返工",
+                "评审业务状态：已通过",
+                "评审业务状态：已停止",
+                )
+                if line in content_lines
+            }
+            if len(business_status_lines) != 1:
+                raise TaskArtifactError("P0风格评审卡必须填写唯一明确业务状态，才可激活为可交接")
+            required_review_lines = (
+                "四卡依赖检查：通过",
+                "四卡依赖形状：风格→美术→摄影→灯光，且每张下游只引用直接上游",
+                "Profile阶段状态：完整Profile均已关闭，仅使用四卡转译决定",
+            )
+            if any(line not in content_lines for line in required_review_lines):
+                raise TaskArtifactError("P0风格评审卡的四卡依赖或Profile关闭门未通过")
+        if status == "可交接" and row["成果类型"] == STYLE_PACKAGE_TYPE:
+            content = artifact_path.read_text(encoding="utf-8-sig")
+            content_lines = {line.strip() for line in content.splitlines()}
+            required_lines = (
+                "风格包状态：可用于批量生产",
+                "最终结论：可用于批量生产",
+                "四卡有效且依赖闭合：是",
+                "P0测试全部通过：是",
+                "无未决冲突与硬事实缺口：是",
+                "完整Profile状态：全部已关闭",
+            )
+            if any(line not in content_lines for line in required_lines):
+                raise TaskArtifactError("风格锁定包未满足批量放行业务门，不得激活为可交接")
+            review_refs = [
+                reference
+                for reference in _split_refs(row["上游精确引用集合"])
+                if reference in local_by_reference
+                and local_by_reference[reference]["成果类型"] in STYLE_REVIEW_TYPES
+            ]
+            if len(review_refs) != 1:
+                raise TaskArtifactError("风格锁定包必须精确引用一张任务成果索引中的P0风格评审卡")
+            review = local_by_reference[review_refs[0]]
+            if review["成果状态"] != "可交接" or review["当前有效"] != "是":
+                raise TaskArtifactError("风格锁定包引用的P0风格评审卡不是当前可交接版本")
+            review_path = _resolve_inside(project_root, review["成果路径"])
+            review_lines = {
+                line.strip()
+                for line in review_path.read_text(encoding="utf-8-sig").splitlines()
+            }
+            required_review_release_lines = (
+                "评审业务状态：已通过",
+                "必做测试是否全部通过：是",
+                "待处理专业冲突：无",
+                "顾问硬事实缺口：无",
+            )
+            if any(line not in review_lines for line in required_review_release_lines):
+                raise TaskArtifactError("风格锁定包引用的P0风格评审卡尚未满足批量放行证据门")
         references = _split_refs(row["上游精确引用集合"])
         self_reference = f"{row['成果ID']}@{row['成果版本']}"
         if self_reference in references:
@@ -205,10 +342,26 @@ def _validate_index(
     task_index: Path,
     project_id: str,
     project_root: Path,
+    allow_stale_style: bool = False,
+    allow_release_gate_change: bool = False,
 ) -> None:
     _schema_check(index_path, SCHEMA_PATH, project_id)
     _, rows = _read_csv(index_path)
-    _validate_business(rows, project_id, project_root, _task_pairs(task_index, project_id))
+    working = rows
+    if allow_release_gate_change:
+        working = [
+            {**row, "成果状态": "待复核", "当前有效": "否"}
+            if row["成果类型"] == STYLE_PACKAGE_TYPE
+            else row
+            for row in rows
+        ]
+    _validate_business(
+        working,
+        project_id,
+        project_root,
+        _task_pairs(task_index, project_id),
+        allow_stale_style,
+    )
 
 
 def _load_payload(path: Path) -> dict[str, Any]:
@@ -272,6 +425,8 @@ def _draft(
         if row.get("内容指纹SHA256") not in {"", fingerprint}:
             raise TaskArtifactError(f"载荷内容指纹与成果文件不一致：{artifact_path}")
         row["内容指纹SHA256"] = fingerprint
+        if row["成果类型"] in STYLE_REVIEW_TYPES | {STYLE_PACKAGE_TYPE}:
+            _require_four_current_style_refs(row, project_root, str(payload["项目ID"]), True)
         if same:
             latest = max(same, key=lambda item: _version_number(item["成果版本"]))
             identity_fields = (
@@ -310,6 +465,7 @@ def _activate_like(
     payload: dict[str, Any],
     rows: list[dict[str, str]],
     required_status: str,
+    project_root: Path,
 ) -> dict[str, Any]:
     _require_operation(payload)
     index = {(row["成果ID"], row["成果版本"]): row for row in rows}
@@ -329,6 +485,8 @@ def _activate_like(
             raise TaskArtifactError(f"{row['成果ID']} 已有其他当前有效版本，不得恢复待复核版本")
         if row["成果类别"] == "Prompt" and not str(payload["操作依据"]).startswith("用户原文："):
             raise TaskArtifactError("Prompt成果激活或恢复必须在操作依据中保存以“用户原文：”开头的明确放行原文")
+        if row["成果类型"] in STYLE_REVIEW_TYPES | {STYLE_PACKAGE_TYPE}:
+            _require_four_current_style_refs(row, project_root, str(payload["项目ID"]), True)
         selected.append(row)
     activated: list[str] = []
     replaced: list[str] = []
@@ -431,7 +589,13 @@ def _run(args: argparse.Namespace) -> dict[str, Any]:
             temp.unlink(missing_ok=True)
         return {"项目ID": args.project_id, "初始化结论": "已初始化空索引", "索引路径": str(index_path)}
     if args.command in {"check", "impact"}:
-        _validate_index(index_path, task_index, args.project_id, project_root)
+        _validate_index(
+            index_path,
+            task_index,
+            args.project_id,
+            project_root,
+            allow_stale_style=args.command == "impact",
+        )
     if args.command == "check":
         return {"项目ID": args.project_id, "检查结论": "通过"}
     if args.command == "impact":
@@ -469,14 +633,21 @@ def _run(args: argparse.Namespace) -> dict[str, Any]:
         }
     payload = _load_payload(Path(args.payload).resolve())
     project_id = str(payload.get("项目ID", ""))
-    _validate_index(index_path, task_index, project_id, project_root)
+    _validate_index(
+        index_path,
+        task_index,
+        project_id,
+        project_root,
+        allow_stale_style=args.command == "mark-review",
+        allow_release_gate_change=args.command == "mark-review",
+    )
     headers, rows = _read_csv(index_path)
     if args.command == "draft":
         result = _draft(payload, rows, project_root, headers)
     elif args.command == "activate":
-        result = _activate_like(payload, rows, "草案")
+        result = _activate_like(payload, rows, "草案", project_root)
     elif args.command == "confirm-review":
-        result = _activate_like(payload, rows, "待复核")
+        result = _activate_like(payload, rows, "待复核", project_root)
     elif args.command == "mark-review":
         result = _mark_review(payload, rows)
     else:

@@ -94,6 +94,21 @@ def validate() -> list[str]:
         missing_refs = sorted(required_refs - found_refs)
         if missing_refs:
             errors.append(f"{label}: 定义文件中缺少已发布源引用 {missing_refs}")
+        for version in versions:
+            if str(version) == current:
+                continue
+            history_files = [
+                (REPO_ROOT / str(value)).resolve()
+                for value in paths
+                if Path(str(value)).name.startswith(f"{source_id}@{version}")
+            ]
+            if len(history_files) != 1:
+                errors.append(f"{label}: 旧源版本必须有唯一只读历史定义：{source_id}@{version}")
+                continue
+            history_text = history_files[0].read_text(encoding="utf-8-sig")
+            for marker in ("状态：已被", "项目ID：", "源定义引用："):
+                if marker not in history_text:
+                    errors.append(f"{label}: 旧源定义不完整，缺少 {marker}：{source_id}@{version}")
     return errors
 
 

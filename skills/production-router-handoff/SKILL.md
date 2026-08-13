@@ -27,7 +27,7 @@ description: 根据项目数据绑定、当前阶段、资产类型和缺口选�
 - Prompt 装配 Skill 不重新导演；登记 Skill 不修改创作结果。
 - 上游资产改变时，把任务退回真正负责的 Skill，不在下游打补丁。
 - 登记新资产版本后读取资产状态传播表；任务切片不得包含 `待复核/停用/历史` 资产。待复核资产先交责任生产 Skill 比较，再由用户明确决定沿用或重做；只有 `approval-asset-registry` 可写状态和当前兼容依赖。
-- 项目长期创作基线、表演母档和声音身份卡只读取 `已生效 + 当前有效=是` 的精确项目版本。中央源/Profile版本与项目版本分开：项目只调用不升级源文件；专业Skill产出新草案，`creative-control-versioning` 是项目控制索引版本与状态的唯一写入者。
+- 项目长期创作基线、表演母档和声音身份卡只读取 `已生效 + 当前有效=是` 的精确项目版本。风格四卡只采用唯一直接上游链，顾问成果独立引用；P0评审和风格包只进入任务成果索引，旧四卡组合对应的可交接快照不得用于新任务。中央源/Profile版本与项目版本分开：项目只调用不升级源文件；专业Skill产出新草案，`creative-control-versioning` 是项目控制索引版本与状态的唯一写入者。
 - 分镜表只允许 `shot-visual-design` 写入；`cinematography-direction` 在逐镜阶段只输出审核卡，由镜头视觉设计写回不改变叙事功能的技术修正。
 - 分镜、正式 Prompt 与可用镜头遵循 [版本状态规则](references/shot-prompt-version-state.md)。Prompt 放行和生成结果可用是两个状态；不得用一个“通过”覆盖两者。
 - 生产对话只维护轻量检查点并继续生产，不写镜头生产进度表。只有用户明确要求同步时才输出同步包和专用记录对话激活指令，由 `generation-version-log` 写绑定项目的进度表。
@@ -65,7 +65,7 @@ description: 根据项目数据绑定、当前阶段、资产类型和缺口选�
 
 项目数据默认遵循 [项目数据三层契约](references/project-data-contract.md)：Markdown 卡片负责确认和摘要，CSV 负责多行记录，JSON Schema 负责结构检查。任务单由 `tasks/任务索引.csv` 追踪；没有专用权威索引的创作短卡、Prompt、任务数据集、组合快照和审查记录由 `tasks/任务成果索引.csv` 追踪，规则见 [任务成果索引](references/task-artifact-index.md)。
 
-下游交接前，先用 `scripts/update_task_artifact_index.py check` 检查任务—成果引用、版本链、路径、指纹和当前版本唯一性，再使用 `scripts/validate_project_data.py` 检查本次涉及的 CSV 与 Schema；真实项目必须传入项目 ID，并把 `数据校验报告.md` 写到绑定项目数据目录。只有成果为 `可交接 + 当前有效=是` 才能作为当前任务产物被下游精确引用。结构通过不代表资产批准、Prompt 放行、生成结果可用或其他业务引用有效。
+下游交接前，先用 `scripts/update_task_artifact_index.py check` 检查任务—成果引用、版本链、路径、指纹、当前版本唯一性，以及风格评审/快照所引四卡仍是当前组合，再使用 `scripts/validate_project_data.py` 检查本次涉及的 CSV 与 Schema；真实项目必须传入项目 ID，并把 `数据校验报告.md` 写到绑定项目数据目录。只有成果为 `可交接 + 当前有效=是` 才能作为当前任务产物被下游精确引用。结构通过不代表资产批准、Prompt 放行、生成结果可用或其他业务引用有效。
 
 ## 输出
 

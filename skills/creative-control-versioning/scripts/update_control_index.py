@@ -26,6 +26,18 @@ VERSION_RE = re.compile(r"^v([0-9]{3,})$")
 SOURCE_REF_RE = re.compile(r"^(CCS-[A-Z0-9-]+)@(v[0-9]{3,})$")
 PROFILE_REF_RE = re.compile(r"^(FP-[A-Z0-9-]+)@(v[0-9]+\.[0-9]+)$")
 TRANSACTION_RE = re.compile(r"^CCV-[A-Z0-9-]+$")
+TASK_ARTIFACT_REF_RE = re.compile(r"^[A-Z][A-Z0-9-]+@v[0-9]{3,}$")
+BASELINE_INPUTS_BY_SOURCE = {
+    "CCS-STYLE-LOCK@v001": (),
+    "CCS-STYLE-LOCK@v002": (),
+    "CCS-STYLE-LOCK@v003": (),
+    "CCS-ART-LOOKDEV@v001": ("项目风格锁定基线",),
+    "CCS-ART-LOOKDEV@v002": ("项目风格锁定基线",),
+    "CCS-CINEMATOGRAPHY@v001": ("项目风格锁定基线", "美术LookDev基线"),
+    "CCS-CINEMATOGRAPHY@v002": ("美术LookDev基线",),
+    "CCS-LIGHTING@v001": ("项目风格锁定基线", "美术LookDev基线", "全片摄影规则"),
+    "CCS-LIGHTING@v002": ("全片摄影规则",),
+}
 
 
 KINDS = {
@@ -59,8 +71,8 @@ KINDS = {
         "required_baseline_inputs": {
             "项目风格锁定基线": (),
             "美术LookDev基线": ("项目风格锁定基线",),
-            "全片摄影规则": ("项目风格锁定基线", "美术LookDev基线"),
-            "项目灯光基线": ("项目风格锁定基线", "美术LookDev基线", "全片摄影规则"),
+            "全片摄影规则": ("美术LookDev基线",),
+            "项目灯光基线": ("全片摄影规则",),
         },
     },
     "acting": {
@@ -211,6 +223,23 @@ def _split_refs(value: str) -> list[str]:
     return values
 
 
+def _required_baseline_inputs(row: dict[str, str], config: dict[str, Any]) -> tuple[str, ...]:
+    source_ref = row[config["source"]]
+    required = BASELINE_INPUTS_BY_SOURCE.get(source_ref)
+    if required is None:
+        raise ControlVersionError(f"未定义该中央源版本的长期基线依赖契约：{source_ref}")
+    return required
+
+
+def _allows_consultant_field(row: dict[str, str]) -> bool:
+    return row["源定义引用"] in {
+        "CCS-STYLE-LOCK@v003",
+        "CCS-ART-LOOKDEV@v002",
+        "CCS-CINEMATOGRAPHY@v002",
+        "CCS-LIGHTING@v002",
+    }
+
+
 FINGERPRINT_IGNORED_PREFIXES = (
     "项目卡版本：",
     "上一项目卡版本：",
@@ -323,6 +352,9 @@ def _validate_source_and_profiles(row: dict[str, str], config: dict[str, Any]) -
         for reference in _split_refs(row[config["input_refs"]]):
             if re.fullmatch(r"[A-Z][A-Z0-9-]+@v[0-9]{3,}", reference) is None:
                 raise ControlVersionError(f"输入控制卡引用必须精确到 ID@v###：{reference}")
+        for reference in _split_refs(row["顾问任务成果引用集合"]):
+            if TASK_ARTIFACT_REF_RE.fullmatch(reference) is None:
+                raise ControlVersionError(f"顾问任务成果引用必须精确到成果 ID@v###：{reference}")
 
 
 def _validate_business(
@@ -338,6 +370,13 @@ def _validate_business(
         if row["项目ID"] != project_id:
             raise ControlVersionError(f"发现其他项目数据：{row['项目ID']}")
         _validate_source_and_profiles(row, config)
+        if config["required_baseline_inputs"] is not None:
+            consultant_refs = row["顾问任务成果引用集合"]
+            if _allows_consultant_field(row):
+                if not consultant_refs:
+                    raise ControlVersionError("当前风格基线源必须填写顾问任务成果引用集合；无顾问时写无")
+            elif consultant_refs not in {"", "不适用"}:
+                raise ControlVersionError("历史风格基线源版本不能补写当时不存在的顾问任务成果字段")
         if config["id"] == "声音身份卡ID":
             person_reference = row.get("关联人物正式资产ID与版本", "")
             creature_reference = row.get("关联生物怪物正式资产ID与版本", "")
@@ -394,7 +433,7 @@ def _validate_business(
             if f"{row[config['id']]}@{row[config['version']]}" in references:
                 raise ControlVersionError(f"{row[config['id']]} 不得引用自身")
             linked_baselines = [by_reference[reference] for reference in references if reference in by_reference]
-            required_types = config["required_baseline_inputs"][row["控制类型"]]
+            required_types = _required_baseline_inputs(row, config)
             linked_types = [item["控制类型"] for item in linked_baselines]
             invalid_types = [control_type for control_type in linked_types if control_type not in required_types]
             if invalid_types:
@@ -497,7 +536,7 @@ def _draft(payload: dict[str, Any], rows: list[dict[str, str]], config: dict[str
                 for item in rows
             }
             input_references = _split_refs(row[config["input_refs"]])
-            required_types = config["required_baseline_inputs"][row["控制类型"]]
+            required_types = _required_baseline_inputs(row, config)
             for required_type in required_types:
                 matches = [
                     known_rows[reference]
@@ -508,6 +547,10 @@ def _draft(payload: dict[str, Any], rows: list[dict[str, str]], config: dict[str
                     raise ControlVersionError(f"新草案必须精确引用一张{required_type}当前生效版")
                 if matches[0]["当前有效"] != "是" and matches[0][config["status"]] != "待确认":
                     raise ControlVersionError(f"新草案引用的{required_type}不是当前生效版或待确认新链")
+            known_input_references = [reference for reference in input_references if reference in known_rows]
+            if len(known_input_references) != len(input_references):
+                unknown = [reference for reference in input_references if reference not in known_rows]
+                raise ControlVersionError(f"长期基线输入集合只能引用本项目已入表的直接上游控制卡：{unknown}")
         rows.append(row)
         existing.add((card_id, version))
         added.append(f"{card_id}@{version}")
@@ -562,10 +605,32 @@ def _activate(payload: dict[str, Any], rows: list[dict[str, str]], config: dict[
     return {"已生效版本": activated, "已替代版本": replaced, "_changed": changed}
 
 
+def _would_break_active_dependents(
+    rows: list[dict[str, str]],
+    target_keys: set[tuple[str, str]],
+    config: dict[str, Any],
+) -> list[str]:
+    if config["required_baseline_inputs"] is None:
+        return []
+    target_references = {f"{card_id}@{version}" for card_id, version in target_keys}
+    broken: list[str] = []
+    for row in rows:
+        key = (row[config["id"]], row[config["version"]])
+        if key in target_keys or row["当前有效"] != "是":
+            continue
+        if target_references.intersection(_split_refs(row[config["input_refs"]])):
+            broken.append(f"{row[config['id']]}@{row[config['version']]}")
+    return broken
+
+
 def _invalidate(payload: dict[str, Any], rows: list[dict[str, str]], config: dict[str, Any]) -> dict[str, Any]:
     _required_text(payload, ("项目ID", "事务ID", "操作日期", "用户操作原文"))
     targets = _targets(payload)
     index = {(row[config["id"]], row[config["version"]]): row for row in rows}
+    target_keys = {(target["卡片ID"], target["版本"]) for target in targets}
+    broken = _would_break_active_dependents(rows, target_keys, config)
+    if broken:
+        raise ControlVersionError(f"停用会留下引用已失效上游的当前生效下游；必须把完整受影响链一起停用：{broken}")
     invalidated: list[str] = []
     changed: list[tuple[str, str]] = []
     for target in targets:

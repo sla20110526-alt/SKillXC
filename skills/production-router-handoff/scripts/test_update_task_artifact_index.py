@@ -49,6 +49,29 @@ class TaskArtifactTransactionTests(unittest.TestCase):
             "记录日期", "复核日期",
         ]
         self._write_csv(self.artifact_index, self.artifact_headers, [])
+        self.control_index = self.root / "creative-control/项目创作基线索引.csv"
+        self.control_index.parent.mkdir()
+        control_schema = json.loads(MODULE.CONTROL_SCHEMA_PATH.read_text(encoding="utf-8-sig"))
+        control_headers = list(control_schema["properties"])
+        controls: list[dict[str, str]] = []
+        for card_id, control_type, source, input_refs in (
+            ("CC-STYLE-001", "项目风格锁定基线", "CCS-STYLE-LOCK@v003", "无"),
+            ("CC-ART-001", "美术LookDev基线", "CCS-ART-LOOKDEV@v002", "CC-STYLE-001@v001"),
+            ("CC-CIN-001", "全片摄影规则", "CCS-CINEMATOGRAPHY@v002", "CC-ART-001@v001"),
+            ("CC-LGT-001", "项目灯光基线", "CCS-LIGHTING@v002", "CC-CIN-001@v001"),
+        ):
+            controls.append({
+                "项目ID": "PRJ-TEST", "控制卡ID": card_id, "控制类型": control_type,
+                "控制对象": "全项目", "项目卡版本": "v001", "上一项目卡版本": "不适用",
+                "控制卡状态": "已生效", "当前有效": "是", "适用范围": "全项目",
+                "项目锁定卡版本": "v001", "剧本内容版本": "script-v1", "源定义引用": source,
+                "Profile引用集合": "无", "输入控制卡引用集合": input_refs,
+                "顾问任务成果引用集合": "无", "控制卡路径": f"creative-control/{card_id}@v001.md",
+                "内容指纹SHA256": "0" * 64, "内容变更摘要": "测试",
+                "状态依据类型": "用户明确确认", "状态依据原文": "确认",
+                "生效依据原文": "确认", "记录日期": "2026-08-13", "生效日期": "2026-08-13",
+            })
+        self._write_csv(self.control_index, control_headers, controls)
         self.transaction_number = 0
 
     def tearDown(self) -> None:
@@ -140,6 +163,222 @@ class TaskArtifactTransactionTests(unittest.TestCase):
         self.assertEqual(result["检查结论"], "通过")
         self.assertEqual({row["来源任务ID"] for row in rows}, {"TASK-001"})
         self.assertTrue(all(row["成果状态"] == "可交接" and row["当前有效"] == "是" for row in rows))
+
+    def test_style_review_requires_review_category_four_cards_and_conclusion(self) -> None:
+        review_path = self._artifact_file(
+            "style-review@v001.md",
+            "\n".join((
+                "# 风格测试与评审卡", "评审业务状态：已通过", "四卡依赖检查：通过",
+                "四卡依赖形状：风格→美术→摄影→灯光，且每张下游只引用直接上游",
+                "Profile阶段状态：完整Profile均已关闭，仅使用四卡转译决定",
+                "必做测试是否全部通过：是", "待处理专业冲突：无", "顾问硬事实缺口：无", "",
+            )),
+        )
+        row = self._row(
+            "SLR-PRJ-TEST", "v001", review_path,
+            upstream="CC-STYLE-001@v001；CC-ART-001@v001；CC-CIN-001@v001；CC-LGT-001@v001",
+        )
+        row["成果类别"] = "审查记录"
+        row["成果类型"] = "风格测试与评审卡"
+        self._draft(row)
+        self._status("activate", ("SLR-PRJ-TEST", "v001"))
+        self.assertEqual(self._read_csv(self.artifact_index)[0]["成果状态"], "可交接")
+
+    def test_p0_review_plan_can_be_handed_off_before_generation(self) -> None:
+        review_path = self._artifact_file(
+            "style-review-plan@v001.md",
+            "\n".join((
+                "# 风格测试与评审卡", "评审业务状态：待执行", "四卡依赖检查：通过",
+                "四卡依赖形状：风格→美术→摄影→灯光，且每张下游只引用直接上游",
+                "Profile阶段状态：完整Profile均已关闭，仅使用四卡转译决定", "",
+            )),
+        )
+        row = self._row(
+            "SLR-PRJ-TEST", "v001", review_path,
+            upstream="CC-STYLE-001@v001；CC-ART-001@v001；CC-CIN-001@v001；CC-LGT-001@v001",
+        )
+        row["成果类别"] = "审查记录"
+        row["成果类型"] = "风格测试与评审卡"
+        self._draft(row)
+        self._status("activate", ("SLR-PRJ-TEST", "v001"))
+        saved = self._read_csv(self.artifact_index)[0]
+        self.assertEqual((saved["成果状态"], saved["当前有效"]), ("可交接", "是"))
+
+    def test_style_package_requires_release_gate(self) -> None:
+        review_path = self._artifact_file(
+            "style-review-for-package@v001.md",
+            "\n".join((
+                "# 风格测试与评审卡", "评审业务状态：已通过", "四卡依赖检查：通过",
+                "四卡依赖形状：风格→美术→摄影→灯光，且每张下游只引用直接上游",
+                "Profile阶段状态：完整Profile均已关闭，仅使用四卡转译决定", "",
+            )),
+        )
+        review = self._row(
+            "SLR-PRJ-TEST", "v001", review_path,
+            upstream="CC-STYLE-001@v001；CC-ART-001@v001；CC-CIN-001@v001；CC-LGT-001@v001",
+        )
+        review["成果类别"] = "审查记录"
+        review["成果类型"] = "风格测试与评审卡"
+        self._draft(review)
+        self._status("activate", ("SLR-PRJ-TEST", "v001"))
+        package_path = self._artifact_file(
+            "style-package@v001.md",
+            "\n".join((
+                "# 风格锁定包交付卡",
+                "风格包状态：可用于批量生产",
+                "四卡有效且依赖闭合：是",
+                "P0测试全部通过：否",
+                "无未决冲突与硬事实缺口：是",
+                "完整Profile状态：全部已关闭",
+                "最终结论：不可放行",
+                "",
+            )),
+        )
+        row = self._row(
+            "SLP-PRJ-TEST", "v001", package_path,
+            upstream="CC-STYLE-001@v001；CC-ART-001@v001；CC-CIN-001@v001；CC-LGT-001@v001；SLR-PRJ-TEST@v001",
+        )
+        row["成果类别"] = "组合快照"
+        row["成果类型"] = "风格锁定包"
+        self._draft(row)
+        before = self.artifact_index.read_bytes()
+        with self.assertRaisesRegex(MODULE.TaskArtifactError, "未满足批量放行业务门"):
+            self._status("activate", ("SLP-PRJ-TEST", "v001"))
+        self.assertEqual(self.artifact_index.read_bytes(), before)
+
+    def test_style_package_requires_passing_review_evidence(self) -> None:
+        review_path = self._artifact_file(
+            "style-review-returned@v001.md",
+            "\n".join((
+                "# 风格测试与评审卡", "评审业务状态：需返工", "四卡依赖检查：通过",
+                "四卡依赖形状：风格→美术→摄影→灯光，且每张下游只引用直接上游",
+                "Profile阶段状态：完整Profile均已关闭，仅使用四卡转译决定",
+                "必做测试是否全部通过：否", "待处理专业冲突：无", "顾问硬事实缺口：无", "",
+            )),
+        )
+        review = self._row(
+            "SLR-PRJ-TEST", "v001", review_path,
+            upstream="CC-STYLE-001@v001；CC-ART-001@v001；CC-CIN-001@v001；CC-LGT-001@v001",
+        )
+        review["成果类别"] = "审查记录"
+        review["成果类型"] = "风格测试与评审卡"
+        self._draft(review)
+        self._status("activate", ("SLR-PRJ-TEST", "v001"))
+        package_path = self._artifact_file(
+            "style-package-false-claim@v001.md",
+            "\n".join((
+                "# 风格锁定包交付卡", "风格包状态：可用于批量生产",
+                "四卡有效且依赖闭合：是", "P0测试全部通过：是",
+                "无未决冲突与硬事实缺口：是", "完整Profile状态：全部已关闭",
+                "最终结论：可用于批量生产", "",
+            )),
+        )
+        package = self._row(
+            "SLP-PRJ-TEST", "v001", package_path,
+            upstream="CC-STYLE-001@v001；CC-ART-001@v001；CC-CIN-001@v001；CC-LGT-001@v001；SLR-PRJ-TEST@v001",
+        )
+        package["成果类别"] = "组合快照"
+        package["成果类型"] = "风格锁定包"
+        self._draft(package)
+        before = self.artifact_index.read_bytes()
+        with self.assertRaisesRegex(MODULE.TaskArtifactError, "尚未满足批量放行证据门"):
+            self._status("activate", ("SLP-PRJ-TEST", "v001"))
+        self.assertEqual(self.artifact_index.read_bytes(), before)
+
+    def test_style_package_source_change_marks_old_snapshot_review(self) -> None:
+        review_path = self._artifact_file(
+            "style-review-current@v001.md",
+            "\n".join((
+                "# 风格测试与评审卡", "评审业务状态：已通过", "四卡依赖检查：通过",
+                "四卡依赖形状：风格→美术→摄影→灯光，且每张下游只引用直接上游",
+                "Profile阶段状态：完整Profile均已关闭，仅使用四卡转译决定",
+                "必做测试是否全部通过：是", "待处理专业冲突：无", "顾问硬事实缺口：无", "",
+            )),
+        )
+        review = self._row(
+            "SLR-PRJ-TEST", "v001", review_path,
+            upstream="CC-STYLE-001@v001；CC-ART-001@v001；CC-CIN-001@v001；CC-LGT-001@v001",
+        )
+        review["成果类别"] = "审查记录"
+        review["成果类型"] = "风格测试与评审卡"
+        self._draft(review)
+        self._status("activate", ("SLR-PRJ-TEST", "v001"))
+        package_path = self._artifact_file(
+            "style-package-valid@v001.md",
+            "\n".join((
+                "# 风格锁定包交付卡",
+                "风格包状态：可用于批量生产",
+                "四卡有效且依赖闭合：是",
+                "P0测试全部通过：是",
+                "无未决冲突与硬事实缺口：是",
+                "完整Profile状态：全部已关闭",
+                "最终结论：可用于批量生产",
+                "",
+            )),
+        )
+        row = self._row(
+            "SLP-PRJ-TEST", "v001", package_path,
+            upstream="CC-STYLE-001@v001；CC-ART-001@v001；CC-CIN-001@v001；CC-LGT-001@v001；SLR-PRJ-TEST@v001",
+        )
+        row["成果类别"] = "组合快照"
+        row["成果类型"] = "风格锁定包"
+        self._draft(row)
+        self._status("activate", ("SLP-PRJ-TEST", "v001"))
+        controls = self._read_csv(self.control_index)
+        art = next(item for item in controls if item["控制卡ID"] == "CC-ART-001")
+        art["控制卡状态"] = "已替代"
+        art["当前有效"] = "否"
+        art_v002 = dict(art)
+        art_v002.update({
+            "项目卡版本": "v002", "上一项目卡版本": "v001",
+            "控制卡状态": "已生效", "当前有效": "是",
+        })
+        controls.append(art_v002)
+        cinema = next(item for item in controls if item["控制卡ID"] == "CC-CIN-001")
+        cinema["输入控制卡引用集合"] = "CC-ART-001@v002"
+        self._write_csv(self.control_index, list(controls[0]), controls)
+        with self.assertRaisesRegex(MODULE.TaskArtifactError, "旧成果不得用于新任务"):
+            self._run("check", project_id="PRJ-TEST")
+        impact = self._run(
+            "impact", project_id="PRJ-TEST", upstream_ref="CC-ART-001@v001",
+        )
+        self.assertEqual(
+            [item["成果"] for item in impact["潜在受影响成果"]],
+            ["SLR-PRJ-TEST@v001", "SLP-PRJ-TEST@v001"],
+        )
+        self._status(
+            "mark-review",
+            ("SLR-PRJ-TEST", "v001"),
+            ("SLP-PRJ-TEST", "v001"),
+        )
+        saved = self._read_csv(self.artifact_index)
+        self.assertTrue(
+            all((row["成果状态"], row["当前有效"]) == ("待复核", "否") for row in saved)
+        )
+        with self.assertRaisesRegex(MODULE.TaskArtifactError, "旧成果不得用于新任务"):
+            self._status("confirm-review", ("SLP-PRJ-TEST", "v001"))
+
+    def test_style_artifact_rejects_malformed_current_control_chain(self) -> None:
+        controls = self._read_csv(self.control_index)
+        cinema = next(item for item in controls if item["控制类型"] == "全片摄影规则")
+        cinema["输入控制卡引用集合"] = "CC-STYLE-001@v001；CC-ART-001@v001"
+        self._write_csv(self.control_index, list(controls[0]), controls)
+        review_path = self._artifact_file(
+            "bad-chain-review@v001.md",
+            "\n".join((
+                "# 风格测试与评审卡", "评审业务状态：已通过", "四卡依赖检查：通过",
+                "四卡依赖形状：风格→美术→摄影→灯光，且每张下游只引用直接上游",
+                "Profile阶段状态：完整Profile均已关闭，仅使用四卡转译决定", "",
+            )),
+        )
+        row = self._row(
+            "SLR-BAD-CHAIN", "v001", review_path,
+            upstream="CC-STYLE-001@v001；CC-ART-001@v001；CC-CIN-001@v001；CC-LGT-001@v001",
+        )
+        row["成果类别"] = "审查记录"
+        row["成果类型"] = "风格测试与评审卡"
+        with self.assertRaisesRegex(MODULE.TaskArtifactError, "唯一直接上游链"):
+            self._draft(row)
 
     def test_init_creates_an_empty_valid_artifact_index(self) -> None:
         self.artifact_index.unlink()

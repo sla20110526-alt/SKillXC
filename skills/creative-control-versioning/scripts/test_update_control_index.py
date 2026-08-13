@@ -32,7 +32,7 @@ class ControlVersionTests(unittest.TestCase):
         self.sequence += 1
         return f"CCV-TEST-{self.sequence:03d}"
 
-    def card(self, card_id: str, version: str, body: str, source: str = "CCS-STYLE-LOCK@v002") -> str:
+    def card(self, card_id: str, version: str, body: str, source: str = "CCS-STYLE-LOCK@v003") -> str:
         relative = f"creative-control/baselines/{card_id}@{version}.md"
         path = self.root / relative
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -70,7 +70,7 @@ class ControlVersionTests(unittest.TestCase):
         card_id: str,
         version: str,
         body: str,
-        source: str = "CCS-STYLE-LOCK@v002",
+        source: str = "CCS-STYLE-LOCK@v003",
         control_object: str = "全项目",
         control_type: str = "项目风格锁定基线",
         input_refs: str = "无",
@@ -91,6 +91,7 @@ class ControlVersionTests(unittest.TestCase):
             "源定义引用": source,
             "Profile引用集合": "无",
             "输入控制卡引用集合": input_refs,
+            "顾问任务成果引用集合": "无",
             "控制卡路径": self.card(card_id, version, body, source),
             "内容指纹SHA256": "",
             "内容变更摘要": body,
@@ -312,7 +313,7 @@ class ControlVersionTests(unittest.TestCase):
             "CC-ART-001",
             "v001",
             "美术规则",
-            source="CCS-ART-LOOKDEV@v001",
+            source="CCS-ART-LOOKDEV@v002",
             control_type="美术LookDev基线",
             input_refs="CC-STYLE-001@v001",
         )
@@ -331,7 +332,7 @@ class ControlVersionTests(unittest.TestCase):
                 "CC-ART-001",
                 "v001",
                 "美术规则",
-                source="CCS-ART-LOOKDEV@v001",
+                source="CCS-ART-LOOKDEV@v002",
                 control_type="美术LookDev基线",
                 input_refs="CC-STYLE-001@v001",
             )
@@ -354,7 +355,7 @@ class ControlVersionTests(unittest.TestCase):
                 "CC-ART-001",
                 "v001",
                 "美术A",
-                source="CCS-ART-LOOKDEV@v001",
+                source="CCS-ART-LOOKDEV@v002",
                 control_type="美术LookDev基线",
                 input_refs="CC-STYLE-001@v001",
             )
@@ -366,7 +367,7 @@ class ControlVersionTests(unittest.TestCase):
                 "CC-ART-001",
                 "v002",
                 "美术B",
-                source="CCS-ART-LOOKDEV@v001",
+                source="CCS-ART-LOOKDEV@v002",
                 control_type="美术LookDev基线",
                 input_refs="CC-STYLE-001@v002",
             )
@@ -393,6 +394,116 @@ class ControlVersionTests(unittest.TestCase):
             {(row["控制卡ID"], row["项目卡版本"]) for row in active},
             {("CC-STYLE-001", "v002"), ("CC-ART-001", "v002")},
         )
+
+    def test_four_card_chain_accepts_only_direct_upstream(self) -> None:
+        style = self.row("CC-STYLE-001", "v001", "风格")
+        art = self.row(
+            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v002",
+            control_type="美术LookDev基线", input_refs="CC-STYLE-001@v001",
+        )
+        cinema = self.row(
+            "CC-CIN-001", "v001", "摄影", source="CCS-CINEMATOGRAPHY@v002",
+            control_type="全片摄影规则", input_refs="CC-ART-001@v001",
+        )
+        light = self.row(
+            "CC-LGT-001", "v001", "灯光", source="CCS-LIGHTING@v002",
+            control_type="项目灯光基线", input_refs="CC-CIN-001@v001",
+        )
+        self.draft(style, art, cinema, light)
+        result = self.execute(
+            "activate",
+            {
+                "项目ID": "PRJ-001",
+                "事务ID": self.transaction_id(),
+                "操作日期": "2026-08-14",
+                "目标": [
+                    {"卡片ID": "CC-STYLE-001", "版本": "v001"},
+                    {"卡片ID": "CC-ART-001", "版本": "v001"},
+                    {"卡片ID": "CC-CIN-001", "版本": "v001"},
+                    {"卡片ID": "CC-LGT-001", "版本": "v001"},
+                ],
+                "用户操作原文": "确认四卡按直接上游链生效",
+            },
+        )
+        self.assertEqual(len(result["已生效版本"]), 4)
+
+    def test_cinematography_rejects_repeated_ancestor_reference(self) -> None:
+        self.draft(self.row("CC-STYLE-001", "v001", "风格"))
+        self.state("activate", "CC-STYLE-001", "v001", "确认风格")
+        self.draft(
+            self.row(
+                "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v002",
+                control_type="美术LookDev基线", input_refs="CC-STYLE-001@v001",
+            )
+        )
+        self.state("activate", "CC-ART-001", "v001", "确认美术")
+        cinema = self.row(
+            "CC-CIN-001", "v001", "摄影", source="CCS-CINEMATOGRAPHY@v002",
+            control_type="全片摄影规则",
+            input_refs="CC-STYLE-001@v001；CC-ART-001@v001",
+        )
+        with self.assertRaisesRegex(CONTROL.ControlVersionError, "下游或不允许"):
+            self.draft(cinema)
+
+    def test_baseline_rejects_task_artifact_in_control_dependencies(self) -> None:
+        self.draft(self.row("CC-STYLE-001", "v001", "风格"))
+        self.state("activate", "CC-STYLE-001", "v001", "确认风格")
+        art = self.row(
+            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v002",
+            control_type="美术LookDev基线",
+            input_refs="CC-STYLE-001@v001；CONS-HISTORY-001@v001",
+        )
+        with self.assertRaisesRegex(CONTROL.ControlVersionError, "本项目已入表的直接上游"):
+            self.draft(art)
+
+    def test_consultant_reference_uses_separate_field(self) -> None:
+        self.draft(self.row("CC-STYLE-001", "v001", "风格"))
+        self.state("activate", "CC-STYLE-001", "v001", "确认风格")
+        art = self.row(
+            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v002",
+            control_type="美术LookDev基线", input_refs="CC-STYLE-001@v001",
+        )
+        art["顾问任务成果引用集合"] = "CONS-HISTORY-001@v001"
+        self.draft(art)
+        self.state("activate", "CC-ART-001", "v001", "确认含顾问结论的美术基线")
+        self.assertEqual(self.rows()[-1]["顾问任务成果引用集合"], "CONS-HISTORY-001@v001")
+
+    def test_invalidate_upstream_requires_complete_active_chain(self) -> None:
+        style = self.row("CC-STYLE-001", "v001", "风格")
+        art = self.row(
+            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v002",
+            control_type="美术LookDev基线", input_refs="CC-STYLE-001@v001",
+        )
+        self.draft(style, art)
+        self.execute(
+            "activate",
+            {
+                "项目ID": "PRJ-001", "事务ID": self.transaction_id(),
+                "操作日期": "2026-08-14",
+                "目标": [
+                    {"卡片ID": "CC-STYLE-001", "版本": "v001"},
+                    {"卡片ID": "CC-ART-001", "版本": "v001"},
+                ],
+                "用户操作原文": "确认风格与美术",
+            },
+        )
+        before = self.index.read_bytes()
+        with self.assertRaisesRegex(CONTROL.ControlVersionError, "完整受影响链一起停用"):
+            self.state("invalidate", "CC-STYLE-001", "v001", "只停用上游")
+        self.assertEqual(self.index.read_bytes(), before)
+        result = self.execute(
+            "invalidate",
+            {
+                "项目ID": "PRJ-001", "事务ID": self.transaction_id(),
+                "操作日期": "2026-08-15",
+                "目标": [
+                    {"卡片ID": "CC-STYLE-001", "版本": "v001"},
+                    {"卡片ID": "CC-ART-001", "版本": "v001"},
+                ],
+                "用户操作原文": "确认完整链停用",
+            },
+        )
+        self.assertEqual(len(result["已失效版本"]), 2)
 
     def test_acting_and_voice_use_same_version_transaction(self) -> None:
         for kind in ("acting", "voice"):
