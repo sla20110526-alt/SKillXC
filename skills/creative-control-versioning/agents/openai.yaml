@@ -1,0 +1,6 @@
+interface:
+  display_name: "创作控制版本管理"
+  short_description: "分离中央源与项目控制卡版本，并管理项目卡确认生效。"
+  default_prompt: "使用 $creative-control-versioning 核对中央源引用，并版本化项目重要创作控制卡。"
+policy:
+  allow_implicit_invocation: false

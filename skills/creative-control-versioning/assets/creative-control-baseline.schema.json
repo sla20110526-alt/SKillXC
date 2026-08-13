@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "项目创作基线索引",
+  "type": "object",
+  "required": ["项目ID", "控制卡ID", "控制类型", "控制对象", "项目卡版本", "上一项目卡版本", "控制卡状态", "当前有效", "适用范围", "项目锁定卡版本", "剧本内容版本", "源定义引用", "Profile引用集合", "输入控制卡引用集合", "控制卡路径", "内容指纹SHA256", "内容变更摘要", "状态依据类型", "状态依据原文", "生效依据原文", "记录日期", "生效日期"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "控制卡ID": {"type": "string", "pattern": "^CC-[A-Z0-9-]+$"},
+    "控制类型": {"type": "string", "enum": ["项目风格锁定基线", "美术LookDev基线", "全片摄影规则", "项目灯光基线"]},
+    "控制对象": {"type": "string", "minLength": 1},
+    "项目卡版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "上一项目卡版本": {"type": "string", "minLength": 1},
+    "控制卡状态": {"type": "string", "enum": ["待确认", "已生效", "已替代", "已失效"]},
+    "当前有效": {"type": "string", "enum": ["是", "否"]},
+    "适用范围": {"type": "string", "minLength": 1},
+    "项目锁定卡版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "剧本内容版本": {"type": "string", "minLength": 1},
+    "源定义引用": {"type": "string", "pattern": "^CCS-[A-Z0-9-]+@v[0-9]{3,}$"},
+    "Profile引用集合": {"type": "string", "minLength": 1},
+    "输入控制卡引用集合": {"type": "string", "minLength": 1},
+    "控制卡路径": {"type": "string", "minLength": 1},
+    "内容指纹SHA256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "内容变更摘要": {"type": "string", "minLength": 1},
+    "状态依据类型": {"type": "string", "enum": ["系统草案", "用户明确确认", "版本替代", "用户明确停用"]},
+    "状态依据原文": {"type": "string", "minLength": 1},
+    "生效依据原文": {"type": "string", "minLength": 1},
+    "记录日期": {"type": "string", "minLength": 1},
+    "生效日期": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}

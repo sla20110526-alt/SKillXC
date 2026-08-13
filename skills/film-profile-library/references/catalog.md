@@ -58,6 +58,6 @@
 
 ## 目录维护规则
 
-- 新增、重命名、暂停、替代或升级卡片时，必须同步本目录并运行 `scripts/validate_profiles.py`。
+- 新增、重命名、暂停、替代或升级卡片时，必须同步本目录、[`profile-version-history.json`](profile-version-history.json)，并运行 `scripts/validate_profiles.py`。
 - 目录是选择入口，不是证据来源；逐条来源登记在 [来源索引](sources.md)。
 - 同一主体可以有不同作品研究卡，但必须使用不同 ProfileID，并明确不能扩大为主体的固定风格。

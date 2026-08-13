@@ -9,6 +9,7 @@
 - 分镜表只有 `shot-visual-design` 可以写入；摄影指导的逐镜意见经审核卡返回，由镜头视觉设计写回。
 - Prompt 放行与生成结果可用分开记录；生产对话只回显轻量检查点，独立记录对话按用户明确授权同步项目进度。
 - 下游只读取当前任务需要的最小数据切片。
+- 中央源定义、Profile 与项目重要创作控制卡使用相互独立的版本；中央源或 Profile 升级不自动改写既有项目卡。
 - 项目数据使用人读 Markdown 卡、CSV 多行记录和 JSON Schema 检查；单次创作短卡由任务索引追踪，不重复制造专用 CSV。
 - 每次结构化数据交接附校验报告；结构通过不替代用户批准、正式登记和业务复核。
 
@@ -21,6 +22,7 @@
 | `asset-demand-plan` | 候选资产、预留正式资产ID、剧本事实 | 批次计划、需求/依赖表、校验报告 | 路由交接 |
 | `production-router-handoff` | 当前阶段、项目绑定、任务和缺口 | Skill确认、任务单、任务索引、激活指令、校验报告 | 对应创作 Skill |
 | `approval-asset-registry` | 项目绑定；用户明确登记指令；唯一候选 | 绑定卡/索引、登记回执、正式/可调用表、校验报告 | 就绪审计、分镜 |
+| `creative-control-versioning` | 专业Skill产生的项目控制卡草案；中央源/Profile精确引用；用户确认原文 | 项目基线/表演母档/声音身份的版本与生效事务、备份和校验 | 专业生产、就绪审计；不生产创作内容 |
 | `generation-version-log` | 用户明确同步或详细记录要求 | 镜头生产进度表；按需生成/失败详表；校验报告 | 项目进度、复盘；不进入资产登记 |
 | `continuity-readiness-audit` | 正式登记与调用表、剧本状态 | 审计卡、场次/生成单元表、校验报告 | 分镜或返回补资产 |
 
@@ -64,6 +66,7 @@
 |---|---|
 | 剧本出处或状态不清 | `script-truth-index` |
 | 项目目录未绑定或跨项目数据混用 | `approval-asset-registry` 重建或复核绑定卡 |
+| 项目重要创作控制卡版本、中央源/Profile引用或生效状态冲突 | 内容返回责任专业Skill；版本和状态交 `creative-control-versioning` |
 | 缺少资产或父子版本错误 | `asset-demand-plan` / 对应资产生产 Skill |
 | 人脸、场景、道具本体错误 | 对应资产生产 Skill + `image-prompt-production` |
 | 缺少场景机位视图 | `location-spatial-production` 补做 SV3 |

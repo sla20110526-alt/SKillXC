@@ -47,6 +47,11 @@
       "card": "skills/sound-voice-direction/assets/角色声音身份卡模板.md"
     },
     {
+      "template": "skills/creative-control-versioning/assets/项目创作基线索引模板.csv",
+      "schema": "skills/creative-control-versioning/assets/creative-control-baseline.schema.json",
+      "card": "skills/creative-control-versioning/assets/创作控制版本操作卡模板.md"
+    },
+    {
       "template": "skills/production-router-handoff/assets/任务索引模板.csv",
       "schema": "skills/production-router-handoff/assets/handoff-task.schema.json",
       "card": "skills/production-router-handoff/assets/创作任务单模板.md"

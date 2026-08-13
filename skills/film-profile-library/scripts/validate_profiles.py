@@ -234,6 +234,7 @@ def validate_library(library_root: Path) -> dict[str, Any]:
     schema_path = references / "profile-card-schema.json"
     catalog_path = references / "catalog.md"
     sources_path = references / "sources.md"
+    history_path = references / "profile-version-history.json"
     errors: list[str] = []
     try:
         schema = _read_json(schema_path)
@@ -301,9 +302,54 @@ def validate_library(library_root: Path) -> dict[str, Any]:
             if record.get(field) != item[field]:
                 errors.append(f"catalog.md: {item['ProfileID']} 的 {field} 与卡片不一致")
 
+    history_count = 0
+    try:
+        history_payload = _read_json(history_path)
+        history_records = history_payload.get("profiles")
+        if not isinstance(history_records, list):
+            errors.append("profile-version-history.json: profiles 必须是数组")
+            history_records = []
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        history_records = []
+        errors.append(f"无法读取 profile-version-history.json：{exc}")
+    history: dict[str, list[str]] = {}
+    for index, item in enumerate(history_records):
+        if not isinstance(item, dict):
+            errors.append(f"profile-version-history.json: 第 {index + 1} 项必须是对象")
+            continue
+        profile_id = item.get("profile_id")
+        versions = item.get("available_versions")
+        if not isinstance(profile_id, str) or not profile_id:
+            errors.append(f"profile-version-history.json: 第 {index + 1} 项缺少 profile_id")
+            continue
+        if profile_id in history:
+            errors.append(f"profile-version-history.json: ProfileID重复：{profile_id}")
+            continue
+        if not isinstance(versions, list) or not versions or not all(isinstance(value, str) for value in versions):
+            errors.append(f"profile-version-history.json: {profile_id} 的 available_versions 必须是非空字符串数组")
+            continue
+        if len(versions) != len(set(versions)):
+            errors.append(f"profile-version-history.json: {profile_id} 的历史版本重复")
+        if any(re.fullmatch(r"v[0-9]+\.[0-9]+", value) is None for value in versions):
+            errors.append(f"profile-version-history.json: {profile_id} 含无效版本号")
+        else:
+            ordered = sorted(versions, key=lambda value: tuple(int(part) for part in value[1:].split(".")))
+            if versions != ordered:
+                errors.append(f"profile-version-history.json: {profile_id} 的历史版本必须按升序排列")
+        history[profile_id] = versions
+    history_count = len(history)
+    if set(history) != set(cards):
+        errors.append("profile-version-history.json: ProfileID 集合与实际卡片不一致")
+    for profile_id, (_, record) in cards.items():
+        versions = history.get(profile_id, [])
+        current = record.get("卡片版本")
+        if versions and current != versions[-1]:
+            errors.append(f"profile-version-history.json: {profile_id} 的最后版本必须等于当前卡片版本 {current}")
+
     return {
         "profiles": len(files),
         "catalog_rows": len(catalog_records),
+        "history_rows": history_count,
         "sources": len(known_sources),
         "errors": errors,
     }
@@ -317,6 +363,7 @@ def _render_report(result: dict[str, Any]) -> str:
         "Schema版本：v1.0",
         f"Profile卡片数：{result['profiles']}",
         f"目录记录数：{result['catalog_rows']}",
+        f"历史版本记录数：{result.get('history_rows', 0)}",
         f"来源ID数：{result['sources']}",
         f"结论：{'通过' if not errors else '未通过'}",
         "",

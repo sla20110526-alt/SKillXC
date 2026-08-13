@@ -29,7 +29,25 @@ class ProfileLibraryTests(unittest.TestCase):
         result = VALIDATOR.validate_library(LIBRARY_ROOT)
         self.assertEqual(result["profiles"], 27)
         self.assertEqual(result["catalog_rows"], 27)
+        self.assertEqual(result["history_rows"], 27)
         self.assertEqual(result["errors"], [])
+
+    def test_unregistered_profile_version_is_rejected(self) -> None:
+        temp_dir, root = self.copy_library()
+        try:
+            history = root / "references/profile-version-history.json"
+            text = history.read_text(encoding="utf-8")
+            history.write_text(
+                text.replace(
+                    '{"profile_id": "FP-DIR-DAVID-FINCHER", "available_versions": ["v1.0"]}',
+                    '{"profile_id": "FP-DIR-DAVID-FINCHER", "available_versions": ["v0.9"]}',
+                ),
+                encoding="utf-8",
+            )
+            result = VALIDATOR.validate_library(root)
+            self.assertTrue(any("最后版本必须等于当前卡片版本" in error for error in result["errors"]))
+        finally:
+            temp_dir.cleanup()
 
     def test_missing_section_is_rejected(self) -> None:
         temp_dir, root = self.copy_library()

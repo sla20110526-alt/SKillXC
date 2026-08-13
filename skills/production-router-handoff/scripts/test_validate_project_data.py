@@ -179,6 +179,16 @@ class ManifestRegressionTests(unittest.TestCase):
             return "v0.1"
         if isinstance(pattern, str) and pattern == "^ASP-[A-Z0-9-]+$":
             return "ASP-TEST-001"
+        if isinstance(pattern, str) and pattern == "^CC-[A-Z0-9-]+$":
+            return "CC-TEST-001"
+        if isinstance(pattern, str) and pattern == "^CCS-[A-Z0-9-]+@v[0-9]{3,}$":
+            return "CCS-TEST@v001"
+        if isinstance(pattern, str) and pattern == "^CCS-ACTING-MASTER@v[0-9]{3,}$":
+            return "CCS-ACTING-MASTER@v001"
+        if isinstance(pattern, str) and pattern == "^CCS-VOICE-IDENTITY@v[0-9]{3,}$":
+            return "CCS-VOICE-IDENTITY@v001"
+        if isinstance(pattern, str) and pattern == "^[a-f0-9]{64}$":
+            return "0" * 64
         if field == "项目ID":
             return "PRJ-TEST"
         return "测试值" if int(spec.get("minLength", 0)) > 0 else ""
