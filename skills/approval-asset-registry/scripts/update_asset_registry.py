@@ -46,7 +46,7 @@ PAIR_FIELDS = (
     "状态依据",
     "状态更新时间",
 )
-DEPENDENT_ROLES = {"五视图基础卡", "服装妆造", "状态变体", "交互组合", "场景视图", "光影状态"}
+DEPENDENT_ROLES = {"五视图基础卡", "服装妆造", "状态变体", "交互组合", "场景视图", "光影状态", "对象表面应用", "对象装配"}
 VERSION_RE = re.compile(r"^v([0-9]{3,})$")
 REFERENCE_RE = re.compile(r"^([^@；]+)@(v[0-9]{3,})$")
 EVENT_RE = re.compile(r"^ASP-[A-Z0-9-]+$")
@@ -290,6 +290,50 @@ def _validate_pair_business(
                 )
             if light_parent["正式资产ID"] == row["正式资产ID"]:
                 raise RegistryError(f"空间图与光影状态必须使用不同正式资产ID：{self_reference}")
+        object_types = {"道具", "载具"}
+        object_parent_roles = {"独立对象", "状态变体", "对象表面应用", "对象装配"}
+        if row["资产类型"] in object_types and row["资产角色"] not in object_parent_roles:
+            raise RegistryError(f"道具/载具资产角色不符合对象生产链：{self_reference}")
+        if row["资产角色"] == "独立对象" and row["资产类型"] in object_types:
+            if production_dependencies:
+                raise RegistryError(f"基础道具/载具不得带生产依据：{self_reference}")
+        if row["资产角色"] == "图案文字母版":
+            if row["资产类型"] != "图案文字" or production_dependencies:
+                raise RegistryError(f"图案文字母版必须是无依赖的图案文字资产：{self_reference}")
+        if row["资产类型"] == "图案文字" and row["资产角色"] != "图案文字母版":
+            raise RegistryError(f"图案文字资产必须使用图案文字母版角色：{self_reference}")
+        if row["资产类型"] in object_types and row["资产角色"] == "状态变体":
+            if len(parent_dependencies) != 1 or extra_dependencies:
+                raise RegistryError(f"对象状态变体必须只依赖一个同类型对象父版本：{self_reference}")
+            object_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if object_parent is None or object_parent["资产类型"] != row["资产类型"] or object_parent["资产角色"] not in object_parent_roles:
+                raise RegistryError(f"对象状态变体的父版本必须是已登记同类型对象：{self_reference} -> {parent_dependencies[0]}")
+            if object_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"对象父版本与状态变体必须使用不同正式资产ID：{self_reference}")
+        if row["资产角色"] == "对象表面应用":
+            if row["资产类型"] not in object_types or len(parent_dependencies) != 1 or not extra_dependencies:
+                raise RegistryError(f"对象表面应用必须有一个同类型对象父版本和至少一个图案文字母版：{self_reference}")
+            surface_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if surface_parent is None or surface_parent["资产类型"] != row["资产类型"] or surface_parent["资产角色"] not in object_parent_roles:
+                raise RegistryError(f"对象表面应用的父版本必须是已登记同类型对象：{self_reference} -> {parent_dependencies[0]}")
+            if surface_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"对象父版本与表面应用必须使用不同正式资产ID：{self_reference}")
+            for graphic_dependency in extra_dependencies:
+                graphic_row = rows_by_reference.get((project_id, graphic_dependency))
+                if graphic_row is None or (graphic_row["资产类型"], graphic_row["资产角色"]) != ("图案文字", "图案文字母版"):
+                    raise RegistryError(f"对象表面应用的附加版本必须全部是图案文字母版：{self_reference} -> {graphic_dependency}")
+        if row["资产角色"] == "对象装配":
+            if row["资产类型"] not in object_types or len(parent_dependencies) != 1 or not extra_dependencies:
+                raise RegistryError(f"对象装配必须有一个同类型主承载对象父版本和至少一个装配件：{self_reference}")
+            assembly_parent = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if assembly_parent is None or assembly_parent["资产类型"] != row["资产类型"] or assembly_parent["资产角色"] not in object_parent_roles:
+                raise RegistryError(f"对象装配的父版本必须是已登记同类型主承载对象：{self_reference} -> {parent_dependencies[0]}")
+            if assembly_parent["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"主承载对象与对象装配必须使用不同正式资产ID：{self_reference}")
+            for object_dependency in extra_dependencies:
+                component_row = rows_by_reference.get((project_id, object_dependency))
+                if component_row is None or component_row["资产类型"] not in object_types or component_row["资产角色"] not in object_parent_roles:
+                    raise RegistryError(f"对象装配的附加版本必须全部是已登记道具/载具：{self_reference} -> {object_dependency}")
         for dependency in production_dependencies:
             if dependency == self_reference:
                 raise RegistryError(f"资产不能把自身列为生产依据：{self_reference}")

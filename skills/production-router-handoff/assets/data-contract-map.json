@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-13-location-spatial-maturity",
+  "manifest_revision": "2026-08-13-prop-vehicle-maturity",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
@@ -46,6 +46,16 @@
       "template": "skills/location-spatial-production/assets/场景视图投影表模板.csv",
       "schema": "skills/location-spatial-production/assets/location-view-projection.schema.json",
       "card": "skills/location-spatial-production/assets/场景空间生产卡模板.md"
+    },
+    {
+      "template": "skills/prop-vehicle-production/assets/对象部件与交互锚点表模板.csv",
+      "schema": "skills/prop-vehicle-production/assets/object-anchor.schema.json",
+      "card": "skills/prop-vehicle-production/assets/对象资产生产卡模板.md"
+    },
+    {
+      "template": "skills/prop-vehicle-production/assets/图案文字校对表模板.csv",
+      "schema": "skills/prop-vehicle-production/assets/graphic-text-proof.schema.json",
+      "card": "skills/prop-vehicle-production/assets/对象资产生产卡模板.md"
     },
     {
       "template": "skills/acting-direction/assets/角色表演母档表模板.csv",

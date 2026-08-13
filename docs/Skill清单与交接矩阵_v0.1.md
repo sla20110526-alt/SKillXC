@@ -39,7 +39,7 @@
 | `character-asset-production` | 是否使用；当前人物工作模式；每次候选是否明确登记 | 脸母图、单张五视图卡、服装/状态/交互继承卡、Prompt输入与候选验收 | 图片Prompt；明确登记后转登记 |
 | `location-spatial-production` | 是否使用；场景工作模式；母图构图子模式；每张候选是否明确登记 | 母图、空间圣经、锚点/投影表、场景状态、多视图与光影状态 | 图片Prompt；明确登记后转登记；导演/分镜读取空间数据 |
 | `world-asset-production` | 混合/类别不清时是否使用；下游生产Skill是否确认 | 资产身份拆分、唯一责任Skill、依赖与生产顺序；不产候选 | 对应分类资产Skill |
-| `prop-vehicle-production` | 是否使用；对象本体/状态/交互模式；候选是否明确登记 | 道具、载具、图案文字的身份卡、总览卡定义与候选验收 | 图片Prompt；明确登记后转登记 |
+| `prop-vehicle-production` | 是否使用；对象工作模式与交付形态；候选是否明确登记 | 对象生产卡、部件/交互锚点、对象总览卡、图案文字校对、载具舱内接口与候选验收 | 图片Prompt；明确登记后转登记；人物/生物组合或场景空间读取接口 |
 | `creature-monster-production` | 是否使用；基础/结构变体/状态变体；候选是否明确登记 | 生物/怪物身份卡、总览卡定义、运动约束与候选验收 | 图片Prompt；明确登记后转登记 |
 | `vfx-asset-production` | 是否需要独立资产；是否使用；候选是否明确登记 | VFX视觉母版定义、时序/环境接触卡与候选验收 | 图片/镜头Prompt；明确登记后转登记 |
 | `image-prompt-production` | 是否使用 | GPT Image 2 Prompt与修订 | 外部生成；再回资产 Skill |

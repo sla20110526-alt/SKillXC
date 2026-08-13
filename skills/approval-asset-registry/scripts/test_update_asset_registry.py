@@ -105,6 +105,22 @@ class RegistryTransactionTests(unittest.TestCase):
         row["允许变化"] = "当前槽位指定视图或状态"
         return row
 
+    def object_row(
+        self,
+        asset_id: str,
+        version: str,
+        asset_type: str,
+        role: str,
+        parent: str = "不适用",
+        extras: str = "不适用",
+    ) -> dict[str, str]:
+        row = self.formal_row(asset_id, version, role, parent, extras)
+        row["资产类型"] = asset_type
+        row["正式用途"] = "真人写实道具、载具或图案文字资产"
+        row["必须继承"] = "对象身份、结构、尺度、锚点、材质和功能"
+        row["允许变化"] = "当前槽位唯一变化"
+        return row
+
     @staticmethod
     def callable_row(formal: dict[str, str]) -> dict[str, str]:
         return {
@@ -496,6 +512,177 @@ class RegistryTransactionTests(unittest.TestCase):
         )
         result = self.register(self.spatial_row("SCN-MASTER-001", "v002", "场景", "场景母图"))
         self.assertEqual(result["待复核派生资产"], ["LGT-001@v001", "SCN-VIEW-001@v001"])
+
+    def test_object_surface_application_uses_object_parent_and_graphic_extra(self) -> None:
+        self.register(self.object_row("PRP-BASE-001", "v001", "道具", "独立对象"))
+        self.register(self.object_row("GFX-001", "v001", "图案文字", "图案文字母版"))
+        self.register(
+            self.object_row(
+                "PRP-SURFACE-001",
+                "v001",
+                "道具",
+                "对象表面应用",
+                "PRP-BASE-001@v001",
+                "GFX-001@v001",
+            )
+        )
+        rows = {(row["正式资产ID"], row["版本"]): row for row in self.table("正式资产登记表.csv")}
+        self.assertEqual(rows[("PRP-SURFACE-001", "v001")]["生产依据父资产ID与版本"], "PRP-BASE-001@v001")
+        self.assertEqual(rows[("PRP-SURFACE-001", "v001")]["生产依据附加资产ID与版本"], "GFX-001@v001")
+
+    def test_object_surface_application_rejects_non_graphic_extra(self) -> None:
+        self.register(self.object_row("PRP-BASE-001", "v001", "道具", "独立对象"))
+        self.register(self.object_row("PRP-EXTRA-001", "v001", "道具", "独立对象"))
+        invalid = self.object_row(
+            "PRP-SURFACE-001",
+            "v001",
+            "道具",
+            "对象表面应用",
+            "PRP-BASE-001@v001",
+            "PRP-EXTRA-001@v001",
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "附加版本必须全部是图案文字母版"):
+            self.register(invalid)
+
+    def test_object_state_requires_same_type_object_parent(self) -> None:
+        self.register(self.object_row("VEH-BASE-001", "v001", "载具", "独立对象"))
+        invalid = self.object_row(
+            "PRP-STATE-001", "v001", "道具", "状态变体", "VEH-BASE-001@v001"
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "父版本必须是已登记同类型对象"):
+            self.register(invalid)
+
+    def test_object_assembly_requires_registered_object_extras(self) -> None:
+        self.register(self.object_row("VEH-BASE-001", "v001", "载具", "独立对象"))
+        self.register(self.object_row("PRP-MOUNT-001", "v001", "道具", "独立对象"))
+        self.register(
+            self.object_row(
+                "VEH-ASSEMBLY-001",
+                "v001",
+                "载具",
+                "对象装配",
+                "VEH-BASE-001@v001",
+                "PRP-MOUNT-001@v001",
+            )
+        )
+
+    def test_object_and_graphic_types_reject_wrong_roles(self) -> None:
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "道具/载具资产角色不符合对象生产链"):
+            self.register(self.object_row("PRP-BASE-001", "v001", "道具", "基础"))
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "图案文字资产必须使用图案文字母版角色"):
+            self.register(self.object_row("GFX-001", "v001", "图案文字", "独立对象"))
+
+    def test_independent_object_rejects_production_dependencies(self) -> None:
+        self.register(self.object_row("PRP-OLDER-001", "v001", "道具", "独立对象"))
+        invalid = self.object_row(
+            "PRP-BASE-001", "v001", "道具", "独立对象", "PRP-OLDER-001@v001"
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "基础道具/载具不得带生产依据"):
+            self.register(invalid)
+
+    def test_graphic_master_rejects_production_dependencies(self) -> None:
+        self.register(self.object_row("GFX-OLDER-001", "v001", "图案文字", "图案文字母版"))
+        invalid = self.object_row(
+            "GFX-001", "v001", "图案文字", "图案文字母版", "GFX-OLDER-001@v001"
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "图案文字母版必须是无依赖的图案文字资产"):
+            self.register(invalid)
+
+    def test_object_assembly_rejects_graphic_extra(self) -> None:
+        self.register(self.object_row("VEH-BASE-001", "v001", "载具", "独立对象"))
+        self.register(self.object_row("GFX-001", "v001", "图案文字", "图案文字母版"))
+        invalid = self.object_row(
+            "VEH-ASSEMBLY-001",
+            "v001",
+            "载具",
+            "对象装配",
+            "VEH-BASE-001@v001",
+            "GFX-001@v001",
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "附加版本必须全部是已登记道具/载具"):
+            self.register(invalid)
+
+    def test_new_graphic_version_propagates_to_surface_application(self) -> None:
+        self.register(self.object_row("PRP-BASE-001", "v001", "道具", "独立对象"))
+        self.register(self.object_row("GFX-001", "v001", "图案文字", "图案文字母版"))
+        self.register(
+            self.object_row(
+                "PRP-SURFACE-001",
+                "v001",
+                "道具",
+                "对象表面应用",
+                "PRP-BASE-001@v001",
+                "GFX-001@v001",
+            )
+        )
+        result = self.register(self.object_row("GFX-001", "v002", "图案文字", "图案文字母版"))
+        self.assertEqual(result["待复核派生资产"], ["PRP-SURFACE-001@v001"])
+
+    def test_new_graphic_version_propagates_across_carrier_skills(self) -> None:
+        self.register(self.formal_row("CHR-001", "v001", "基础"))
+        self.register(self.spatial_row("SCN-MASTER-001", "v001", "场景", "场景母图"))
+        self.register(self.object_row("GFX-001", "v001", "图案文字", "图案文字母版"))
+        costume = self.formal_row(
+            "COSTUME-001",
+            "v001",
+            "服装妆造",
+            "CHR-001@v001",
+            "GFX-001@v001",
+        )
+        costume["资产类型"] = "服装妆造"
+        self.register(costume)
+        self.register(
+            self.spatial_row(
+                "SCN-STATE-001",
+                "v001",
+                "场景",
+                "状态变体",
+                "SCN-MASTER-001@v001",
+                "GFX-001@v001",
+            )
+        )
+        result = self.register(self.object_row("GFX-001", "v002", "图案文字", "图案文字母版"))
+        self.assertEqual(
+            result["待复核派生资产"],
+            ["COSTUME-001@v001", "SCN-STATE-001@v001"],
+        )
+
+    def test_new_vehicle_version_propagates_to_cabin_scene_and_views(self) -> None:
+        self.register(self.object_row("VEH-001", "v001", "载具", "独立对象"))
+        self.register(
+            self.spatial_row(
+                "SCN-CABIN-001", "v001", "场景", "场景母图", extras="VEH-001@v001"
+            )
+        )
+        self.register(
+            self.spatial_row(
+                "SCN-CABIN-VIEW-001",
+                "v001",
+                "场景视图",
+                "场景视图",
+                "SCN-CABIN-001@v001",
+            )
+        )
+        self.register(
+            self.spatial_row(
+                "LGT-CABIN-001",
+                "v001",
+                "光影",
+                "光影状态",
+                "SCN-CABIN-VIEW-001@v001",
+            )
+        )
+        result = self.register(self.object_row("VEH-001", "v002", "载具", "独立对象"))
+        self.assertEqual(
+            result["待复核派生资产"],
+            ["LGT-CABIN-001@v001", "SCN-CABIN-001@v001", "SCN-CABIN-VIEW-001@v001"],
+        )
+
+    def test_character_state_and_interaction_chain_still_accepts_generic_roles(self) -> None:
+        self.build_chain()
+        rows = {(row["正式资产ID"], row["版本"]): row for row in self.table("正式资产登记表.csv")}
+        self.assertEqual(rows[("STA-001", "v001")]["资产角色"], "状态变体")
+        self.assertEqual(rows[("INT-001", "v001")]["资产角色"], "交互组合")
 
 
 if __name__ == "__main__":

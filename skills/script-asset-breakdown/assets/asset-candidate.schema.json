@@ -10,6 +10,7 @@
     "暂定资产名称": {"type": "string", "minLength": 1},
     "基础或变体": {"type": "string", "enum": ["基础", "变体", "组合", "待确认"]},
     "父预留正式资产ID": {"type": ["string", "null"]},
+    "附加预留正式资产ID集合": {"type": ["string", "null"]},
     "剧本出处": {"type": "string", "minLength": 1},
     "关联场次": {"type": "string"},
     "信息来源": {"type": "string", "enum": ["剧本明确", "用户锁定", "创作建议", "待确认"]},

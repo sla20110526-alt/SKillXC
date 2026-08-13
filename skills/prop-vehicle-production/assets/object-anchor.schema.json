@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "对象部件与交互锚点",
+  "type": "object",
+  "required": ["项目ID", "对象定义ID", "对象定义版本", "预留正式资产ID", "正式资产ID与版本", "锚点ID", "锚点名称", "锚点类别", "所在部件", "局部位置", "朝向", "功能状态", "可见状态", "事实来源", "锁定级别"],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "对象定义ID": {"type": "string", "minLength": 1},
+    "对象定义版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "预留正式资产ID": {"type": "string", "minLength": 1},
+    "正式资产ID与版本": {"type": "string", "pattern": "^(未登记|[^@；]+@v[0-9]{3,})$"},
+    "锚点ID": {"type": "string", "minLength": 1},
+    "锚点名称": {"type": "string", "minLength": 1},
+    "锚点类别": {"type": "string", "enum": ["主体轮廓", "结构连接", "握持", "支撑", "操作", "开合", "装配", "乘坐", "进出", "安全", "图案区域", "尺度参照", "其他"]},
+    "所在部件": {"type": "string", "minLength": 1},
+    "局部位置": {"type": "string", "minLength": 1},
+    "朝向": {"type": "string", "minLength": 1},
+    "尺寸与容差": {"type": "string"},
+    "功能状态": {"type": "string", "minLength": 1},
+    "接触对象类别": {"type": "string"},
+    "承载与受力": {"type": "string"},
+    "运动约束": {"type": "string"},
+    "可见状态": {"type": "string", "enum": ["完整可见", "部分可见", "不可见", "待确认"]},
+    "事实来源": {"type": "string", "enum": ["对象图可见", "剧本明确", "用户锁定", "顾问结论", "创作建议待确认", "未知"]},
+    "锁定级别": {"type": "string", "enum": ["可见锁定", "关系锁定", "推断待确认", "未知禁止补写"]},
+    "备注": {"type": "string"}
+  },
+  "additionalProperties": false
+}
