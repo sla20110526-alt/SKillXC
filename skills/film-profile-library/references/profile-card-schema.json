@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "影视专业 Profile Markdown 卡元数据",
+  "type": "object",
+  "required": [
+    "ProfileID",
+    "卡片版本",
+    "当前状态",
+    "资料成熟度",
+    "专业部门",
+    "主体名称",
+    "主体类型",
+    "代表作品",
+    "适用阶段",
+    "Profile默认作用域",
+    "Profile本体失效点",
+    "方法证据状态",
+    "来源ID"
+  ],
+  "properties": {
+    "ProfileID": {
+      "type": "string",
+      "pattern": "^FP-(DIR|CIN|PD|WRI|EDI)-[A-Z0-9-]+$"
+    },
+    "卡片版本": {
+      "type": "string",
+      "pattern": "^v[0-9]+\\.[0-9]+$"
+    },
+    "当前状态": {
+      "type": "string",
+      "enum": ["待补资料", "受限可选", "可选择", "暂停使用", "已替代"]
+    },
+    "资料成熟度": {
+      "type": "string",
+      "enum": ["提纲", "初版", "已核验", "项目验证"]
+    },
+    "专业部门": {
+      "type": "string",
+      "enum": ["导演", "摄影指导", "美术／Production Design", "编剧／剧作", "剪辑"]
+    },
+    "主体名称": {
+      "type": "string",
+      "minLength": 1
+    },
+    "主体类型": {
+      "type": "string",
+      "enum": ["个人", "组合"]
+    },
+    "代表作品": {
+      "type": "string",
+      "minLength": 1
+    },
+    "适用阶段": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Profile默认作用域": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Profile本体失效点": {
+      "type": "string",
+      "minLength": 1
+    },
+    "方法证据状态": {
+      "type": "string",
+      "enum": ["用户提供", "分析性归纳", "直接观察", "来源支持", "混合证据"]
+    },
+    "来源ID": {
+      "type": "string",
+      "pattern": "^SRC-[A-Z0-9-]+(?:、SRC-[A-Z0-9-]+)*$"
+    }
+  },
+  "additionalProperties": false,
+  "x-profile-contract": {
+    "contract_version": "v1.0",
+    "required_sections": [
+      "Profile 记录",
+      "核心工作问题",
+      "可观察方法与证据",
+      "决策顺序",
+      "适用与误用风险",
+      "部门交接",
+      "当前项目短执行卡",
+      "来源与升级缺口"
+    ],
+    "method_evidence_enum": ["用户提供", "直接观察", "来源支持", "分析性归纳"],
+    "minimum_methods": 3,
+    "maturity_status_rules": {
+      "提纲": ["待补资料", "暂停使用", "已替代"],
+      "初版": ["受限可选", "暂停使用", "已替代"],
+      "已核验": ["可选择", "暂停使用", "已替代"],
+      "项目验证": ["可选择", "暂停使用", "已替代"]
+    }
+  }
+}
