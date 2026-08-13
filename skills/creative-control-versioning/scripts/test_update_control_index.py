@@ -301,6 +301,18 @@ class ControlVersionTests(unittest.TestCase):
         with self.assertRaisesRegex(CONTROL.ControlVersionError, "必须引用中央目录当前源版本"):
             self.draft(self.row("CC-STYLE-001", "v001", "规则", "CCS-STYLE-LOCK@v001"))
 
+    def test_new_art_draft_rejects_replaced_v002_source(self) -> None:
+        art = self.row(
+            "CC-ART-001",
+            "v001",
+            "美术规则",
+            source="CCS-ART-LOOKDEV@v002",
+            control_type="美术LookDev基线",
+            input_refs="CC-STYLE-001@v001",
+        )
+        with self.assertRaisesRegex(CONTROL.ControlVersionError, "必须引用中央目录当前源版本"):
+            self.draft(art)
+
     def test_rejects_profile_from_wrong_department(self) -> None:
         row = self.row("CC-STYLE-001", "v001", "规则")
         row["Profile引用集合"] = "FP-CIN-ROGER-DEAKINS@v1.0"
@@ -319,7 +331,7 @@ class ControlVersionTests(unittest.TestCase):
             "CC-ART-001",
             "v001",
             "美术规则",
-            source="CCS-ART-LOOKDEV@v002",
+            source="CCS-ART-LOOKDEV@v003",
             control_type="美术LookDev基线",
             input_refs="CC-STYLE-001@v001",
         )
@@ -338,7 +350,7 @@ class ControlVersionTests(unittest.TestCase):
                 "CC-ART-001",
                 "v001",
                 "美术规则",
-                source="CCS-ART-LOOKDEV@v002",
+                source="CCS-ART-LOOKDEV@v003",
                 control_type="美术LookDev基线",
                 input_refs="CC-STYLE-001@v001",
             )
@@ -361,7 +373,7 @@ class ControlVersionTests(unittest.TestCase):
                 "CC-ART-001",
                 "v001",
                 "美术A",
-                source="CCS-ART-LOOKDEV@v002",
+                source="CCS-ART-LOOKDEV@v003",
                 control_type="美术LookDev基线",
                 input_refs="CC-STYLE-001@v001",
             )
@@ -373,7 +385,7 @@ class ControlVersionTests(unittest.TestCase):
                 "CC-ART-001",
                 "v002",
                 "美术B",
-                source="CCS-ART-LOOKDEV@v002",
+                source="CCS-ART-LOOKDEV@v003",
                 control_type="美术LookDev基线",
                 input_refs="CC-STYLE-001@v002",
             )
@@ -404,7 +416,7 @@ class ControlVersionTests(unittest.TestCase):
     def test_four_card_chain_accepts_only_direct_upstream(self) -> None:
         style = self.row("CC-STYLE-001", "v001", "风格")
         art = self.row(
-            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v002",
+            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v003",
             control_type="美术LookDev基线", input_refs="CC-STYLE-001@v001",
         )
         cinema = self.row(
@@ -438,7 +450,7 @@ class ControlVersionTests(unittest.TestCase):
         self.state("activate", "CC-STYLE-001", "v001", "确认风格")
         self.draft(
             self.row(
-                "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v002",
+                "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v003",
                 control_type="美术LookDev基线", input_refs="CC-STYLE-001@v001",
             )
         )
@@ -455,7 +467,7 @@ class ControlVersionTests(unittest.TestCase):
         self.draft(self.row("CC-STYLE-001", "v001", "风格"))
         self.state("activate", "CC-STYLE-001", "v001", "确认风格")
         art = self.row(
-            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v002",
+            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v003",
             control_type="美术LookDev基线",
             input_refs="CC-STYLE-001@v001；CONS-HISTORY-001@v001",
         )
@@ -466,7 +478,7 @@ class ControlVersionTests(unittest.TestCase):
         self.draft(self.row("CC-STYLE-001", "v001", "风格"))
         self.state("activate", "CC-STYLE-001", "v001", "确认风格")
         art = self.row(
-            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v002",
+            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v003",
             control_type="美术LookDev基线", input_refs="CC-STYLE-001@v001",
         )
         art["顾问任务成果引用集合"] = "CONS-HISTORY-001@v001"
@@ -477,7 +489,7 @@ class ControlVersionTests(unittest.TestCase):
     def test_invalidate_upstream_requires_complete_active_chain(self) -> None:
         style = self.row("CC-STYLE-001", "v001", "风格")
         art = self.row(
-            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v002",
+            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v003",
             control_type="美术LookDev基线", input_refs="CC-STYLE-001@v001",
         )
         self.draft(style, art)

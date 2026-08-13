@@ -164,6 +164,46 @@ class TaskArtifactTransactionTests(unittest.TestCase):
         self.assertEqual({row["来源任务ID"] for row in rows}, {"TASK-001"})
         self.assertTrue(all(row["成果状态"] == "可交接" and row["当前有效"] == "是" for row in rows))
 
+    def test_art_lookdev_handoff_is_a_versioned_task_artifact(self) -> None:
+        tasks = self._read_csv(self.task_index)
+        tasks[0]["当前阶段"] = "美术与LookDev"
+        tasks[0]["责任Skill"] = "art-lookdev-direction"
+        tasks[0]["需求槽位场次镜头范围"] = "人物资产类别"
+        self._write_csv(self.task_index, list(tasks[0]), tasks)
+        path = self._artifact_file(
+            "ALD-PRJ-TEST-CHAR@v001.md",
+            "\n".join((
+                "# 美术执行交接包",
+                "成果ID：ALD-PRJ-TEST-CHAR",
+                "成果版本：v001",
+                "工作模式：资产类别执行交接",
+                "当前美术LookDev基线ID@版本：CC-ART-001@v001",
+                "GPT Image 2 美术短执行切片：人物形制、材料、维护与固有色",
+                "说明：本包不是批量放行。",
+                "",
+            )),
+        )
+        row = self._row(
+            "ALD-PRJ-TEST-CHAR",
+            "v001",
+            path,
+            upstream="CC-ART-001@v001",
+        )
+        row.update({
+            "成果类别": "创作短卡",
+            "成果类型": "美术资产类别执行包",
+            "成果名称": "人物资产美术执行交接",
+            "责任Skill": "art-lookdev-direction",
+            "适用范围": "人物资产类别",
+        })
+        self._draft(row)
+        self._status("activate", ("ALD-PRJ-TEST-CHAR", "v001"))
+        saved = self._read_csv(self.artifact_index)[0]
+        self.assertEqual(
+            (saved["成果状态"], saved["当前有效"], saved["上游精确引用集合"]),
+            ("可交接", "是", "CC-ART-001@v001"),
+        )
+
     def test_style_review_requires_review_category_four_cards_and_conclusion(self) -> None:
         review_path = self._artifact_file(
             "style-review@v001.md",

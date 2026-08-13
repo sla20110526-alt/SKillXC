@@ -34,7 +34,7 @@
 |---|---|---|---|
 | `script-asset-breakdown` | 是否使用通用拆解 Skill | 拆解卡、候选/缺口表、预留正式资产ID、校验报告 | 资产需求计划 |
 | `style-lock-director` | 四种工作模式；相应专业Skill；对应阶段是否加载Profile | 项目风格意图基线、唯一直接上游四卡状态、P0审查记录、风格包组合快照与三个资产短切片 | 专业基线Skill；任务成果索引；分类资产与图片Prompt |
-| `art-lookdev-direction` | 是否使用；是否加载美术 Profile | 世界、美术、材质、色彩规则 | 风格总控、资产生产 |
+| `art-lookdev-direction` | 是否使用；长期基线时是否加载美术 Profile；长期基线/资产类别交接/场次状态/兼容复核模式 | 可追溯美术长期基线；建筑陈设、服装妆造、道具、材料工艺、老化污迹、固有色与母题规则；美术执行交接包和GPT Image 2短切片 | 风格总控组装P0/风格包；摄影基线；分类资产生产 |
 | `cinematography-direction` | 是否使用；全片基线时是否加载摄影 Profile | 全片摄影规则卡；场戏摄影约束卡；逐镜摄影审核卡 | 镜头设计；摄影审核写回 |
 | `lighting-direction` | 是否使用 | 光源地图、受光与曝光卡 | 场景资产、镜头 Prompt |
 | `specialist-consultant-router` | 是否使用；准确与艺术化边界 | 最小顾问问题与结论卡 | 美术、资产、调度 |

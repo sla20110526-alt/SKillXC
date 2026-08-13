@@ -1,5 +1,5 @@
 {
-  "catalog_version": "v003",
+  "catalog_version": "v004",
   "sources": [
     {
       "source_id": "CCS-STYLE-LOCK",
@@ -17,16 +17,17 @@
     },
     {
       "source_id": "CCS-ART-LOOKDEV",
-      "current_version": "v002",
-      "available_versions": ["v001", "v002"],
+      "current_version": "v003",
+      "available_versions": ["v001", "v002", "v003"],
       "control_type": "美术LookDev基线",
       "owner_skill": "art-lookdev-direction",
       "definition_paths": [
         "skills/art-lookdev-direction/references/CCS-ART-LOOKDEV@v001.md",
+        "skills/art-lookdev-direction/references/CCS-ART-LOOKDEV@v002.md",
         "skills/art-lookdev-direction/assets/美术LookDev基线卡模板.md"
       ],
       "available_versions_policy": "append-only",
-      "change_summary": "顾问成果改用独立任务成果字段，美术长期依赖只保留项目风格锁定直接上游"
+      "change_summary": "补齐事实推导、六类专业交接、永久/类别/场次/镜头四层边界、顾问缺口和GPT Image 2短执行切片；长期依赖仍只保留项目风格锁定直接上游"
     },
     {
       "source_id": "CCS-CINEMATOGRAPHY",

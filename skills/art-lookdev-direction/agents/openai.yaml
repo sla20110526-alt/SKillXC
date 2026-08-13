@@ -1,7 +1,6 @@
 interface:
   display_name: "美术与LookDev指导"
-  short_description: "设计真人写实项目的时代地域、材质、色彩、空间和视觉世界。"
-  default_prompt: "使用 $art-lookdev-direction 为当前项目制定美术与LookDev方案。"
+  short_description: "从剧本事实建立世界美术基线，并交接资产规则与场次状态。"
+  default_prompt: "使用 $art-lookdev-direction 为当前项目建立可追溯的美术基线或最小执行交接。"
 policy:
   allow_implicit_invocation: false
-
