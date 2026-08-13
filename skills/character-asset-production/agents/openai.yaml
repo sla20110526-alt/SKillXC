@@ -1,7 +1,7 @@
 interface:
   display_name: "人物资产生产"
-  short_description: "用GPT Image 2生产选脸、五视图总览卡及人物状态变体。"
-  default_prompt: "使用 $character-asset-production 生产当前真人写实人物资产候选。"
+  short_description: "锁定真人脸部身份并生产五视图、妆造、状态和交互候选。"
+  default_prompt: "使用 $character-asset-production 按精确版本链生产或复核当前真人写实人物资产。"
 policy:
   allow_implicit_invocation: false
 

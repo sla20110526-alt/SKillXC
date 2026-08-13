@@ -36,7 +36,7 @@
 | `cinematography-direction` | 是否使用；全片基线时是否加载摄影 Profile | 全片摄影规则卡；场戏摄影约束卡；逐镜摄影审核卡 | 镜头设计；摄影审核写回 |
 | `lighting-direction` | 是否使用 | 光源地图、受光与曝光卡 | 场景资产、镜头 Prompt |
 | `specialist-consultant-router` | 是否使用；准确与艺术化边界 | 最小顾问问题与结论卡 | 美术、资产、调度 |
-| `character-asset-production` | 是否使用；每次候选是否明确登记 | 选脸、单张五视图总览卡、人物变体 | 正式登记 |
+| `character-asset-production` | 是否使用；当前人物工作模式；每次候选是否明确登记 | 脸母图、单张五视图卡、服装/状态/交互继承卡、Prompt输入与候选验收 | 图片Prompt；明确登记后转登记 |
 | `location-spatial-production` | 是否使用；母图/视图是否明确登记 | 母图、空间圣经、光源图、多视图 | 正式登记、导演调度 |
 | `world-asset-production` | 混合/类别不清时是否使用；下游生产Skill是否确认 | 资产身份拆分、唯一责任Skill、依赖与生产顺序；不产候选 | 对应分类资产Skill |
 | `prop-vehicle-production` | 是否使用；对象本体/状态/交互模式；候选是否明确登记 | 道具、载具、图案文字的身份卡、总览卡定义与候选验收 | 图片Prompt；明确登记后转登记 |

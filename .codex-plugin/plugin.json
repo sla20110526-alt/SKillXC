@@ -1,7 +1,7 @@
 {
   "name": "skillxc",
-  "version": "0.1.0+codex.20260813054810",
-  "description": "面向真人写实 AI 影视项目的抽屉式生产控制与创作 Skill 系统，适配 GPT Image 2 与 Seedance 2.0。",
+  "version": "0.1.0+codex.20260813072850",
+  "description": "\u9762\u5411\u771f\u4eba\u5199\u5b9e AI \u5f71\u89c6\u9879\u76ee\u7684\u62bd\u5c49\u5f0f\u751f\u4ea7\u63a7\u5236\u4e0e\u521b\u4f5c Skill \u7cfb\u7edf\uff0c\u9002\u914d GPT Image 2 \u4e0e Seedance 2.0\u3002",
   "author": {
     "name": "sla20110526-alt",
     "url": "https://github.com/sla20110526-alt"
@@ -17,9 +17,9 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "AI影视生产核心系统",
-    "shortDescription": "按阶段调用真人写实 AI 影视生产控制与创作 Skill。",
-    "longDescription": "面向已有剧本或生产内容明确的真人写实 AI 影视项目，提供项目锁定、资产生产与登记、场戏与镜头设计、正式 Prompt 生产及按需 QC 能力。",
+    "displayName": "AI\u5f71\u89c6\u751f\u4ea7\u6838\u5fc3\u7cfb\u7edf",
+    "shortDescription": "\u6309\u9636\u6bb5\u8c03\u7528\u771f\u4eba\u5199\u5b9e AI \u5f71\u89c6\u751f\u4ea7\u63a7\u5236\u4e0e\u521b\u4f5c Skill\u3002",
+    "longDescription": "\u9762\u5411\u5df2\u6709\u5267\u672c\u6216\u751f\u4ea7\u5185\u5bb9\u660e\u786e\u7684\u771f\u4eba\u5199\u5b9e AI \u5f71\u89c6\u9879\u76ee\uff0c\u63d0\u4f9b\u9879\u76ee\u9501\u5b9a\u3001\u8d44\u4ea7\u751f\u4ea7\u4e0e\u767b\u8bb0\u3001\u573a\u620f\u4e0e\u955c\u5934\u8bbe\u8ba1\u3001\u6b63\u5f0f Prompt \u751f\u4ea7\u53ca\u6309\u9700 QC \u80fd\u529b\u3002",
     "developerName": "sla20110526-alt",
     "category": "Productivity",
     "capabilities": [
@@ -27,9 +27,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "从当前剧本开始，询问我是否启用真人写实 AI 影视生产总流程。",
-      "列出当前阶段可调用的生产控制与创作 Skill，等待我确认。",
-      "使用生产路由 Skill 为当前任务生成最小交接包。"
+      "\u4ece\u5f53\u524d\u5267\u672c\u5f00\u59cb\uff0c\u8be2\u95ee\u6211\u662f\u5426\u542f\u7528\u771f\u4eba\u5199\u5b9e AI \u5f71\u89c6\u751f\u4ea7\u603b\u6d41\u7a0b\u3002",
+      "\u5217\u51fa\u5f53\u524d\u9636\u6bb5\u53ef\u8c03\u7528\u7684\u751f\u4ea7\u63a7\u5236\u4e0e\u521b\u4f5c Skill\uff0c\u7b49\u5f85\u6211\u786e\u8ba4\u3002",
+      "\u4f7f\u7528\u751f\u4ea7\u8def\u7531 Skill \u4e3a\u5f53\u524d\u4efb\u52a1\u751f\u6210\u6700\u5c0f\u4ea4\u63a5\u5305\u3002"
     ]
   }
 }

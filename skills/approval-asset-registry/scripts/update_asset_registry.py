@@ -46,7 +46,7 @@ PAIR_FIELDS = (
     "状态依据",
     "状态更新时间",
 )
-DEPENDENT_ROLES = {"服装妆造", "状态变体", "交互组合", "场景视图", "光影状态"}
+DEPENDENT_ROLES = {"五视图基础卡", "服装妆造", "状态变体", "交互组合", "场景视图", "光影状态"}
 VERSION_RE = re.compile(r"^v([0-9]{3,})$")
 REFERENCE_RE = re.compile(r"^([^@；]+)@(v[0-9]{3,})$")
 EVENT_RE = re.compile(r"^ASP-[A-Z0-9-]+$")
@@ -202,6 +202,9 @@ def _validate_pair_business(
         )
     active_by_asset: dict[tuple[str, str], list[str]] = {}
     reference_states: dict[tuple[str, str], str] = {}
+    rows_by_reference = {
+        (row["项目ID"], _reference(row)): row for row in formal_rows
+    }
     for key, formal_row in formal.items():
         callable_row = callable_map[key]
         if key[0] != project_id:
@@ -223,7 +226,27 @@ def _validate_pair_business(
             raise RegistryError(f"同一正式资产ID存在多个可调用版本：{asset_key} -> {versions}")
     for row in formal_rows:
         self_reference = _reference(row)
-        for dependency in _production_dependencies(row):
+        production_dependencies = _production_dependencies(row)
+        parent_dependencies = _split_references(row["生产依据父资产ID与版本"])
+        extra_dependencies = _split_references(row["生产依据附加资产ID与版本"])
+        if row["资产角色"] == "脸母图":
+            if row["资产类型"] != "人物":
+                raise RegistryError(f"人物脸母图必须登记为人物资产：{self_reference}")
+            if production_dependencies or _split_references(row["当前兼容依赖资产ID与版本"]):
+                raise RegistryError(f"人物脸母图不得带生产依据或当前兼容依赖：{self_reference}")
+        if row["资产角色"] == "五视图基础卡":
+            if row["资产类型"] != "人物" or len(parent_dependencies) != 1 or extra_dependencies:
+                raise RegistryError(
+                    f"人物五视图基础卡必须是人物资产，只依赖一个脸母图父版本：{self_reference}"
+                )
+            face_row = rows_by_reference.get((project_id, parent_dependencies[0]))
+            if face_row is None or face_row["资产类型"] != "人物" or face_row["资产角色"] != "脸母图":
+                raise RegistryError(
+                    f"人物五视图基础卡的父版本必须是已登记脸母图：{self_reference} -> {parent_dependencies[0]}"
+                )
+            if face_row["正式资产ID"] == row["正式资产ID"]:
+                raise RegistryError(f"人物脸母图与五视图基础卡必须使用不同正式资产ID：{self_reference}")
+        for dependency in production_dependencies:
             if dependency == self_reference:
                 raise RegistryError(f"资产不能把自身列为生产依据：{self_reference}")
             if (project_id, dependency) not in reference_states:

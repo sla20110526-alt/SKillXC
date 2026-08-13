@@ -333,6 +333,85 @@ class RegistryTransactionTests(unittest.TestCase):
                 "PRJ-001",
             )
 
+    def test_character_face_and_overview_card_use_distinct_dependency_chain(self) -> None:
+        self.register(self.formal_row("CHR-FACE-001", "v001", "脸母图"))
+        self.register(
+            self.formal_row(
+                "CHR-CARD-001",
+                "v001",
+                "五视图基础卡",
+                "CHR-FACE-001@v001",
+            )
+        )
+        rows = {(row["正式资产ID"], row["版本"]): row for row in self.table("正式资产登记表.csv")}
+        self.assertEqual(rows[("CHR-FACE-001", "v001")]["状态"], "可调用")
+        self.assertEqual(
+            rows[("CHR-CARD-001", "v001")]["生产依据父资产ID与版本"],
+            "CHR-FACE-001@v001",
+        )
+
+    def test_character_overview_card_rejects_non_face_parent(self) -> None:
+        self.register(self.formal_row("CHR-BASE-001", "v001", "基础"))
+        invalid = self.formal_row(
+            "CHR-CARD-001",
+            "v001",
+            "五视图基础卡",
+            "CHR-BASE-001@v001",
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "父版本必须是已登记脸母图"):
+            self.register(invalid)
+
+    def test_character_face_rejects_dependencies(self) -> None:
+        self.register(self.formal_row("CHR-BASE-001", "v001", "基础"))
+        invalid = self.formal_row(
+            "CHR-FACE-001",
+            "v001",
+            "脸母图",
+            "CHR-BASE-001@v001",
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "人物脸母图不得带生产依据或当前兼容依赖"):
+            self.register(invalid)
+
+    def test_character_face_requires_character_asset_type(self) -> None:
+        invalid = self.formal_row("CST-FACE-001", "v001", "脸母图")
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "人物脸母图必须登记为人物资产"):
+            self.register(invalid)
+
+    def test_character_face_and_overview_card_cannot_share_asset_id(self) -> None:
+        self.register(self.formal_row("CHR-001", "v001", "脸母图"))
+        invalid = self.formal_row(
+            "CHR-001",
+            "v002",
+            "五视图基础卡",
+            "CHR-001@v001",
+        )
+        with self.assertRaisesRegex(REGISTRY.RegistryError, "必须使用不同正式资产ID"):
+            self.register(invalid)
+
+    def test_new_character_face_version_propagates_to_overview_and_variants(self) -> None:
+        self.register(self.formal_row("CHR-FACE-001", "v001", "脸母图"))
+        self.register(
+            self.formal_row(
+                "CHR-CARD-001",
+                "v001",
+                "五视图基础卡",
+                "CHR-FACE-001@v001",
+            )
+        )
+        self.register(
+            self.formal_row(
+                "CST-001",
+                "v001",
+                "服装妆造",
+                "CHR-CARD-001@v001",
+            )
+        )
+        result = self.register(self.formal_row("CHR-FACE-001", "v002", "脸母图"))
+        self.assertEqual(
+            result["待复核派生资产"],
+            ["CHR-CARD-001@v001", "CST-001@v001"],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
