@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Seedance视频Prompt参考映射",
+  "type": "object",
+  "required": [
+    "项目ID", "参考映射数据集ID", "映射版本", "生成单元ID", "分镜组ID与版本", "参考序号", "平台引用名", "参考类型",
+    "主体或对象ID", "正式来源ID与版本或用户参考定位", "当前服装状态或阶段", "适用镜头ID与版本集合", "唯一用途",
+    "允许继承", "禁止继承", "平台处理方式", "平台能力核对状态", "来源状态"
+  ],
+  "properties": {
+    "项目ID": {"type": "string", "minLength": 1},
+    "参考映射数据集ID": {"type": "string", "pattern": "^VRM-[A-Z0-9-]+$"},
+    "映射版本": {"type": "string", "pattern": "^v[0-9]{3,}$"},
+    "生成单元ID": {"type": "string", "minLength": 1},
+    "分镜组ID与版本": {"type": "string", "pattern": "^[^@；]+@v[0-9]{3,}$"},
+    "参考序号": {"type": "integer", "minimum": 1},
+    "平台引用名": {"type": "string", "minLength": 1},
+    "参考类型": {"type": "string", "enum": ["人物五视图总览卡", "场景空间参考", "道具或载具参考", "生物或怪物总览卡", "VFX视觉参考", "动作或运镜视频参考", "正式声音参考"]},
+    "主体或对象ID": {"type": "string", "minLength": 1},
+    "正式来源ID与版本或用户参考定位": {"type": "string", "minLength": 1},
+    "当前服装状态或阶段": {"type": "string", "minLength": 1},
+    "适用镜头ID与版本集合": {"type": "string", "minLength": 1},
+    "唯一用途": {"type": "string", "minLength": 1},
+    "允许继承": {"type": "string", "minLength": 1},
+    "禁止继承": {"type": "string", "minLength": 1},
+    "平台处理方式": {"type": "string", "enum": ["直接上传（本次已核对）", "Prompt描述转译", "外部声音或后期参考", "仅人工核对不上传", "使用时待核对"]},
+    "平台能力核对状态": {"type": "string", "enum": ["已核对", "待核对"]},
+    "来源状态": {"type": "string", "enum": ["正式可调用资产", "用户确认的一次性参考"]},
+    "备注": {"type": "string"}
+  },
+  "additionalProperties": false
+}

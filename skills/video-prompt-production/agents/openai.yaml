@@ -1,7 +1,7 @@
 interface:
   display_name: "视频Prompt生产"
-  short_description: "按分镜版本装配Seedance正式Prompt，并轻量确认生成放行与可用状态。"
-  default_prompt: "使用 $video-prompt-production 按当前分镜版本装配带ID和版本的Seedance 2.0正式Prompt。"
+  short_description: "装配Seedance单镜头或镜头组正式Prompt，并维护参考映射与版本。"
+  default_prompt: "使用 $video-prompt-production 为当前生成单元装配可手工复制的Seedance 2.0正式Prompt。"
 policy:
   allow_implicit_invocation: false
 

@@ -197,6 +197,8 @@ class ManifestRegressionTests(unittest.TestCase):
             return "DBD-PRJ-TEST-SCN001"
         if isinstance(pattern, str) and pattern == "^ERT-[A-Z0-9-]+$":
             return "ERT-PRJ-TEST-SBG001"
+        if isinstance(pattern, str) and pattern == "^VRM-[A-Z0-9-]+$":
+            return "VRM-PRJ-TEST-GU001"
         if isinstance(pattern, str) and pattern == "^BLK-[0-9]{3,}$":
             return "BLK-001"
         if isinstance(pattern, str) and pattern == "^CUT-[0-9]{3,}$":

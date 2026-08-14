@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-14-c06-editing-rhythm-v001",
+  "manifest_revision": "2026-08-14-c07-video-prompt-v001",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
@@ -171,6 +171,11 @@
       "template": "skills/shot-visual-design/assets/分镜表模板.csv",
       "schema": "skills/shot-visual-design/assets/storyboard-shot.schema.json",
       "card": "skills/shot-visual-design/assets/分镜设计卡模板.md"
+    },
+    {
+      "template": "skills/video-prompt-production/assets/视频Prompt参考映射表模板.csv",
+      "schema": "skills/video-prompt-production/assets/video-prompt-reference.schema.json",
+      "card": "skills/video-prompt-production/assets/正式Prompt交付卡模板.md"
     },
     {
       "template": "skills/video-qc-review/assets/视频QC记录模板.csv",
