@@ -6,6 +6,7 @@
 
 - [真人写实 AI 影视生产总流程 v0.1](docs/真人写实AI影视生产总流程_v0.1.md)
 - [Skill 清单与交接矩阵 v0.1](docs/Skill清单与交接矩阵_v0.1.md)
+- [SKillXC 操作与同事交付手册 v0.1](docs/SKillXC操作与同事交付手册_v0.1.md)
 - [剩余工作与完成验收总表 v0.1](docs/剩余工作与完成验收总表_v0.1.md)
 - [现行规则源清单](active-rule-sources.json)
 

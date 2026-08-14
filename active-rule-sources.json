@@ -45,6 +45,11 @@
   ],
   "support_documents": [
     {
+      "path": "docs/SKillXC操作与同事交付手册_v0.1.md",
+      "role": "人类操作者的项目对话组织、同事交付、安装边界和日常使用手册，不参与具体项目创作推理",
+      "load_policy": "explicit-support-only"
+    },
+    {
       "path": "docs/Codex用户级Skill重装恢复.md",
       "role": "用户级安装和灾难恢复说明，不参与影视生产推理",
       "load_policy": "explicit-support-only"
