@@ -1,7 +1,6 @@
 interface:
-  display_name: "视频QC审查"
-  short_description: "按需诊断Seedance镜头；明确记录时校验QC表，默认不保存。"
-  default_prompt: "使用 $video-qc-review 检查当前生成镜头；不要自动记录，若我明确要求记录则校验QC表。"
+  display_name: "视频QC与结果回流"
+  short_description: "诊断或复盘Seedance镜头，明确授权后才保存正式QC记录。"
+  default_prompt: "使用 $video-qc-review 诊断当前生成结果并给出唯一返工路径；除非我明确要求，否则不要保存记录。"
 policy:
   allow_implicit_invocation: false
-

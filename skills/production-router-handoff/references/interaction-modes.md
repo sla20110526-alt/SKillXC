@@ -21,9 +21,9 @@
 
 - 项目绑定、正式资产登记或待复核解除：`approval-asset-registry`；
 - 项目长期创作控制卡、表演母档或声音身份的版本/生效事务：`creative-control-versioning`；
-- 镜头进度同步、详细生成版本、失败原因保存：`generation-version-log`；
+- 镜头进度同步、详细生成批次/输入设置和用户失败描述：`generation-version-log`；正式QC根因、证据和返工路由：`video-qc-review`；
 - 保存正式连续性/就绪审计：`continuity-readiness-audit` 的严格审计记录模式；
-- 保存正式视频 QC 或项目复盘记录：`video-qc-review` 的正式记录/项目复盘模式。
+- 保存正式视频 QC 或项目复盘记录：`video-qc-review` 的正式记录模式；项目复盘分析本身仍不落盘，只有用户另行明确说“保存/记录本次复盘”才进入严格记录。
 
 生产对话收到授权时，只冻结当前对象和用户原文，输出相应最小申请/同步包与短激活指令；不在原生产对话直接写登记表、进度表、失败记录、控制索引、正式审计表或 QC 表。
 

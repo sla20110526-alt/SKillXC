@@ -199,6 +199,16 @@ class ManifestRegressionTests(unittest.TestCase):
             return "ERT-PRJ-TEST-SBG001"
         if isinstance(pattern, str) and pattern == "^VRM-[A-Z0-9-]+$":
             return "VRM-PRJ-TEST-GU001"
+        if isinstance(pattern, str) and pattern == "^QCR-[A-Z0-9-]+$":
+            return "QCR-PRJ-TEST-GU001"
+        if isinstance(pattern, str) and pattern == "^ISS-[0-9]{3,}$":
+            return "ISS-001"
+        if isinstance(pattern, str) and pattern == "^VPR-[A-Z0-9-]+@v[0-9]{3,}$":
+            return "VPR-PRJ-TEST-GU001@v001"
+        if isinstance(pattern, str) and pattern == "^VRM-[A-Z0-9-]+@v[0-9]{3,}$":
+            return "VRM-PRJ-TEST-GU001@v001"
+        if isinstance(pattern, str) and pattern == "^[0-9]{4}-[0-9]{2}-[0-9]{2}$":
+            return "2026-08-14"
         if isinstance(pattern, str) and pattern == "^BLK-[0-9]{3,}$":
             return "BLK-001"
         if isinstance(pattern, str) and pattern == "^CUT-[0-9]{3,}$":
@@ -249,7 +259,10 @@ class ManifestRegressionTests(unittest.TestCase):
             return "0" * 64
         if field == "项目ID":
             return "PRJ-TEST"
-        return "测试值" if int(spec.get("minLength", 0)) > 0 else ""
+        minimum_length = int(spec.get("minLength", 0))
+        if minimum_length > 0:
+            return ("测试值" * ((minimum_length + 2) // 3))[:minimum_length]
+        return ""
 
     def test_every_manifest_package_accepts_a_minimal_valid_row(self) -> None:
         repo_root = Path(__file__).resolve().parents[3]

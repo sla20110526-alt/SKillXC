@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-14-c07-video-prompt-v001",
+  "manifest_revision": "2026-08-14-c08-video-qc-v001",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
