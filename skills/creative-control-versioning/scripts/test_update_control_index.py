@@ -493,10 +493,19 @@ class ControlVersionTests(unittest.TestCase):
             "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v003",
             control_type="美术LookDev基线", input_refs="CC-STYLE-001@v001",
         )
-        art["顾问任务成果引用集合"] = "CONS-HISTORY-001@v001"
+        art["顾问任务成果引用集合"] = "CCR-HISTORY-001@v001"
         self.draft(art)
         self.state("activate", "CC-ART-001", "v001", "确认含顾问结论的美术基线")
-        self.assertEqual(self.rows()[-1]["顾问任务成果引用集合"], "CONS-HISTORY-001@v001")
+        self.assertEqual(self.rows()[-1]["顾问任务成果引用集合"], "CCR-HISTORY-001@v001")
+
+    def test_consultant_question_package_cannot_replace_conclusion_card(self) -> None:
+        art = self.row(
+            "CC-ART-001", "v001", "美术", source="CCS-ART-LOOKDEV@v003",
+            control_type="美术LookDev基线", input_refs="CC-STYLE-001@v001",
+        )
+        art["顾问任务成果引用集合"] = "CQP-HISTORY-001@v001"
+        with self.assertRaisesRegex(CONTROL.ControlVersionError, "顾问结论卡"):
+            self.draft(art)
 
     def test_invalidate_upstream_requires_complete_active_chain(self) -> None:
         style = self.row("CC-STYLE-001", "v001", "风格")

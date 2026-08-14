@@ -18,7 +18,7 @@
     "源定义引用": {"type": "string", "pattern": "^CCS-[A-Z0-9-]+@v[0-9]{3,}$"},
     "Profile引用集合": {"type": "string", "minLength": 1},
     "输入控制卡引用集合": {"type": "string", "minLength": 1},
-    "顾问任务成果引用集合": {"type": "string", "minLength": 1},
+    "顾问任务成果引用集合": {"type": "string", "pattern": "^(无|不适用|CCR-[A-Z0-9-]+@v[0-9]{3,}(；CCR-[A-Z0-9-]+@v[0-9]{3,})*)$"},
     "控制卡路径": {"type": "string", "minLength": 1},
     "内容指纹SHA256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
     "内容变更摘要": {"type": "string", "minLength": 1},

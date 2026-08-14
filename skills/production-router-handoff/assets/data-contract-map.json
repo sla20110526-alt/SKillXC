@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-14-c02-lighting-v003",
+  "manifest_revision": "2026-08-14-c03-consultant-v001",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
@@ -51,6 +51,11 @@
       "template": "skills/lighting-direction/assets/场景光源地图模板.csv",
       "schema": "skills/lighting-direction/assets/lighting-source-map.schema.json",
       "card": "skills/lighting-direction/assets/场景光源地图说明卡模板.md"
+    },
+    {
+      "template": "skills/specialist-consultant-router/assets/顾问证据记录模板.csv",
+      "schema": "skills/specialist-consultant-router/assets/consultant-evidence.schema.json",
+      "card": "skills/specialist-consultant-router/assets/顾问结论卡模板.md"
     },
     {
       "template": "skills/prop-vehicle-production/assets/对象部件与交互锚点表模板.csv",

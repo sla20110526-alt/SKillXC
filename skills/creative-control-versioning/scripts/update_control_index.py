@@ -26,7 +26,7 @@ VERSION_RE = re.compile(r"^v([0-9]{3,})$")
 SOURCE_REF_RE = re.compile(r"^(CCS-[A-Z0-9-]+)@(v[0-9]{3,})$")
 PROFILE_REF_RE = re.compile(r"^(FP-[A-Z0-9-]+)@(v[0-9]+\.[0-9]+)$")
 TRANSACTION_RE = re.compile(r"^CCV-[A-Z0-9-]+$")
-TASK_ARTIFACT_REF_RE = re.compile(r"^[A-Z][A-Z0-9-]+@v[0-9]{3,}$")
+CONSULTANT_RESULT_REF_RE = re.compile(r"^CCR-[A-Z0-9-]+@v[0-9]{3,}$")
 BASELINE_INPUTS_BY_SOURCE = {
     "CCS-STYLE-LOCK@v001": (),
     "CCS-STYLE-LOCK@v002": (),
@@ -365,8 +365,8 @@ def _validate_source_and_profiles(row: dict[str, str], config: dict[str, Any]) -
             if re.fullmatch(r"[A-Z][A-Z0-9-]+@v[0-9]{3,}", reference) is None:
                 raise ControlVersionError(f"输入控制卡引用必须精确到 ID@v###：{reference}")
         for reference in _split_refs(row["顾问任务成果引用集合"]):
-            if TASK_ARTIFACT_REF_RE.fullmatch(reference) is None:
-                raise ControlVersionError(f"顾问任务成果引用必须精确到成果 ID@v###：{reference}")
+            if CONSULTANT_RESULT_REF_RE.fullmatch(reference) is None:
+                raise ControlVersionError(f"顾问任务成果引用必须是精确的顾问结论卡 CCR-ID@v###：{reference}")
 
 
 def _validate_business(
