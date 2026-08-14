@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-14-c05-directing-blocking-v001",
+  "manifest_revision": "2026-08-14-c06-editing-rhythm-v001",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
@@ -26,6 +26,11 @@
       "template": "skills/directing-blocking/assets/场戏调度表模板.csv",
       "schema": "skills/directing-blocking/assets/directing-blocking.schema.json",
       "card": "skills/directing-blocking/assets/场戏调度卡模板.md"
+    },
+    {
+      "template": "skills/editing-rhythm/assets/剪辑节奏表模板.csv",
+      "schema": "skills/editing-rhythm/assets/editing-rhythm.schema.json",
+      "card": "skills/editing-rhythm/assets/剪辑节奏卡模板.md"
     },
     {
       "template": "skills/script-asset-breakdown/assets/候选资产拆解表模板.csv",

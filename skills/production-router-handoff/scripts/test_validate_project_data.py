@@ -195,8 +195,14 @@ class ManifestRegressionTests(unittest.TestCase):
             return "BDT-PRJ-TEST-SCN001"
         if isinstance(pattern, str) and pattern == "^DBD-[A-Z0-9-]+$":
             return "DBD-PRJ-TEST-SCN001"
+        if isinstance(pattern, str) and pattern == "^ERT-[A-Z0-9-]+$":
+            return "ERT-PRJ-TEST-SBG001"
         if isinstance(pattern, str) and pattern == "^BLK-[0-9]{3,}$":
             return "BLK-001"
+        if isinstance(pattern, str) and pattern == "^CUT-[0-9]{3,}$":
+            return "CUT-001"
+        if isinstance(pattern, str) and pattern == "^(待剪辑建立|CUT-[0-9]{3,})$":
+            return "待剪辑建立"
         if isinstance(pattern, str) and pattern == "^DSB-[A-Z0-9-]+@v[0-9]{3,}；BDT-[A-Z0-9-]+@v[0-9]{3,}$":
             return "DSB-PRJ-TEST-SCN001@v001；BDT-PRJ-TEST-SCN001@v001"
         if isinstance(pattern, str) and pattern == "^AX-[A-Z0-9-]+$":
@@ -223,6 +229,12 @@ class ManifestRegressionTests(unittest.TestCase):
             return "CCS-VOICE-IDENTITY@v001"
         if isinstance(pattern, str) and pattern == "^[^@；]+@v[0-9]{3,}$":
             return "SCN-TEST-001@v001"
+        if isinstance(pattern, str) and pattern == "^(场末|[^@；]+@v[0-9]{3,})$":
+            return "场末"
+        if isinstance(pattern, str) and pattern == "^ERT-[A-Z0-9-]+@v[0-9]{3,}；ERC-[A-Z0-9-]+@v[0-9]{3,}$":
+            return "ERT-PRJ-TEST-SBG001@v001；ERC-PRJ-TEST-SBG001@v001"
+        if isinstance(pattern, str) and pattern == "^(待剪辑检查|ERT-[A-Z0-9-]+@v[0-9]{3,}；ERC-[A-Z0-9-]+@v[0-9]{3,})$":
+            return "待剪辑检查"
         if isinstance(pattern, str) and pattern == "^(未登记|[^@；]+@v[0-9]{3,})$":
             return "未登记"
         if isinstance(pattern, str) and pattern == "^(未登记|不适用|[^@；]+@v[0-9]{3,})$":
