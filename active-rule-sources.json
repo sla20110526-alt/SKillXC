@@ -46,7 +46,7 @@
   "support_documents": [
     {
       "path": "docs/SKillXC操作与同事交付手册_v0.1.md",
-      "role": "人类操作者的项目对话组织、同事交付、安装边界和日常使用手册，不参与具体项目创作推理",
+      "role": "人类操作者的逐阶段对话组织、新对话激活、同事离线交付、安装更新边界和日常使用手册，不参与具体项目创作推理",
       "load_policy": "explicit-support-only"
     },
     {
