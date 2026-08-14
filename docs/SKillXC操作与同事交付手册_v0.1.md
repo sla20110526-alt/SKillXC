@@ -427,4 +427,3 @@
 - [轻量生产与严格记录合同](../skills/production-router-handoff/references/interaction-modes.md)
 - [项目数据三层契约](../skills/production-router-handoff/references/project-data-contract.md)
 - [短交接包模板](../skills/production-router-handoff/assets/短交接包模板.md)
-
