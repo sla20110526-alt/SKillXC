@@ -191,6 +191,12 @@ class ManifestRegressionTests(unittest.TestCase):
             return "CCR-PRJ-TEST-SCN-001@v001"
         if isinstance(pattern, str) and pattern == "^CLM-[0-9]{3,}$":
             return "CLM-001"
+        if isinstance(pattern, str) and pattern == "^BDT-[A-Z0-9-]+$":
+            return "BDT-PRJ-TEST-SCN001"
+        if isinstance(pattern, str) and pattern == "^SCN-[A-Z0-9-]+$":
+            return "SCN-001"
+        if isinstance(pattern, str) and pattern == "^BT-[0-9]{3,}$":
+            return "BT-001"
         if isinstance(pattern, str) and pattern == "^([0-9]{4}-[0-9]{2}-[0-9]{2}|不适用)$":
             return "2026-08-14"
         if isinstance(pattern, str) and pattern == "^(无|不适用|CCR-[A-Z0-9-]+@v[0-9]{3,}(；CCR-[A-Z0-9-]+@v[0-9]{3,})*)$":

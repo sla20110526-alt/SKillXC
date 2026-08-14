@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-14-c03-consultant-v001",
+  "manifest_revision": "2026-08-14-c04-scene-beats-v001",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
@@ -16,6 +16,11 @@
       "template": "skills/script-truth-index/assets/剧本事实索引模板.csv",
       "schema": "skills/script-truth-index/assets/script-fact.schema.json",
       "card": "skills/script-truth-index/assets/剧本事实索引卡模板.md"
+    },
+    {
+      "template": "skills/dramaturgy-scene-beats/assets/场戏节拍表模板.csv",
+      "schema": "skills/dramaturgy-scene-beats/assets/scene-beat.schema.json",
+      "card": "skills/dramaturgy-scene-beats/assets/场戏节拍卡模板.md"
     },
     {
       "template": "skills/script-asset-breakdown/assets/候选资产拆解表模板.csv",
