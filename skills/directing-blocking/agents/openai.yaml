@@ -1,7 +1,7 @@
 interface:
   display_name: "导演与人物调度"
-  short_description: "设计观众视点、人物走位、空间关系、信息揭示及场面调度。"
-  default_prompt: "使用 $directing-blocking 为当前场戏设计导演视点和人物调度。"
+  short_description: "建立可版本追踪的观众视点、人物走位、轴线及空间调度成果。"
+  default_prompt: "使用 $directing-blocking 为当前场戏建立或复核导演视点与人物调度。"
 policy:
   allow_implicit_invocation: false
 

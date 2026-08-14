@@ -193,6 +193,14 @@ class ManifestRegressionTests(unittest.TestCase):
             return "CLM-001"
         if isinstance(pattern, str) and pattern == "^BDT-[A-Z0-9-]+$":
             return "BDT-PRJ-TEST-SCN001"
+        if isinstance(pattern, str) and pattern == "^DBD-[A-Z0-9-]+$":
+            return "DBD-PRJ-TEST-SCN001"
+        if isinstance(pattern, str) and pattern == "^BLK-[0-9]{3,}$":
+            return "BLK-001"
+        if isinstance(pattern, str) and pattern == "^DSB-[A-Z0-9-]+@v[0-9]{3,}；BDT-[A-Z0-9-]+@v[0-9]{3,}$":
+            return "DSB-PRJ-TEST-SCN001@v001；BDT-PRJ-TEST-SCN001@v001"
+        if isinstance(pattern, str) and pattern == "^AX-[A-Z0-9-]+$":
+            return "AX-PRJ-TEST-001"
         if isinstance(pattern, str) and pattern == "^SCN-[A-Z0-9-]+$":
             return "SCN-001"
         if isinstance(pattern, str) and pattern == "^BT-[0-9]{3,}$":

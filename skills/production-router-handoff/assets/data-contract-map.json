@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-14-c04-scene-beats-v001",
+  "manifest_revision": "2026-08-14-c05-directing-blocking-v001",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
@@ -21,6 +21,11 @@
       "template": "skills/dramaturgy-scene-beats/assets/场戏节拍表模板.csv",
       "schema": "skills/dramaturgy-scene-beats/assets/scene-beat.schema.json",
       "card": "skills/dramaturgy-scene-beats/assets/场戏节拍卡模板.md"
+    },
+    {
+      "template": "skills/directing-blocking/assets/场戏调度表模板.csv",
+      "schema": "skills/directing-blocking/assets/directing-blocking.schema.json",
+      "card": "skills/directing-blocking/assets/场戏调度卡模板.md"
     },
     {
       "template": "skills/script-asset-breakdown/assets/候选资产拆解表模板.csv",
