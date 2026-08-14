@@ -1,5 +1,5 @@
 {
-  "catalog_version": "v004",
+  "catalog_version": "v005",
   "sources": [
     {
       "source_id": "CCS-STYLE-LOCK",
@@ -44,16 +44,17 @@
     },
     {
       "source_id": "CCS-LIGHTING",
-      "current_version": "v002",
-      "available_versions": ["v001", "v002"],
+      "current_version": "v003",
+      "available_versions": ["v001", "v002", "v003"],
       "control_type": "项目灯光基线",
       "owner_skill": "lighting-direction",
       "definition_paths": [
         "skills/lighting-direction/references/CCS-LIGHTING@v001.md",
+        "skills/lighting-direction/references/CCS-LIGHTING@v002.md",
         "skills/lighting-direction/assets/项目灯光基线卡模板.md"
       ],
       "available_versions_policy": "append-only",
-      "change_summary": "灯光长期依赖只保留全片摄影直接上游，顾问成果使用独立任务成果字段"
+      "change_summary": "补齐摄影约束承接、六类来源与控光角色、人物/材料受光、曝光和多视图继承边界；长期依赖仍只保留全片摄影直接上游"
     },
     {
       "source_id": "CCS-ACTING-MASTER",

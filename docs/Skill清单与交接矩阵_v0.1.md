@@ -36,7 +36,7 @@
 | `style-lock-director` | 四种工作模式；相应专业Skill；对应阶段是否加载Profile | 项目风格意图基线、唯一直接上游四卡状态、P0审查记录、风格包组合快照与三个资产短切片 | 专业基线Skill；任务成果索引；分类资产与图片Prompt |
 | `art-lookdev-direction` | 是否使用；长期基线时是否加载美术 Profile；长期基线/资产类别交接/场次状态/兼容复核模式 | 可追溯美术长期基线；建筑陈设、服装妆造、道具、材料工艺、老化污迹、固有色与母题规则；美术执行交接包和GPT Image 2短切片 | 风格总控组装P0/风格包；摄影基线；分类资产生产 |
 | `cinematography-direction` | 是否使用；全片基线时是否加载摄影 Profile | 全片摄影规则卡；场戏摄影约束卡；逐镜摄影审核卡 | 镜头设计；摄影审核写回 |
-| `lighting-direction` | 是否使用 | 光源地图、受光与曝光卡 | 场景资产、镜头 Prompt |
+| `lighting-direction` | 是否使用；项目基线/场景光源地图/人物受光/多视图继承/镜头短执行模式 | 项目灯光长期基线；场景光源地图；人物受光、多视图继承和镜头灯光短执行卡 | 风格总控、场景资产、图片/视频Prompt；不改摄影机、空间或VFX本体 |
 | `specialist-consultant-router` | 是否使用；准确与艺术化边界 | 最小顾问问题与结论卡 | 美术、资产、调度 |
 | `character-asset-production` | 是否使用；当前人物工作模式；每次候选是否明确登记 | 脸母图、单张五视图卡、服装/状态/交互继承卡、Prompt输入与候选验收 | 图片Prompt；明确登记后转登记 |
 | `location-spatial-production` | 是否使用；场景工作模式；母图构图子模式；每张候选是否明确登记 | 母图、空间圣经、锚点/投影表、场景状态、多视图与光影状态 | 图片Prompt；明确登记后转登记；导演/分镜读取空间数据 |
@@ -76,6 +76,7 @@
 | 缺少资产或父子版本错误 | `asset-demand-plan` / 对应资产生产 Skill |
 | 人脸或人物身份错误 | `character-asset-production` + `image-prompt-production` |
 | 场景构造或视图错误 | `location-spatial-production` + `image-prompt-production` |
+| 光源角色、人物受光、阴影、反射、曝光灯光实现或换角度灯光继承错误 | `lighting-direction`；空间锚点错误返回 `location-spatial-production`，相机侧曝光目标错误返回 `cinematography-direction` |
 | 道具、载具、图案文字本体错误 | `prop-vehicle-production` + `image-prompt-production` |
 | 生物/怪物解剖、身份或运动约束错误 | `creature-monster-production` + `image-prompt-production` |
 | VFX视觉身份、来源/路径、阶段、发光、接触或残留错误 | 图片资产定义/候选返回 `vfx-asset-production` + `image-prompt-production`；逐镜Prompt漏译返回 `video-prompt-production`；场景受光规则错误返回 `lighting-direction` |

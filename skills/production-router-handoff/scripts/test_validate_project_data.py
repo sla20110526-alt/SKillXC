@@ -179,6 +179,8 @@ class ManifestRegressionTests(unittest.TestCase):
             return "不适用"
         if isinstance(pattern, str) and pattern == "^[A-Z][A-Z0-9-]+$":
             return "ART-TEST-001"
+        if isinstance(pattern, str) and pattern == "^LMP-[A-Z0-9-]+$":
+            return "LMP-PRJ-TEST-SCN-001-BASE"
         if isinstance(pattern, str) and pattern == "^v[0-9]+\\.[0-9]+$":
             return "v0.1"
         if isinstance(pattern, str) and pattern == "^ASP-[A-Z0-9-]+$":

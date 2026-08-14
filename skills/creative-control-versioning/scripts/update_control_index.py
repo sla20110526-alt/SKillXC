@@ -38,6 +38,7 @@ BASELINE_INPUTS_BY_SOURCE = {
     "CCS-CINEMATOGRAPHY@v002": ("美术LookDev基线",),
     "CCS-LIGHTING@v001": ("项目风格锁定基线", "美术LookDev基线", "全片摄影规则"),
     "CCS-LIGHTING@v002": ("全片摄影规则",),
+    "CCS-LIGHTING@v003": ("全片摄影规则",),
 }
 
 
@@ -247,6 +248,7 @@ def _allows_consultant_field(row: dict[str, str]) -> bool:
         "CCS-ART-LOOKDEV@v003",
         "CCS-CINEMATOGRAPHY@v002",
         "CCS-LIGHTING@v002",
+        "CCS-LIGHTING@v003",
     }
 
 

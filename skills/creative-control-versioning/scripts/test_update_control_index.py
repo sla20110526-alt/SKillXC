@@ -313,6 +313,18 @@ class ControlVersionTests(unittest.TestCase):
         with self.assertRaisesRegex(CONTROL.ControlVersionError, "必须引用中央目录当前源版本"):
             self.draft(art)
 
+    def test_new_lighting_draft_rejects_replaced_v002_source(self) -> None:
+        lighting = self.row(
+            "CC-LGT-001",
+            "v001",
+            "灯光规则",
+            source="CCS-LIGHTING@v002",
+            control_type="项目灯光基线",
+            input_refs="CC-CIN-001@v001",
+        )
+        with self.assertRaisesRegex(CONTROL.ControlVersionError, "必须引用中央目录当前源版本"):
+            self.draft(lighting)
+
     def test_rejects_profile_from_wrong_department(self) -> None:
         row = self.row("CC-STYLE-001", "v001", "规则")
         row["Profile引用集合"] = "FP-CIN-ROGER-DEAKINS@v1.0"
@@ -424,7 +436,7 @@ class ControlVersionTests(unittest.TestCase):
             control_type="全片摄影规则", input_refs="CC-ART-001@v001",
         )
         light = self.row(
-            "CC-LGT-001", "v001", "灯光", source="CCS-LIGHTING@v002",
+            "CC-LGT-001", "v001", "灯光", source="CCS-LIGHTING@v003",
             control_type="项目灯光基线", input_refs="CC-CIN-001@v001",
         )
         self.draft(style, art, cinema, light)

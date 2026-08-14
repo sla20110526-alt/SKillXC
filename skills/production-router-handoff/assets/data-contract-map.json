@@ -1,6 +1,6 @@
 {
   "contract_version": "v0.1",
-  "manifest_revision": "2026-08-14-c01-art-lookdev-v003",
+  "manifest_revision": "2026-08-14-c02-lighting-v003",
   "pairs": [
     {
       "template": "skills/project-category-lock/assets/项目锁定索引模板.csv",
@@ -46,6 +46,11 @@
       "template": "skills/location-spatial-production/assets/场景视图投影表模板.csv",
       "schema": "skills/location-spatial-production/assets/location-view-projection.schema.json",
       "card": "skills/location-spatial-production/assets/场景空间生产卡模板.md"
+    },
+    {
+      "template": "skills/lighting-direction/assets/场景光源地图模板.csv",
+      "schema": "skills/lighting-direction/assets/lighting-source-map.schema.json",
+      "card": "skills/lighting-direction/assets/场景光源地图说明卡模板.md"
     },
     {
       "template": "skills/prop-vehicle-production/assets/对象部件与交互锚点表模板.csv",
