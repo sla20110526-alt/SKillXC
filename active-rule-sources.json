@@ -1,6 +1,9 @@
 {
-  "manifest_version": "1.0.0",
-  "purpose": "定义SKillXC现行规则源及各自加载策略，不包含历史讨论、聊天转录或接续记录；列入清单不等于允许一次性读取全部内容。",
+  "manifest_version": "1.1.0",
+  "archive_status": "sealed",
+  "sealed_on": "2026-09-05",
+  "successor_repository": "https://github.com/sla20110526-alt/XiaoC-YingShiGongZuo",
+  "purpose": "记录已封存的 SKillXC 旧规则源；所有生产与控制 Skill 均禁止自动发现、安装、加载和调用。",
   "authority_order": [
     {
       "path": "AGENTS.md",
@@ -9,38 +12,38 @@
     },
     {
       "path": "active-rule-sources.json",
-      "role": "现行来源和加载策略清单",
-      "load_policy": "manifest-only"
+      "role": "封存来源和停用策略清单",
+      "load_policy": "archive-manifest-only"
     },
     {
       "path": "README.md",
-      "role": "现行入口和硬规则摘要",
-      "load_policy": "on-demand-current-summary"
+      "role": "封存入口和历史规则摘要",
+      "load_policy": "archive-summary-only"
     },
     {
       "path": "docs/剩余工作与完成验收总表_v0.1.md",
-      "role": "真人写实第一版后续建设的唯一范围、顺序和完成验收清单；不参与具体项目创作推理",
-      "load_policy": "maintenance-planning-only"
+      "role": "封存前的维护范围与验收清单",
+      "load_policy": "archive-only"
     },
     {
       "path": "docs/真人写实AI影视生产总流程_v0.1.md",
-      "role": "真人写实闭环的现行总流程",
-      "load_policy": "on-demand-current-rule"
+      "role": "封存前的真人写实闭环总流程",
+      "load_policy": "archive-only"
     },
     {
       "path": "docs/Skill清单与交接矩阵_v0.1.md",
-      "role": "现行Skill职责和交接矩阵",
-      "load_policy": "on-demand-current-rule"
+      "role": "封存前的 Skill 职责和交接矩阵",
+      "load_policy": "archive-only"
     },
     {
-      "path": "skills",
-      "role": "30个现行生产Skill的唯一内容源",
-      "load_policy": "skill-metadata-then-explicit-activation"
+      "path": "archived-skills",
+      "role": "30个旧版生产 Skill 的历史源码",
+      "load_policy": "disabled-archive-only"
     },
     {
       "path": ".codex-plugin/plugin.json",
-      "role": "现行插件清单",
-      "load_policy": "discovery-metadata-only"
+      "role": "封存插件元数据，不含 Skill 分发入口",
+      "load_policy": "disabled-archive-only"
     }
   ],
   "support_documents": [
@@ -61,5 +64,5 @@
     "对话接续记录",
     "已被现行规则替代的旧流程副本"
   ],
-  "historical_access_policy": "只有用户在当前指令中明确提供归档路径并明确要求读取、核对或比较历史时，才允许访问该指定归档；不得自行搜索外部目录、Git历史、旧提交、远端旧版本或缓存。"
+  "historical_access_policy": "只有用户明确要求查看、核对、比较或恢复旧版时，才允许在指定范围内访问；不得自动发现、加载、安装、调用或恢复任何旧 Skill。"
 }

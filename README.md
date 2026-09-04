@@ -1,6 +1,10 @@
-# SKillXC
+# SKillXC（已封存）
 
-本仓库用于设计和实现“抽屉式 AI 影视生产 Skill 系统”。当前第一版只覆盖已有剧本或生产内容明确的真人写实项目，使用 GPT Image 2 制作图片资产、Seedance 2.0 生成视频，终点为正式镜头 Prompt 与生成可用镜头。
+> **封存状态：2026-09-05 起停止使用。** 本仓库的 30 个旧版生产与控制 Skill 仅保留源码和历史资料，不再提供自动发现、安装、插件发布或生产调用入口。新的影视生产工作统一转到[“小虫的影视生产流”](https://github.com/sla20110526-alt/XiaoC-YingShiGongZuo)。
+>
+> 旧源码已整体移入 `archived-skills/`，原文件名与正文保持不变，但该目录不再由插件或本机自动发现；除非用户以后明确要求恢复旧版，不得重新启用。
+
+本仓库曾用于设计和实现“抽屉式 AI 影视生产 Skill 系统”。以下内容作为封存前的设计记录保留，不再代表当前生产入口。
 
 ## 入口
 
@@ -8,7 +12,7 @@
 - [Skill 清单与交接矩阵 v0.1](docs/Skill清单与交接矩阵_v0.1.md)
 - [SKillXC 操作与同事离线交付手册 v0.1（详细版）](docs/SKillXC操作与同事交付手册_v0.1.md)
 - [剩余工作与完成验收总表 v0.1](docs/剩余工作与完成验收总表_v0.1.md)
-- [现行规则源清单](active-rule-sources.json)
+- [封存规则源清单](active-rule-sources.json)
 
 ## Skill 结构
 
@@ -18,19 +22,19 @@
 - 1 个独立影视大师 Profile 资料库。
 - 1 个按需视频 QC Skill。
 
-全部 Skill 位于 [`skills/`](skills/)。项目数据默认采用 Markdown 卡片、CSV 表格与 JSON Schema 检查：卡片供人确认，CSV 保存多行权威记录，Schema 检查表头与逐行结构；检查报告写入具体项目数据目录。任务索引只负责任务调度，单次创作短卡和其他无专用权威表的任务产物由独立任务成果索引承担结构化追踪，一项任务可以交付多项成果。完整规则见 [`项目数据三层契约`](skills/production-router-handoff/references/project-data-contract.md)与[`任务成果索引规则`](skills/production-router-handoff/references/task-artifact-index.md)。
+全部旧 Skill 现封存在 [`archived-skills/`](archived-skills/)。封存前的项目数据约定、模板和检查工具随源码保留，仅供历史追溯，不再参与新生产任务。
 
-交互默认采用[轻量生产模式](skills/production-router-handoff/references/interaction-modes.md)：后台仍维护完整任务单、ID/版本、索引和校验，普通对话只显示当前创作结果、必要缺口、一个确认点与下一步。项目绑定、正式登记、控制版本、进度/失败记录、正式审计、正式 QC 和复盘只在用户明确要求后进入对应严格记录对话。
+封存前的交互模式保存在[历史运行说明](archived-skills/production-router-handoff/references/interaction-modes.md)，仅供追溯，不得作为当前生产入口。
 
-## Codex 接入
+## 历史 Codex 接入（已停用）
 
-- [插件清单](.codex-plugin/plugin.json) 将本仓库作为一套可持续更新的 `skillxc` 插件提供。
+- [插件清单](.codex-plugin/plugin.json) 现仅保留封存元数据，不再发布任何 Skill。
 - [仓库级规则](AGENTS.md) 约束中央源、调用确认、维护边界和安装拓扑。
 - 用户级 `.agents` 持久化根目录位于 D 盘，C 盘用户目录只保留标准发现入口；[重装恢复说明](docs/Codex用户级Skill重装恢复.md)与[恢复工具](deployment/windows/)随仓库备份。
-- 本仓库、插件和 Skill 不保存历史讨论正文；新任务只按[现行规则源清单](active-rule-sources.json)规定的策略加载内容，列入清单不等于一次读取全部 Skill。只有用户在当前指令中明确提供归档路径并要求读取或比较时，才可访问该指定历史归档。
-- 本地开发态通过持久化目录中的链接直接读取 `skills/`，不复制 Skill；中央源更新后各项目读取到同一版本。
-- `production-router-handoff` 是唯一可自动识别的总路由入口；其余 29 个 Skill 必须在用户确认后显式调用。
-- 个人插件市场入口与直接链接是两种接入方式，不同时启用，避免同名 Skill 重复发现。
+- 本仓库、插件和 Skill 不保存历史讨论正文；[封存规则源清单](active-rule-sources.json)只记录停用边界，不提供任何新任务加载入口。只有用户明确要求查看、核对、比较或恢复旧版时，才可在指定范围内访问。
+- 本地开发态链接已全部移出自动发现目录；`archived-skills/` 不得直接接入 Codex。
+- `production-router-handoff` 与其余 29 个旧 Skill 均已封存，不再提供自动或显式调用入口。
+- 个人插件市场入口当前不存在，直接链接也已移出自动发现目录；两种旧接入方式均不得恢复。
 
 ## 当前硬规则
 
